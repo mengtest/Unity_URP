@@ -186,8 +186,6 @@ Shader "ToonShade/ShadingGradeMap_TransClipping_StencilMask"
 			#pragma multi_compile_fog
 			#pragma target 3.0
 			#pragma multi_compile _IS_TRANSCLIPPING_ON
-			#pragma multi_compile _IS_ANGELRING_OFF
-			#pragma multi_compile _IS_PASS_FWDBASE
 			#pragma multi_compile _EMISSIVE_SIMPLE _EMISSIVE_ANIMATION
 			#include "UnityCG.cginc"
 			#include "AutoLight.cginc"
@@ -218,12 +216,10 @@ Shader "ToonShade/ShadingGradeMap_TransClipping_StencilMask"
 			#pragma multi_compile_fog
 			#pragma target 3.0
 			#pragma multi_compile _IS_TRANSCLIPPING_ON
-			#pragma multi_compile _IS_ANGELRING_OFF
-			#pragma multi_compile _IS_PASS_FWDDELTA
 			#include "UnityCG.cginc"
 			#include "AutoLight.cginc"
 			#include "Lighting.cginc"
-			#include "ToonShadingGradeMap.hlsl"
+			#include "ToonShadingGradeMapDelta.hlsl"
 			ENDCG
 		}
 

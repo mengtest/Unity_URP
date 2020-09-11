@@ -1,196 +1,7 @@
 ﻿#ifndef SHADING_GRADEMAP
 #define SHADING_GRADEMAP
+#include "ToonProperty.hlsl"
 
-sampler2D _MainTex; float4 _MainTex_ST;
-float4 _BaseColor;
-float4 _Color;
-fixed _Use_BaseAs1st;
-fixed _Use_1stAs2nd;
-fixed _Is_LightColor_Base;
-
-sampler2D _1st_ShadeMap; float4 _1st_ShadeMap_ST;
-float4 _1st_ShadeColor;
-fixed _Is_LightColor_1st_Shade;
-sampler2D _2nd_ShadeMap; float4 _2nd_ShadeMap_ST;
-float4 _2nd_ShadeColor;
-fixed _Is_LightColor_2nd_Shade;
-sampler2D _NormalMap; float4 _NormalMap_ST;
-fixed _Is_NormalMapToBase;
-fixed _Set_SystemShadowsToBase;
-float _Tweak_SystemShadowsLevel;
-sampler2D _ShadingGradeMap; float4 _ShadingGradeMap_ST;
-float _Tweak_ShadingGradeMapLevel;
-fixed _BlurLevelSGM;
-float _1st_ShadeColor_Step;
-float _1st_ShadeColor_Feather;
-float _2nd_ShadeColor_Step;
-float _2nd_ShadeColor_Feather;
-
-
-float4 _HighColor;
-sampler2D _HighColor_Tex; float4 _HighColor_Tex_ST;
-fixed _Is_LightColor_HighColor;
-fixed _Is_NormalMapToHighColor;
-float _HighColor_Power;
-fixed _Is_SpecularToHighColor;
-fixed _Is_BlendAddToHiColor;
-fixed _Is_UseTweakHighColorOnShadow;
-float _TweakHighColorOnShadow;
-sampler2D _Set_HighColorMask; float4 _Set_HighColorMask_ST;
-float _Tweak_HighColorMaskLevel;
-
-fixed _RimLight;
-float4 _RimLightColor;
-fixed _Is_LightColor_RimLight;
-fixed _Is_NormalMapToRimLight;
-float _RimLight_Power;
-float _RimLight_InsideMask;
-fixed _RimLight_FeatherOff;
-fixed _LightDirection_MaskOn;
-float _Tweak_LightDirection_MaskLevel;
-fixed _Add_Antipodean_RimLight;
-float4 _Ap_RimLightColor;
-fixed _Is_LightColor_Ap_RimLight;
-float _Ap_RimLight_Power;
-fixed _Ap_RimLight_FeatherOff;
-sampler2D _Set_RimLightMask; float4 _Set_RimLightMask_ST;
-float _Tweak_RimLightMaskLevel;
-
-fixed _MatCap;
-sampler2D _MatCap_Sampler; float4 _MatCap_Sampler_ST;
-float4 _MatCapColor;
-fixed _Is_LightColor_MatCap;
-fixed _Is_BlendAddToMatCap;
-float _Tweak_MatCapUV;
-float _Rotate_MatCapUV;
-fixed _Is_NormalMapForMatCap;
-sampler2D _NormalMapForMatCap; float4 _NormalMapForMatCap_ST;
-float _Rotate_NormalMapForMatCapUV;
-fixed _Is_UseTweakMatCapOnShadow;
-float _TweakMatCapOnShadow;
-sampler2D _Set_MatcapMask; float4 _Set_MatcapMask_ST;
-float _Tweak_MatcapMaskLevel;
-fixed _Is_Ortho;
-float _CameraRolling_Stabilizer;
-fixed _BlurLevelMatcap;
-fixed _Inverse_MatcapMask;
-float _BumpScale;
-float _BumpScaleMatcap;
-
-sampler2D _Emissive_Tex; float4 _Emissive_Tex_ST;
-float4 _Emissive_Color;
-fixed _Is_ViewCoord_Scroll;
-float _Rotate_EmissiveUV;
-float _Base_Speed;
-float _Scroll_EmissiveU;
-float _Scroll_EmissiveV;
-fixed _Is_PingPong_Base;
-float4 _ColorShift;
-float4 _ViewShift;
-float _ColorShift_Speed;
-fixed _Is_ColorShift;
-fixed _Is_ViewShift;
-float3 emissive;
-
-float _Unlit_Intensity;
-fixed _Is_Filter_HiCutPointLightColor;
-fixed _Is_Filter_LightColor;
-float _StepOffset;
-fixed _Is_BLD;
-float _Offset_X_Axis_BLD;
-float _Offset_Y_Axis_BLD;
-fixed _Inverse_Z_Axis_BLD;
-
-#ifdef _IS_TRANSCLIPPING_OFF
-#elif _IS_TRANSCLIPPING_ON
-	sampler2D _ClippingMask; float4 _ClippingMask_ST;
-	fixed _IsBaseMapAlphaAsClippingMask;
-	float _Clipping_Level;
-	fixed _Inverse_Clipping;
-	float _Tweak_transparency;
-#endif
-
-//float2 rotatedUV = RotateUV(i.uv0, (_angular_Verocity*3.141592654), float2(0.5, 0.5), _Time.g);
-float2 RotateUV(float2 _uv, float _radian, float2 _piv, float _time)
-{
-	float RotateUV_ang = _radian;
-	float RotateUV_cos = cos(_time * RotateUV_ang);
-	float RotateUV_sin = sin(_time * RotateUV_ang);
-	return (mul(_uv - _piv, float2x2(RotateUV_cos, -RotateUV_sin, RotateUV_sin, RotateUV_cos)) + _piv);
-}
-
-fixed3 DecodeLightProbe(fixed3 N)
-{
-	return ShadeSH9(float4(N, 1));
-}
-            
-float _GI_Intensity;
-#ifdef _IS_ANGELRING_OFF
-#elif _IS_ANGELRING_ON
-	fixed _AngelRing;
-	sampler2D _AngelRing_Sampler; float4 _AngelRing_Sampler_ST;
-	float4 _AngelRing_Color;
-	fixed _Is_LightColor_AR;
-	float _AR_OffsetU;
-	float _AR_OffsetV;
-	fixed _ARSampler_AlphaOn;
-#endif
-
-struct VertexInput
-{
-	float4 vertex : POSITION;
-	float3 normal : NORMAL;
-	float4 tangent : TANGENT;
-	float2 texcoord0 : TEXCOORD0;
-#ifdef _IS_ANGELRING_ON
-	float2 texcoord1 : TEXCOORD1;
-#endif
-};
-
-struct VertexOutput
-{
-	float4 pos : SV_POSITION;
-	float2 uv0 : TEXCOORD0;
-#ifdef _IS_ANGELRING_OFF
-	float4 posWorld : TEXCOORD1;
-	float3 normalDir : TEXCOORD2;
-	float3 tangentDir : TEXCOORD3;
-	float3 bitangentDir : TEXCOORD4;
-	float mirrorFlag : TEXCOORD5;
-	LIGHTING_COORDS(6,7)
-	UNITY_FOG_COORDS(8)
-	
-#elif _IS_ANGELRING_ON
-	float2 uv1 : TEXCOORD1;
-	float4 posWorld : TEXCOORD2;
-	float3 normalDir : TEXCOORD3;
-	float3 tangentDir : TEXCOORD4;
-	float3 bitangentDir : TEXCOORD5;
-	float mirrorFlag : TEXCOORD6;
-	LIGHTING_COORDS(7,8)
-	UNITY_FOG_COORDS(9)
-#endif
-};
-
-VertexOutput vert(VertexInput v)
-{
-	VertexOutput o = (VertexOutput) 0;
-	o.uv0 = v.texcoord0;
-#ifdef _IS_ANGELRING_ON
-	o.uv1 = v.texcoord1;
-#endif
-	o.normalDir = UnityObjectToWorldNormal(v.normal);
-	o.tangentDir = normalize(mul(unity_ObjectToWorld, float4(v.tangent.xyz, 0.0)).xyz);
-	o.bitangentDir = normalize(cross(o.normalDir, o.tangentDir) * v.tangent.w);
-	o.posWorld = mul(unity_ObjectToWorld, v.vertex);
-	float3 lightColor = _LightColor0.rgb;
-	o.pos = UnityObjectToClipPos(v.vertex);
-	float3 crossFwd = cross(UNITY_MATRIX_V[0], UNITY_MATRIX_V[1]);
-	o.mirrorFlag = dot(crossFwd, UNITY_MATRIX_V[2]) < 0 ? 1 : -1;
-	UNITY_TRANSFER_FOG(o, o.pos);
-	TRANSFER_VERTEX_TO_FRAGMENT(o)
-	return o;
-}
 
 float4 frag(VertexOutput i, fixed facing : VFACE) : SV_TARGET
 {
@@ -214,29 +25,19 @@ float4 frag(VertexOutput i, fixed facing : VFACE) : SV_TARGET
 
 	UNITY_LIGHT_ATTENUATION(attenuation, i, i.posWorld.xyz);
 	
-#ifdef _IS_PASS_FWDBASE
 	float3 defaultLightDirection = normalize(UNITY_MATRIX_V[2].xyz + UNITY_MATRIX_V[1].xyz);
 	float3 defaultLightColor = saturate(max(half3(0.05,0.05,0.05)*_Unlit_Intensity,max(ShadeSH9(half4(0.0, 0.0, 0.0, 1.0)),ShadeSH9(half4(0.0, -1.0, 0.0, 1.0)).rgb)*_Unlit_Intensity));
 	float3 customLightDirection = normalize(mul( unity_ObjectToWorld, float4(((float3(1.0,0.0,0.0)*_Offset_X_Axis_BLD*10)+(float3(0.0,1.0,0.0)*_Offset_Y_Axis_BLD*10)+(float3(0.0,0.0,-1.0)*lerp(-1.0,1.0,_Inverse_Z_Axis_BLD))),0)).xyz);
 	float3 lightDirection = normalize(lerp(defaultLightDirection,_WorldSpaceLightPos0.xyz,any(_WorldSpaceLightPos0.xyz)));
 	lightDirection = lerp(lightDirection, customLightDirection, _Is_BLD);
 	float3 lightColor = lerp(max(defaultLightColor,_LightColor0.rgb),max(defaultLightColor,saturate(_LightColor0.rgb)),_Is_Filter_LightColor);
-	
-#elif _IS_PASS_FWDDELTA
-	float3 lightDirection = normalize(lerp(_WorldSpaceLightPos0.xyz, _WorldSpaceLightPos0.xyz - i.posWorld.xyz,_WorldSpaceLightPos0.w));
-	float3 addPassLightColor = (0.5*dot(lerp( i.normalDir, normalDirection, _Is_NormalMapToBase ), lightDirection)+0.5) * _LightColor0.rgb * attenuation;
-	float pureIntencity = max(0.001,(0.299*_LightColor0.r + 0.587*_LightColor0.g + 0.114*_LightColor0.b));
-	float3 lightColor = max(0, lerp(addPassLightColor, lerp(0,min(addPassLightColor,addPassLightColor/pureIntencity),_WorldSpaceLightPos0.w),_Is_Filter_LightColor));
-
-#endif
 
 	float3 halfDirection = normalize(viewDirection + lightDirection);
 	_Color = _BaseColor;
 
-#ifdef _IS_PASS_FWDBASE
 	float3 Set_LightColor = lightColor.rgb;
 	float3 Set_BaseColor = lerp( (_MainTex_var.rgb*_BaseColor.rgb), ((_MainTex_var.rgb*_BaseColor.rgb)*Set_LightColor), _Is_LightColor_Base );
-	float4 _1st_ShadeMap_var = lerp(tex2D(_1st_ShadeMap,TRANSFORM_TEX(Set_UV0, _1st_ShadeMap)),_MainTex_var,_Use_BaseAs1st);
+	float4 _1st_ShadeMap_var = lerp(tex2D(_1st_ShadeMap, TRANSFORM_TEX(Set_UV0, _1st_ShadeMap)),_MainTex_var,_Use_BaseAs1st);
 	float3 _Is_LightColor_1st_Shade_var = lerp( (_1st_ShadeMap_var.rgb*_1st_ShadeColor.rgb), ((_1st_ShadeMap_var.rgb*_1st_ShadeColor.rgb)*Set_LightColor), _Is_LightColor_1st_Shade );
 	float _HalfLambert_var = 0.5*dot(lerp( i.normalDir, normalDirection, _Is_NormalMapToBase ),lightDirection)+0.5; // Half Lambert
 	float4 _ShadingGradeMap_var = tex2Dlod(_ShadingGradeMap,float4(TRANSFORM_TEX(Set_UV0, _ShadingGradeMap),0.0,_BlurLevelSGM));
@@ -249,13 +50,13 @@ float4 frag(VertexOutput i, fixed facing : VFACE) : SV_TARGET
 	float Set_ShadeShadowMask = saturate((1.0 + ( (Set_ShadingGrade - (_2nd_ShadeColor_Step-_2nd_ShadeColor_Feather)) * (0.0 - 1.0) ) / (_2nd_ShadeColor_Step - (_2nd_ShadeColor_Step-_2nd_ShadeColor_Feather)))); // 1st and 2nd Shades Mask
 	
 	float3 Set_FinalBaseColor = lerp(_BaseColor_var,lerp(_Is_LightColor_1st_Shade_var,lerp( (_2nd_ShadeMap_var.rgb*_2nd_ShadeColor.rgb), ((_2nd_ShadeMap_var.rgb*_2nd_ShadeColor.rgb)*Set_LightColor), _Is_LightColor_2nd_Shade ),Set_ShadeShadowMask),Set_FinalShadowMask);
-	float4 _Set_HighColorMask_var = tex2D(_Set_HighColorMask,TRANSFORM_TEX(Set_UV0, _Set_HighColorMask));
+	float4 _Set_HighColorMask_var = tex2D(_Set_HighColorMask, TRANSFORM_TEX(Set_UV0, _Set_HighColorMask));
 	float _Specular_var = 0.5*dot(halfDirection,lerp( i.normalDir, normalDirection, _Is_NormalMapToHighColor ))+0.5; // Specular
 	float _TweakHighColorMask_var = (saturate((_Set_HighColorMask_var.g+_Tweak_HighColorMaskLevel))*lerp( (1.0 - step(_Specular_var,(1.0 - pow(_HighColor_Power,5)))), pow(_Specular_var,exp2(lerp(11,1,_HighColor_Power))), _Is_SpecularToHighColor ));
-	float4 _HighColor_Tex_var = tex2D(_HighColor_Tex,TRANSFORM_TEX(Set_UV0, _HighColor_Tex));
+	float4 _HighColor_Tex_var = tex2D(_HighColor_Tex, TRANSFORM_TEX(Set_UV0, _HighColor_Tex));
 	float3 _HighColor_var = (lerp( (_HighColor_Tex_var.rgb*_HighColor.rgb), ((_HighColor_Tex_var.rgb*_HighColor.rgb)*Set_LightColor), _Is_LightColor_HighColor )*_TweakHighColorMask_var);
 	float3 Set_HighColor = (lerp( saturate((Set_FinalBaseColor-_TweakHighColorMask_var)), Set_FinalBaseColor, lerp(_Is_BlendAddToHiColor,1.0,_Is_SpecularToHighColor) )+lerp( _HighColor_var, (_HighColor_var*((1.0 - Set_FinalShadowMask)+(Set_FinalShadowMask*_TweakHighColorOnShadow))), _Is_UseTweakHighColorOnShadow ));
-	float4 _Set_RimLightMask_var = tex2D(_Set_RimLightMask,TRANSFORM_TEX(Set_UV0, _Set_RimLightMask));
+	float4 _Set_RimLightMask_var = tex2D(_Set_RimLightMask, TRANSFORM_TEX(Set_UV0, _Set_RimLightMask));
 	float3 _Is_LightColor_RimLight_var = lerp( _RimLightColor.rgb, (_RimLightColor.rgb*Set_LightColor), _Is_LightColor_RimLight );
 	float _RimArea_var = (1.0 - dot(lerp( i.normalDir, normalDirection, _Is_NormalMapToRimLight ),viewDirection));
 	float _RimLightPower_var = pow(_RimArea_var,exp2(lerp(3,0,_RimLight_Power)));
@@ -315,9 +116,7 @@ float4 frag(VertexOutput i, fixed facing : VFACE) : SV_TARGET
 	float3 matCapColorOnMultiplyMode = Set_HighColor*(1-_Tweak_MatcapMaskLevel_var_MultiplyMode) + Set_HighColor*Set_MatCap*_Tweak_MatcapMaskLevel_var_MultiplyMode + lerp(float3(0,0,0),Set_RimLight,_RimLight);
 	float3 matCapColorFinal = lerp(matCapColorOnMultiplyMode, matCapColorOnAddMode, _Is_BlendAddToMatCap);
 	
-#ifdef _IS_ANGELRING_OFF
-	float3 finalColor = lerp(_RimLight_var, matCapColorFinal, _MatCap);// Final Composition before Emissive
-#elif _IS_ANGELRING_ON
+#ifdef _IS_ANGELRING_ON
 	float3 finalColor = lerp(_RimLight_var, matCapColorFinal, _MatCap);// Final Composition before AR
 	float3 _AR_OffsetU_var = lerp(mul(UNITY_MATRIX_V, float4(i.normalDir,0)).xyz,float3(0,0,1),_AR_OffsetU);
 	float2 AR_VN = _AR_OffsetU_var.xy*0.5 + float2(0.5,0.5);
@@ -329,6 +128,8 @@ float4 frag(VertexOutput i, fixed facing : VFACE) : SV_TARGET
 	float Set_ARtexAlpha = _AngelRing_Sampler_var.a;
 	float3 Set_AngelRingWithAlpha = (_Is_LightColor_AR_var*_AngelRing_Sampler_var.a);
 	finalColor = lerp(finalColor, lerp((finalColor + Set_AngelRing), ((finalColor*(1.0 - Set_ARtexAlpha))+Set_AngelRingWithAlpha), _ARSampler_AlphaOn ), _AngelRing );// Final Composition before Emissive
+#else
+	float3 finalColor = lerp(_RimLight_var, matCapColorFinal, _MatCap);
 #endif
 	
 #ifdef _EMISSIVE_SIMPLE
@@ -369,53 +170,18 @@ float4 frag(VertexOutput i, fixed facing : VFACE) : SV_TARGET
 	float4 emissive_Color = lerp(colorShift_Color, viewShift_Color, _Is_ViewShift);
 	emissive = emissive_Color.rgb * _Emissive_Tex_var.rgb * emissiveMask;
 #endif
+	
 	float3 envLightColor = DecodeLightProbe(normalDirection) < float3(1,1,1) ? DecodeLightProbe(normalDirection) : float3(1,1,1);
 	float envLightIntensity = 0.299*envLightColor.r + 0.587*envLightColor.g + 0.114*envLightColor.b <1 ? (0.299*envLightColor.r + 0.587*envLightColor.g + 0.114*envLightColor.b) : 1;
 	finalColor =  saturate(finalColor) + (envLightColor*envLightIntensity*_GI_Intensity*smoothstep(1,0,envLightIntensity/2)) + emissive;
 
 
-#elif _IS_PASS_FWDDELTA
-	_1st_ShadeColor_Step = saturate(_1st_ShadeColor_Step + _StepOffset);
-	_2nd_ShadeColor_Step = saturate(_2nd_ShadeColor_Step + _StepOffset);
-	float _LightIntensity = lerp(0,(0.299*_LightColor0.r + 0.587*_LightColor0.g + 0.114*_LightColor0.b)*attenuation,_WorldSpaceLightPos0.w) ;
-	float3 Set_LightColor = lerp(lightColor,lerp(lightColor,min(lightColor,_LightColor0.rgb*attenuation*_1st_ShadeColor_Step),_WorldSpaceLightPos0.w),_Is_Filter_HiCutPointLightColor);
-	float3 Set_BaseColor = lerp( (_MainTex_var.rgb*_BaseColor.rgb*_LightIntensity), ((_MainTex_var.rgb*_BaseColor.rgb)*Set_LightColor), _Is_LightColor_Base );
-	float4 _1st_ShadeMap_var = lerp(tex2D(_1st_ShadeMap,TRANSFORM_TEX(Set_UV0, _1st_ShadeMap)),_MainTex_var,_Use_BaseAs1st);
-	float3 _Is_LightColor_1st_Shade_var = lerp( (_1st_ShadeMap_var.rgb*_1st_ShadeColor.rgb*_LightIntensity), ((_1st_ShadeMap_var.rgb*_1st_ShadeColor.rgb)*Set_LightColor), _Is_LightColor_1st_Shade );
-	float _HalfLambert_var = 0.5*dot(lerp( i.normalDir, normalDirection, _Is_NormalMapToBase ),lightDirection)+0.5; // Half Lambert
-	float4 _ShadingGradeMap_var = tex2Dlod(_ShadingGradeMap,float4(TRANSFORM_TEX(Set_UV0, _ShadingGradeMap),0.0,_BlurLevelSGM));
-	float _ShadingGradeMapLevel_var = _ShadingGradeMap_var.r < 0.95 ? _ShadingGradeMap_var.r+_Tweak_ShadingGradeMapLevel : 1;
-	float Set_ShadingGrade = saturate(_ShadingGradeMapLevel_var)*lerp( _HalfLambert_var, (_HalfLambert_var*saturate(1.0+_Tweak_SystemShadowsLevel)), _Set_SystemShadowsToBase );
-	float Set_FinalShadowMask = saturate((1.0 + ( (Set_ShadingGrade - (_1st_ShadeColor_Step-_1st_ShadeColor_Feather)) * (0.0 - 1.0) ) / (_1st_ShadeColor_Step - (_1st_ShadeColor_Step-_1st_ShadeColor_Feather)))); // Base and 1st Shade Mask
-	float3 _BaseColor_var = lerp(Set_BaseColor,_Is_LightColor_1st_Shade_var,Set_FinalShadowMask);
-	float4 _2nd_ShadeMap_var = lerp(tex2D(_2nd_ShadeMap,TRANSFORM_TEX(Set_UV0, _2nd_ShadeMap)),_1st_ShadeMap_var,_Use_1stAs2nd);
-	float Set_ShadeShadowMask = saturate((1.0 + ( (Set_ShadingGrade - (_2nd_ShadeColor_Step-_2nd_ShadeColor_Feather)) * (0.0 - 1.0) ) / (_2nd_ShadeColor_Step - (_2nd_ShadeColor_Step-_2nd_ShadeColor_Feather)))); // 1st and 2nd Shades Mask
-	float3 finalColor = lerp(_BaseColor_var,lerp(_Is_LightColor_1st_Shade_var,lerp( (_2nd_ShadeMap_var.rgb*_2nd_ShadeColor.rgb*_LightIntensity), ((_2nd_ShadeMap_var.rgb*_2nd_ShadeColor.rgb)*Set_LightColor), _Is_LightColor_2nd_Shade ),Set_ShadeShadowMask),Set_FinalShadowMask);
-	
-	float4 _Set_HighColorMask_var = tex2D(_Set_HighColorMask,TRANSFORM_TEX(Set_UV0, _Set_HighColorMask));
-	float _Specular_var = 0.5*dot(halfDirection,lerp( i.normalDir, normalDirection, _Is_NormalMapToHighColor ))+0.5; // Specular
-	float _TweakHighColorMask_var = (saturate((_Set_HighColorMask_var.g+_Tweak_HighColorMaskLevel))*lerp( (1.0 - step(_Specular_var,(1.0 - pow(_HighColor_Power,5)))), pow(_Specular_var,exp2(lerp(11,1,_HighColor_Power))), _Is_SpecularToHighColor ));
-	float4 _HighColor_Tex_var = tex2D(_HighColor_Tex,TRANSFORM_TEX(Set_UV0, _HighColor_Tex));
-	float3 _HighColor_var = (lerp( (_HighColor_Tex_var.rgb*_HighColor.rgb), ((_HighColor_Tex_var.rgb*_HighColor.rgb)*Set_LightColor), _Is_LightColor_HighColor )*_TweakHighColorMask_var);
-	finalColor = finalColor + lerp(lerp( _HighColor_var, (_HighColor_var*((1.0 - Set_FinalShadowMask)+(Set_FinalShadowMask*_TweakHighColorOnShadow))), _Is_UseTweakHighColorOnShadow ),float3(0,0,0),_Is_Filter_HiCutPointLightColor);
-	finalColor = saturate(finalColor);
-#endif
-
-
 #ifdef _IS_TRANSCLIPPING_OFF
-	#ifdef _IS_PASS_FWDBASE
-		fixed4 finalRGBA = fixed4(finalColor,1);
-	#elif _IS_PASS_FWDDELTA
-		fixed4 finalRGBA = fixed4(finalColor,0);
-	#endif
+	fixed4 finalRGBA = fixed4(finalColor,1);
 	
 #elif _IS_TRANSCLIPPING_ON
 	float Set_Opacity = saturate((_Inverse_Clipping_var+_Tweak_transparency));
-	#ifdef _IS_PASS_FWDBASE
-		fixed4 finalRGBA = fixed4(finalColor,Set_Opacity);
-	#elif _IS_PASS_FWDDELTA
-	fixed4 finalRGBA = fixed4(finalColor * Set_Opacity,0);
-	#endif
+	fixed4 finalRGBA = fixed4(finalColor,Set_Opacity);	
 #endif
 	UNITY_APPLY_FOG(i.fogCoord, finalRGBA);
 	return finalRGBA;

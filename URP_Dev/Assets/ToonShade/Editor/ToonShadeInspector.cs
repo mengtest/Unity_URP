@@ -1444,6 +1444,7 @@ namespace ToonShade
 				if (GUILayout.Button("Off", shortButtonStyle))
 				{
 					material.SetFloat("_AngelRing", 1);
+					material.EnableKeyword("_IS_ANGELRING_ON");
 				}
 			}
 			else
@@ -1451,6 +1452,7 @@ namespace ToonShade
 				if (GUILayout.Button("Active", shortButtonStyle))
 				{
 					material.SetFloat("_AngelRing", 0);
+					material.DisableKeyword("_IS_ANGELRING_ON");
 				}
 			}
 			EditorGUILayout.EndHorizontal();
