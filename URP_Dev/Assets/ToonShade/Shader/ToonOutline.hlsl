@@ -12,10 +12,14 @@ float _Nearest_Distance;
 float4 _Outline_Color;
 float _Offset_Z;
 
-sampler2D _MainTex; float4 _MainTex_ST;
-sampler2D _Outline_Sampler; float4 _Outline_Sampler_ST;
-sampler2D _OutlineTex; float4 _OutlineTex_ST;
-sampler2D _BakedNormal; float4 _BakedNormal_ST;
+sampler2D _MainTex;
+float4 _MainTex_ST;
+sampler2D _Outline_Sampler;
+float4 _Outline_Sampler_ST;
+sampler2D _OutlineTex;
+float4 _OutlineTex_ST;
+sampler2D _BakedNormal;
+float4 _BakedNormal_ST;
 
 fixed _Is_OutlineTex;
 fixed _Is_BlendBaseColor;
@@ -73,13 +77,13 @@ PSInput vert(VSInput v)
 #ifdef _OUTLINE_NML
 	o.pos = UnityObjectToClipPos(
 		lerp(
-			float4(v.vertex.xyz + v.normal*Set_Outline_Width,1), 
-			float4(v.vertex.xyz + _BakedNormalDir*Set_Outline_Width,1), _Is_BakedNormal));
+			float4(v.vertex.xyz + v.normal * Set_Outline_Width, 1), 
+			float4(v.vertex.xyz + _BakedNormalDir*Set_Outline_Width, 1), _Is_BakedNormal));
 	
 #elif _OUTLINE_POS
-    Set_Outline_Width = Set_Outline_Width*2;
-    float signVar = dot(normalize(v.vertex),normalize(v.normal))<0 ? -1 : 1;
-    o.pos = UnityObjectToClipPos(float4(v.vertex.xyz + signVar*normalize(v.vertex)*Set_Outline_Width, 1));
+	Set_Outline_Width = Set_Outline_Width*2;
+	float signVar = dot(normalize(v.vertex),normalize(v.normal))<0 ? -1 : 1;
+	o.pos = UnityObjectToClipPos(float4(v.vertex.xyz + signVar*normalize(v.vertex)*Set_Outline_Width, 1));
 #endif
 	o.pos.z = o.pos.z + _Offset_Z * _ClipCameraPos.z;
 	return o;
@@ -99,8 +103,8 @@ float4 frag(PSInput i) : SV_Target
 	float4 _MainTex_var = tex2D(_MainTex, TRANSFORM_TEX(Set_UV0, _MainTex));
 	float3 Set_BaseColor = _BaseColor.rgb * _MainTex_var.rgb;
 	float3 _Is_BlendBaseColor_var = lerp(
-		_Outline_Color.rgb * lightColor, 
-		(_Outline_Color.rgb * Set_BaseColor * Set_BaseColor * lightColor), 
+		_Outline_Color.rgb * lightColor,
+		(_Outline_Color.rgb * Set_BaseColor * Set_BaseColor * lightColor),
 	_Is_BlendBaseColor);
 	
 	float3 _OutlineTex_var = tex2D(_OutlineTex, TRANSFORM_TEX(Set_UV0, _OutlineTex));
