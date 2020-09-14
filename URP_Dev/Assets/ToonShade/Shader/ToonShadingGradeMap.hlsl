@@ -218,6 +218,8 @@ struct VertexInput
 
 struct VertexOutput
 {
+	// half4 fogFactorAndVertexLight : TEXCOORD7; 
+	// x: fogFactor, yzw: vertex light
 	float4 pos : SV_POSITION;
 	float2 uv0 : TEXCOORD0;
 #ifdef _IS_ANGELRING_OFF
@@ -227,7 +229,7 @@ struct VertexOutput
 	float3 bitangentDir : TEXCOORD4;
 	float mirrorFlag : TEXCOORD5;
 	DECLARE_LIGHTMAP_OR_SH(lightmapUV, vertexSH, 6);
-	half4 fogFactorAndVertexLight : TEXCOORD7; // x: fogFactor, yzw: vertex light
+	half4 fogFactorAndVertexLight : TEXCOORD7;
 	#ifndef _MAIN_LIGHT_SHADOWS
 		float4 positionCS : TEXCOORD8;
 		int mainLightID : TEXCOORD9;
@@ -247,7 +249,7 @@ struct VertexOutput
 	float3 bitangentDir : TEXCOORD5;
 	float mirrorFlag : TEXCOORD6;
 	DECLARE_LIGHTMAP_OR_SH(lightmapUV, vertexSH, 7);
-	half4 fogFactorAndVertexLight : TEXCOORD8; // x: fogFactor, yzw: vertex light
+	half4 fogFactorAndVertexLight : TEXCOORD8;
 	#ifndef _MAIN_LIGHT_SHADOWS
 		float4 positionCS : TEXCOORD9;
 		int mainLightID : TEXCOORD10;
@@ -268,7 +270,7 @@ struct ToonLight
 	float3 direction;
 	float3 color;
 	float distanceAttenuation;
-	real shadowAttenuation;
+	float shadowAttenuation;
 	int type;
 };
 
@@ -279,7 +281,7 @@ struct ToonLight
 	toonlight.shadowAttenuation = 0; \
 	toonlight.type = 0
 
-real MainLightRealtimeShadowToonShade(float4 shadowCoord, float4 positionCS)
+half MainLightRealtimeShadowToonShade(float4 shadowCoord, float4 positionCS)
 {
 #if !defined(MAIN_LIGHT_CALCULATE_SHADOWS)
 	return 1.0h;
@@ -293,7 +295,7 @@ real MainLightRealtimeShadowToonShade(float4 shadowCoord, float4 positionCS)
 	return SampleShadowmap(TEXTURE2D_ARGS(_MainLightShadowmapTexture, sampler_MainLightShadowmapTexture), shadowCoord, shadowSamplingData, shadowParams, false);
 }
 
-real AdditionalLightRealtimeShadowToonShade(int lightIndex, float3 positionWS, float4 positionCS)
+half AdditionalLightRealtimeShadowToonShade(int lightIndex, float3 positionWS, float4 positionCS)
 {
 #if defined(USE_RAYTRACING_SHADOW)
 	float4 screenPos = ComputeScreenPos(positionCS / positionCS.w);
@@ -542,7 +544,7 @@ float4 frag(VertexOutput i, fixed facing : VFACE) : SV_TARGET
 	clip(Set_Clipping - 0.5);
 #endif
 
-	real shadowAttenuation = 1.0;
+	half shadowAttenuation = 1.0;
 
 #ifdef _MAIN_LIGHT_SHADOWS
 	shadowAttenuation = mainLight.shadowAttenuation;

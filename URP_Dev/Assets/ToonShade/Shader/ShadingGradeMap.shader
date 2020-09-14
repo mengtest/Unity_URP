@@ -178,7 +178,7 @@ Shader "ToonShade/ShadingGradeMap"
 			HLSLPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma target 2.0
+			#pragma target 3.0
 			#pragma multi_compile _IS_OUTLINE_CLIPPING_NO 
 			#pragma multi_compile _OUTLINE_NML _OUTLINE_POS
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
@@ -204,13 +204,9 @@ Shader "ToonShade/ShadingGradeMap"
 			}
 
 			HLSLPROGRAM
-			#pragma prefer_hlslcc gles
-			#pragma exclude_renderers d3d11_9x
-			#pragma target 2.0
-
+			#pragma target 3.0
 			#pragma vertex vert
 			#pragma fragment frag
-
 			#pragma shader_feature _NORMALMAP
 			#pragma shader_feature _ALPHATEST_ON
 			#pragma shader_feature _ALPHAPREMULTIPLY_ON
@@ -218,6 +214,7 @@ Shader "ToonShade/ShadingGradeMap"
 			#pragma shader_feature _METALLICSPECGLOSSMAP
 			#pragma shader_feature _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
 			#pragma shader_feature _OCCLUSIONMAP
+
 			#pragma shader_feature _SPECULARHIGHLIGHTS_OFF
 			#pragma shader_feature _ENVIRONMENTREFLECTIONS_OFF
 			#pragma shader_feature _SPECULAR_SETUP
@@ -256,9 +253,7 @@ Shader "ToonShade/ShadingGradeMap"
 			Cull[_CullMode]
 
 			HLSLPROGRAM
-			#pragma prefer_hlslcc gles
-			#pragma exclude_renderers d3d11_9x
-			#pragma target 2.0
+			#pragma target 3.0
 			#pragma shader_feature _ALPHATEST_ON
 			#pragma multi_compile_instancing
 			#pragma shader_feature _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
@@ -279,9 +274,7 @@ Shader "ToonShade/ShadingGradeMap"
 			Cull[_CullMode]
 
 			HLSLPROGRAM
-			#pragma prefer_hlslcc gles
-			#pragma exclude_renderers d3d11_9x
-			#pragma target 2.0
+			#pragma target 3.0
 			#pragma vertex DepthOnlyVertex
 			#pragma fragment DepthOnlyFragment
 			#pragma shader_feature _ALPHATEST_ON

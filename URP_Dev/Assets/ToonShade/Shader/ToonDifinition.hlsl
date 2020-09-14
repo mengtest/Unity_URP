@@ -24,19 +24,18 @@
 #define UnityObjectToClipPos UnityObjectToClipPosInstanced
 
 #if defined(FOG_LINEAR) || defined(FOG_EXP) || defined(FOG_EXP2)
-#define UNITY_FOG_COORDS(idx) UNITY_FOG_COORDS_PACKED(idx, float1)
+	#define UNITY_FOG_COORDS(idx) UNITY_FOG_COORDS_PACKED(idx, float1)
 
-#if (SHADER_TARGET < 30) || defined(SHADER_API_MOBILE)
-// mobile or SM2.0: calculate fog factor per-vertex
-#define UNITY_TRANSFER_FOG(o,outpos) UNITY_CALC_FOG_FACTOR((outpos).z); o.fogCoord.x = unityFogFactor
+	#if (SHADER_TARGET < 30) || defined(SHADER_API_MOBILE)
+		// mobile or SM2.0: calculate fog factor per-vertex
+		#define UNITY_TRANSFER_FOG(o,outpos) UNITY_CALC_FOG_FACTOR((outpos).z); o.fogCoord.x = unityFogFactor
+	#else
+		// SM3.0 and PC/console: calculate fog distance per-vertex, and fog factor per-pixel
+		#define UNITY_TRANSFER_FOG(o,outpos) o.fogCoord.x = (outpos).z
+	#endif
 #else
-// SM3.0 and PC/console: calculate fog distance per-vertex, and fog factor per-pixel
-
-#define UNITY_TRANSFER_FOG(o,outpos) o.fogCoord.x = (outpos).z
-#endif
-#else
-#define UNITY_FOG_COORDS(idx)
-#define UNITY_TRANSFER_FOG(o,outpos)
+	#define UNITY_FOG_COORDS(idx)
+	#define UNITY_TRANSFER_FOG(o,outpos)
 #endif
 
 #define UNITY_FOG_LERP_COLOR(col,fogCol,fogFac) col.rgb = lerp((fogCol).rgb, (col).rgb, saturate(fogFac))
@@ -157,16 +156,13 @@ half3 SHEvalLinearL0L1(half4 normal)
 half3 SHEvalLinearL2(half4 normal)
 {
 	half3 x1, x2;
-    // 4 of the quadratic (L2) polynomials
 	half4 vB = normal.xyzz * normal.yzzx;
 	x1.r = dot(unity_SHBr, vB);
 	x1.g = dot(unity_SHBg, vB);
 	x1.b = dot(unity_SHBb, vB);
 
-    // Final (5th) quadratic (L2) polynomial
 	half vC = normal.x * normal.x - normal.y * normal.y;
 	x2 = unity_SHC.rgb * vC;
-
 	return x1 + x2;
 }
 
@@ -181,4 +177,5 @@ half3 ShadeSH9(half4 normal)
 #endif
 	return res;
 }
-#endif
+
+#endif // TOON_DIFINITION
