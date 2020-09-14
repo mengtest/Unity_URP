@@ -66,8 +66,6 @@
 #define LIGHT_ATTENUATION(a)    SHADOW_ATTENUATION(a)
 #endif
 
-
-
 inline bool IsGammaSpace()
 {
 #ifdef UNITY_COLORSPACE_GAMMA

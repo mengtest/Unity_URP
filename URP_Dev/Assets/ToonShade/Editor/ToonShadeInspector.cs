@@ -8,7 +8,7 @@ namespace ToonShade
 		const string ShaderDefineSHADINGGRADEMAP = "_SHADINGGRADEMAP";
 		const string ShaderDefineANGELRING_ON = "_IS_ANGELRING_ON";
 		const string ShaderDefineANGELRING_OFF = "_IS_ANGELRING_OFF";
-		const string ShaderDefineUTS_USE_RAYTRACING_SHADOW = "_USE_RAYTRACING_SHADOW";
+		const string ShaderDefine_USE_RAYTRACING_SHADOW = "USE_RAYTRACING_SHADOW";
 		const string ShaderPropAngelRing = "_AngelRing";
 		const string ShaderPropRTHS = "_RTHS";
 		const string ShaderPropMatCap = "_MatCap";
@@ -680,20 +680,20 @@ namespace ToonShade
 		{
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Raytraced Hard Shadow");
-			var isRTHSenabled = material.IsKeywordEnabled(ShaderDefineUTS_USE_RAYTRACING_SHADOW);
+			var isRTHSenabled = material.IsKeywordEnabled(ShaderDefine_USE_RAYTRACING_SHADOW);
 
 			if (isRTHSenabled)
 			{
 				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 				{
-					material.DisableKeyword(ShaderDefineUTS_USE_RAYTRACING_SHADOW);
+					material.DisableKeyword(ShaderDefine_USE_RAYTRACING_SHADOW);
 				}
 			}
 			else
 			{
 				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 				{
-					material.EnableKeyword(ShaderDefineUTS_USE_RAYTRACING_SHADOW);
+					material.EnableKeyword(ShaderDefine_USE_RAYTRACING_SHADOW);
 				}
 			}
 

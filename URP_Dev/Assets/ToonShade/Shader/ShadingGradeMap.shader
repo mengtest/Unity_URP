@@ -234,12 +234,9 @@ Shader "ToonShade/ShadingGradeMap"
 			#pragma multi_compile _ LIGHTMAP_ON
 			#pragma multi_compile_fog
 
-			#pragma multi_compile   _IS_PASS_FWDBASE
-			#pragma multi_compile   _ENVIRONMENTREFLECTIONS_OFF
+			#pragma shader_feature _ USE_RAYTRACING_SHADOW
 			#pragma shader_feature _IS_TRANSCLIPPING_OFF _IS_TRANSCLIPPING_ON
 			#pragma shader_feature _IS_ANGELRING_OFF _IS_ANGELRING_ON
-			#pragma shader_feature _ UTS_USE_RAYTRACING_SHADOW
-			#pragma shader_feature _IS_CLIPPING_OFF _IS_CLIPPING_MODE _IS_CLIPPING_TRANSMODE
 			#pragma shader_feature _EMISSIVE_SIMPLE _EMISSIVE_ANIMATION
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"

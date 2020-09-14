@@ -286,7 +286,7 @@ real MainLightRealtimeShadowToonShade(float4 shadowCoord, float4 positionCS)
 #endif
 	ShadowSamplingData shadowSamplingData = GetMainLightShadowSamplingData();
 	half4 shadowParams = GetMainLightShadowParams();
-#if defined(UTS_USE_RAYTRACING_SHADOW)
+#if defined(USE_RAYTRACING_SHADOW)
 	float4 screenPos =  ComputeScreenPos(positionCS/ positionCS.w);
 	return SAMPLE_TEXTURE2D(_RaytracedHardShadow, sampler_RaytracedHardShadow, screenPos);
 #endif 
@@ -295,7 +295,7 @@ real MainLightRealtimeShadowToonShade(float4 shadowCoord, float4 positionCS)
 
 real AdditionalLightRealtimeShadowToonShade(int lightIndex, float3 positionWS, float4 positionCS)
 {
-#if defined(UTS_USE_RAYTRACING_SHADOW)
+#if defined(USE_RAYTRACING_SHADOW)
 	float4 screenPos = ComputeScreenPos(positionCS / positionCS.w);
 	return SAMPLE_TEXTURE2D(_RaytracedHardShadow, sampler_RaytracedHardShadow, screenPos);
 #endif
@@ -570,7 +570,7 @@ float4 frag(VertexOutput i, fixed facing : VFACE) : SV_TARGET
 	float _HalfLambert_var = 0.5 * dot(lerp(i.normalDir, normalDirection, _Is_NormalMapToBase), lightDirection) + 0.5; // Half Lambert
 	float4 _ShadingGradeMap_var = tex2Dlod(_ShadingGradeMap, float4(TRANSFORM_TEX(Set_UV0, _ShadingGradeMap), 0.0, _BlurLevelSGM));
 	
-#if !defined (UTS_USE_RAYTRACING_SHADOW)
+#if !defined (USE_RAYTRACING_SHADOW)
 	shadowAttenuation *= 2.0f;
 	shadowAttenuation = saturate(shadowAttenuation);
 #endif
@@ -763,8 +763,8 @@ float4 frag(VertexOutput i, fixed facing : VFACE) : SV_TARGET
 			pointLightColor += finalColor;
 		}
 	}
-	
-//#endif // _ADDITIONAL_LIGHTS
+// _ADDITIONAL_LIGHTS
+//#endif
 	
 	finalColor = saturate(finalColor) + (envLightColor * envLightIntensity * _GI_Intensity * smoothstep(1, 0, envLightIntensity / 2)) + emissive;
 	finalColor += pointLightColor;
