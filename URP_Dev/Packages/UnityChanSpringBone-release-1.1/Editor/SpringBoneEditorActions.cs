@@ -6,7 +6,8 @@ using UnityEngine;
 
 namespace Unity.Animations.SpringBones
 {
-    public static class SpringBoneEditorActions
+#if UNITY_EDITOR
+	public static class SpringBoneEditorActions
     {
         public static void ShowSpringBoneWindow()
         {
@@ -180,4 +181,5 @@ namespace Unity.Animations.SpringBones
             }
         }
     }
+#endif
 }

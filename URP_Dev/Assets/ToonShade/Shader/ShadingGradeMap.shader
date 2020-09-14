@@ -4,13 +4,30 @@ Shader "ToonShade/ShadingGradeMap"
 	Properties
 	{
 		[HideInInspector] _simpleUI("SimpleUI", Int) = 0
-		[HideInInspector] _utsVersion("Version", Float) = 2.07
-		[HideInInspector] _utsTechnique("Technique", int) = 1
-		[Enum(OFF,0,FRONT,1,BACK,2)] _CullMode("Cull Mode", int) = 2
+		[HideInInspector] _AutoRenderQueue("Automatic Render Queue ", int) = 1
+		[Enum(OFF,0,StencilOut,1,StencilMask,2)] _StencilMode("StencilMode",int) = 0
+		_StencilComp("Stencil Comparison", Float) = 8
+		_StencilNo("Stencil No", Float) = 1
+		_StencilOpPass("Stencil Operation", Float) = 0
+		_StencilOpFail("Stencil Operation", Float) = 0
+		[Enum(OFF,0,ON,1,] _TransparentEnabled("Transparent Mode", int) = 0
+
+		// 0:_IS_TRANSCLIPPING_OFF 1:_IS_TRANSCLIPPING_ON
+		[Enum(OFF,0,ON,1,TRANSMODE,2)] _ClippingMode("CliippingMode",int) = 0
+		[Enum(OFF,0,FRONT,1,BACK,2)] _CullMode("Cull Mode", int) = 2 
+		[Enum(OFF,0,ONT,1)]	_ZWriteMode("ZWrite Mode", int) = 1
+		[Enum(OFF,0,ONT,1)]	_ZOverDrawMode("ZOver Draw Mode", Float) = 0
+		_SPRDefaultUnlitColorMask("SPRDefaultUnlit Path Color Mask", int) = 15
+		[Enum(OFF,0,FRONT,1,BACK,2)] _SRPDefaultUnlitColMode("SPRDefaultUnlit  Cull Mode", int) = 1
+		_ClippingMask("ClippingMask", 2D) = "white" {}
+		[HideInInspector] _IsBaseMapAlphaAsClippingMask("IsBaseMapAlphaAsClippingMask", Float) = 0
+		[Toggle(_)] _Inverse_Clipping("Inverse_Clipping", Float) = 0
+		_Clipping_Level("Clipping_Level", Range(0, 1)) = 0
+		_Tweak_transparency("Tweak_transparency", Range(-1, 1)) = 0
+
 		_MainTex("BaseMap", 2D) = "white" {}
 		[HideInInspector] _BaseMap("BaseMap", 2D) = "white" {}
 		_BaseColor("BaseColor", Color) = (1,1,1,1)
-
 		[HideInInspector] _Color("Color", Color) = (1,1,1,1)
 		[Toggle(_)] _Is_LightColor_Base("Is_LightColor_Base", Float) = 1
 		_1st_ShadeMap("1st_ShadeMap", 2D) = "white" {}
@@ -26,17 +43,18 @@ Shader "ToonShade/ShadingGradeMap"
 		[Toggle(_)] _Is_NormalMapToBase("Is_NormalMapToBase", Float) = 0
 		[Toggle(_)] _Set_SystemShadowsToBase("Set_SystemShadowsToBase", Float) = 1
 		_Tweak_SystemShadowsLevel("Tweak_SystemShadowsLevel", Range(-0.5, 0.5)) = 0
-
-		[HideInInspector] _BaseColor_Step("BaseColor_Step", Range(0, 1)) = 0.5
-		[HideInInspector] _BaseShade_Feather("Base/Shade_Feather", Range(0.0001, 1)) = 0.0001
-		[HideInInspector] _ShadeColor_Step("ShadeColor_Step", Range(0, 1)) = 0
-		[HideInInspector] _1st2nd_Shades_Feather("1st/2nd_Shades_Feather", Range(0.0001, 1)) = 0.0001
-		_1st_ShadeColor_Step("1st_ShadeColor_Step", Range(0, 1)) = 0.5
-		_1st_ShadeColor_Feather("1st_ShadeColor_Feather", Range(0.0001, 1)) = 0.0001
-		_2nd_ShadeColor_Step("2nd_ShadeColor_Step", Range(0, 1)) = 0
-		_2nd_ShadeColor_Feather("2nd_ShadeColor_Feather", Range(0.0001, 1)) = 0.0001
+		_BaseColor_Step("BaseColor_Step", Range(0, 1)) = 0.5
+		_BaseShade_Feather("Base/Shade_Feather", Range(0.0001, 1)) = 0.0001
+		_ShadeColor_Step("ShadeColor_Step", Range(0, 1)) = 0
+		_1st2nd_Shades_Feather("1st/2nd_Shades_Feather", Range(0.0001, 1)) = 0.0001
+		[HideInInspector] _1st_ShadeColor_Step("1st_ShadeColor_Step", Range(0, 1)) = 0.5
+		[HideInInspector] _1st_ShadeColor_Feather("1st_ShadeColor_Feather", Range(0.0001, 1)) = 0.0001
+		[HideInInspector] _2nd_ShadeColor_Step("2nd_ShadeColor_Step", Range(0, 1)) = 0
+		[HideInInspector] _2nd_ShadeColor_Feather("2nd_ShadeColor_Feather", Range(0.0001, 1)) = 0.0001
 		_StepOffset("Step_Offset (ForwardAdd Only)", Range(-0.5, 0.5)) = 0
 		[Toggle(_)] _Is_Filter_HiCutPointLightColor("PointLights HiCut_Filter (ForwardAdd Only)", Float) = 1
+		_Set_1st_ShadePosition("Set_1st_ShadePosition", 2D) = "white" {}
+		_Set_2nd_ShadePosition("Set_2nd_ShadePosition", 2D) = "white" {}
 		_ShadingGradeMap("ShadingGradeMap", 2D) = "white" {}
 		_Tweak_ShadingGradeMapLevel("Tweak_ShadingGradeMapLevel", Range(-0.5, 0.5)) = 0
 		_BlurLevelSGM("Blur Level of ShadingGradeMap", Range(0, 10)) = 0
@@ -85,11 +103,18 @@ Shader "ToonShade/ShadingGradeMap"
 		_Rotate_NormalMapForMatCapUV("Rotate_NormalMapForMatCapUV", Range(-1, 1)) = 0
 		[Toggle(_)] _Is_UseTweakMatCapOnShadow("Is_UseTweakMatCapOnShadow", Float) = 0
 		_TweakMatCapOnShadow("TweakMatCapOnShadow", Range(0, 1)) = 0
-
 		_Set_MatcapMask("Set_MatcapMask", 2D) = "white" {}
 		_Tweak_MatcapMaskLevel("Tweak_MatcapMaskLevel", Range(-1, 1)) = 0
 		[Toggle(_)] _Inverse_MatcapMask("Inverse_MatcapMask", Float) = 0
 		[Toggle(_)] _Is_Ortho("Orthographic Projection for MatCap", Float) = 0
+
+		[Toggle(_)] _AngelRing("AngelRing", Float) = 0
+		_AngelRing_Sampler("AngelRing_Sampler", 2D) = "black" {}
+		_AngelRing_Color("AngelRing_Color", Color) = (1,1,1,1)
+		[Toggle(_)] _Is_LightColor_AR("Is_LightColor_AR", Float) = 1
+		_AR_OffsetU("AR_OffsetU", Range(0, 0.5)) = 0
+		_AR_OffsetV("AR_OffsetV", Range(0, 1)) = 0.3
+		[Toggle(_)] _ARSampler_AlphaOn("ARSampler_AlphaOn", Float) = 0
 
 		[KeywordEnum(SIMPLE,ANIMATION)] _EMISSIVE("EMISSIVE MODE", Float) = 0
 		_Emissive_Tex("Emissive_Tex", 2D) = "white" {}
@@ -131,87 +156,145 @@ Shader "ToonShade/ShadingGradeMap"
 
 	SubShader
 	{
-		Tags { "RenderType" = "Opaque" }
+		Tags { "RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" }
 
 		Pass
 		{
 			Name "OUTLINE"
-			Tags {}
-			Cull Front
+			Tags { "LightMode" = "SRPDefaultUnlit" }
 
-			CGPROGRAM
+			Cull[_SRPDefaultUnlitColMode]
+			ColorMask[_SPRDefaultUnlitColorMask]
+			Blend SrcAlpha OneMinusSrcAlpha
+			Stencil
+			{
+				Ref[_StencilNo]
+				Comp[_StencilComp]
+				Pass[_StencilOpPass]
+				Fail[_StencilOpFail]
+
+			}
+
+			HLSLPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma target 3.0
+			#pragma target 2.0
 			#pragma multi_compile _IS_OUTLINE_CLIPPING_NO 
 			#pragma multi_compile _OUTLINE_NML _OUTLINE_POS
-			#include "UnityCG.cginc"
+			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+			#include "ToonDifinition.hlsl"
 			#include "ToonOutline.hlsl"
-			ENDCG
+			ENDHLSL
 		}
 
 		Pass
 		{
 			Name "FORWARD"
-			Tags { "LightMode" = "ForwardBase" }
+			Tags { "LightMode" = "LightweightForward" }
+			ZWrite[_ZWriteMode]
 			Cull[_CullMode]
+			Blend SrcAlpha OneMinusSrcAlpha
 
-			CGPROGRAM
+			Stencil 
+			{
+				Ref[_StencilNo]
+				Comp[_StencilComp]
+				Pass[_StencilOpPass]
+				Fail[_StencilOpFail]
+			}
+
+			HLSLPROGRAM
+			#pragma prefer_hlslcc gles
+			#pragma exclude_renderers d3d11_9x
+			#pragma target 2.0
+
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma multi_compile_fwdbase_fullshadows
+
+			#pragma shader_feature _NORMALMAP
+			#pragma shader_feature _ALPHATEST_ON
+			#pragma shader_feature _ALPHAPREMULTIPLY_ON
+			#pragma shader_feature _EMISSION
+			#pragma shader_feature _METALLICSPECGLOSSMAP
+			#pragma shader_feature _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+			#pragma shader_feature _OCCLUSIONMAP
+			#pragma shader_feature _SPECULARHIGHLIGHTS_OFF
+			#pragma shader_feature _ENVIRONMENTREFLECTIONS_OFF
+			#pragma shader_feature _SPECULAR_SETUP
+			#pragma shader_feature _RECEIVE_SHADOWS_OFF
+
+			#pragma multi_compile _ _MAIN_LIGHT_SHADOWS
+			#pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
+			#pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
+			#pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
+			#pragma multi_compile _ _SHADOWS_SOFT
+			#pragma multi_compile _ _MIXED_LIGHTING_SUBTRACTIVE
+
+			#pragma multi_compile _ DIRLIGHTMAP_COMBINED
+			#pragma multi_compile _ LIGHTMAP_ON
 			#pragma multi_compile_fog
-			#pragma target 3.0
-			#pragma multi_compile _IS_TRANSCLIPPING_OFF
-			#pragma multi_compile _EMISSIVE_SIMPLE _EMISSIVE_ANIMATION
-			#include "UnityCG.cginc"
-			#include "AutoLight.cginc"
-			#include "Lighting.cginc"
+
+			#pragma multi_compile   _IS_PASS_FWDBASE
+			#pragma multi_compile   _ENVIRONMENTREFLECTIONS_OFF
+			#pragma shader_feature _IS_TRANSCLIPPING_OFF _IS_TRANSCLIPPING_ON
+			#pragma shader_feature _IS_ANGELRING_OFF _IS_ANGELRING_ON
+			#pragma shader_feature _ UTS_USE_RAYTRACING_SHADOW
+			#pragma shader_feature _IS_CLIPPING_OFF _IS_CLIPPING_MODE _IS_CLIPPING_TRANSMODE
+			#pragma shader_feature _EMISSIVE_SIMPLE _EMISSIVE_ANIMATION
+			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+			#include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
+			#include "Packages/com.unity.render-pipelines.universal/Shaders/LitForwardPass.hlsl"
+			#include "ToonDifinition.hlsl"
 			#include "ToonShadingGradeMap.hlsl"
-			ENDCG
-		}
-
-		Pass
-		{
-			Name "FORWARD_DELTA"
-			Tags { "LightMode" = "ForwardAdd" }
-			Blend One One
-			Cull[_CullMode]
-
-			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
-			#pragma multi_compile_fwdadd_fullshadows
-			#pragma multi_compile_fog
-			#pragma target 3.0
-			#pragma multi_compile _IS_TRANSCLIPPING_OFF
-			#include "UnityCG.cginc"
-			#include "AutoLight.cginc"
-			#include "Lighting.cginc"
-			#include "ToonShadingGradeMapDelta.hlsl"
-			ENDCG
+			ENDHLSL
 		}
 
 		Pass
 		{
 			Name "SHADOW_CASTER"
 			Tags { "LightMode" = "ShadowCaster" }
-			Offset 1, 1
-			Cull Off
+			ZWrite On
+			ZTest LEqual
+			Cull[_CullMode]
 
-			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
-			#pragma fragmentoption ARB_precision_hint_fastest
-			#pragma multi_compile_shadowcaster
-			#pragma multi_compile_fog
-			#pragma target 3.0
-			#pragma multi_compile _IS_CLIPPING_OFF
-			#include "UnityCG.cginc"
-			#include "Lighting.cginc"
-			#include "ToonShadowCaster.hlsl"
-			ENDCG
+			HLSLPROGRAM
+			#pragma prefer_hlslcc gles
+			#pragma exclude_renderers d3d11_9x
+			#pragma target 2.0
+			#pragma shader_feature _ALPHATEST_ON
+			#pragma multi_compile_instancing
+			#pragma shader_feature _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+			#pragma vertex ShadowPassVertex
+			#pragma fragment ShadowPassFragment
+			#include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
+			#include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
+			ENDHLSL
 		}
+
+		Pass
+		{
+			Name "DEPTH_ONLY"
+			Tags{ "LightMode" = "DepthOnly" }
+
+			ZWrite On
+			ColorMask 0
+			Cull[_CullMode]
+
+			HLSLPROGRAM
+			#pragma prefer_hlslcc gles
+			#pragma exclude_renderers d3d11_9x
+			#pragma target 2.0
+			#pragma vertex DepthOnlyVertex
+			#pragma fragment DepthOnlyFragment
+			#pragma shader_feature _ALPHATEST_ON
+			#pragma shader_feature _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+			#pragma multi_compile_instancing
+			#include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
+			#include "Packages/com.unity.render-pipelines.universal/Shaders/DepthOnlyPass.hlsl"
+			ENDHLSL
+		}
+
 	}
 	FallBack Off
 	CustomEditor "ToonShade.ToonShadeInspector"

@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace Unity.Animations.SpringBones
 {
+#if UNITY_EDITOR
     public class SpringColliderBoneSelector
     {
         public static SpringColliderBoneSelector Create<T>
@@ -147,4 +148,5 @@ namespace Unity.Animations.SpringBones
             return boneGroups.ToArray();
         }
     }
+#endif
 }

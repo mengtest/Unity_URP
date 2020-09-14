@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Unity.Animations.SpringBones
 {
+#if UNITY_EDITOR
     public class SpringBoneSetupErrorWindow : EditorWindow
     {
         public interface IConfirmAction
@@ -71,4 +72,5 @@ namespace Unity.Animations.SpringBones
             GUILayout.EndScrollView();
         }
     }
+#endif
 }

@@ -6,7 +6,8 @@ namespace Unity.Animations.SpringBones
     {
         public class FloatSlider
         {
-            public FloatSlider(string newLabel, float newLeftValue, float newRightValue)
+#if UNITY_EDITOR
+			public FloatSlider(string newLabel, float newLeftValue, float newRightValue)
             {
                 label = newLabel;
                 leftValue = newLeftValue;
@@ -25,7 +26,7 @@ namespace Unity.Animations.SpringBones
                 return valueChanged;
             }
 
-            public bool Show(SerializedProperty floatProperty)
+			public bool Show(SerializedProperty floatProperty)
             {
                 var value = floatProperty.floatValue;
                 var valueChanged = Show(ref value);
@@ -35,10 +36,10 @@ namespace Unity.Animations.SpringBones
                 }
                 return valueChanged;
             }
-
             private string label;
             private float leftValue;
             private float rightValue;
+#endif
         }
     }
 }

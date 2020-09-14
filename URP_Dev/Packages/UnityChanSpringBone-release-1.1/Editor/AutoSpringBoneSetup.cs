@@ -167,6 +167,7 @@ namespace Unity.Animations.SpringBones
 
         private static string GetModelDirectoryFromGameObject(GameObject rootObject)
         {
+#if UNITY_EDITOR
             // Find a mesh?
             var meshPaths = rootObject.GetComponentsInChildren<SkinnedMeshRenderer>(true)
                 .Where(renderer => renderer.sharedMesh != null
@@ -195,7 +196,7 @@ namespace Unity.Animations.SpringBones
                     return PathUtil.AssetPathToSystemPath(modelDirectory);
                 }
             }
-
+#endif
             return "";
         }
     }

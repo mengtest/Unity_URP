@@ -6,6 +6,7 @@ using UnityEngine;
 
 namespace Unity.Animations.SpringBones
 {
+#if UNITY_EDITOR
     public static class SpringColliderEditorActions
     {
         public static IList<GameObject> CreateObjectsWithComponentBeneathSelectedObjects<T>(string suffix) where T : Component
@@ -287,4 +288,5 @@ namespace Unity.Animations.SpringBones
             return newChild;
         }
     }
+#endif
 }

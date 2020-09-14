@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Unity.Animations.SpringBones
 {
+#if UNITY_EDITOR
     using Inspector;
 
     // https://docs.unity3d.com/ScriptReference/Editor.html
@@ -291,4 +292,5 @@ namespace Unity.Animations.SpringBones
             Selection.objects = pivotObjects.ToArray();
         }
     }
+#endif
 }

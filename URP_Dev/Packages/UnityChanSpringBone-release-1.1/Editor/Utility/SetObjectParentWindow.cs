@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Unity.Animations.SpringBones
 {
+#if UNITY_EDITOR
     public class SetObjectParentWindow : EditorWindow
     {
         [MenuItem("UTJ/親子付け")]
@@ -39,4 +40,5 @@ namespace Unity.Animations.SpringBones
             }
         }
    }
+#endif
 }

@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace Unity.Animations.SpringBones
 {
+#if UNITY_EDITOR
     public static class SpringBoneGUIStyles
     {
         public static GUIStyle LabelStyle { get; private set; }
@@ -32,4 +33,5 @@ namespace Unity.Animations.SpringBones
             MiddleLeftJustifiedLabelStyle.alignment = TextAnchor.MiddleLeft;
         }
     }
+#endif
 }

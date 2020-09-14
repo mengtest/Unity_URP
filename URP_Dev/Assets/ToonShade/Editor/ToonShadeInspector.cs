@@ -5,46 +5,183 @@ namespace ToonShade
 {
 	public sealed class ToonShadeInspector : ShaderGUI
 	{
-		public enum _UTS_Technique
+		const string ShaderDefineSHADINGGRADEMAP = "_SHADINGGRADEMAP";
+		const string ShaderDefineANGELRING_ON = "_IS_ANGELRING_ON";
+		const string ShaderDefineANGELRING_OFF = "_IS_ANGELRING_OFF";
+		const string ShaderDefineUTS_USE_RAYTRACING_SHADOW = "_USE_RAYTRACING_SHADOW";
+		const string ShaderPropAngelRing = "_AngelRing";
+		const string ShaderPropRTHS = "_RTHS";
+		const string ShaderPropMatCap = "_MatCap";
+		const string ShaderPropClippingMode = "_ClippingMode";
+		const string ShaderPropClippingMask = "_ClippingMask";
+		const string ShaderPropSimpleUI = "_simpleUI";
+		const string ShaderPropUtsTechniqe = "_utsTechnique";
+		const string ShaderPropAutoRenderQueue = "_AutoRenderQueue";
+		const string ShaderPropStencilMode = "_StencilMode";
+		const string ShaderPropStencilNo = "_StencilNo";
+		const string ShaderPropTransparentEnabled = "_TransparentEnabled";
+		const string ShaderPropStencilComp = "_StencilComp";
+		const string ShaderPropStencilOpPass = "_StencilOpPass";
+		const string ShaderPropStencilOpFail = "_StencilOpFail";
+		const string ShaderPropStencilWriteMask = "_StencilWriteMask";
+		const string ShaderPropStencilReadMask = "_StencilReadMask";
+		const string ShaderPropOutline = "_OUTLINE";
+		const string ShaderPropNormalMapToHighColor = "_Is_NormalMapToHighColor";
+		const string ShaderPropIsNormalMapToRimLight = "_Is_NormalMapToRimLight";
+		const string ShaderPropSetSystemShadowsToBase = "_Set_SystemShadowsToBase";
+		const string ShaderPropIsFilterHiCutPointLightColor = "_Is_Filter_HiCutPointLightColor";
+		const string ShaderPropInverseClipping = "_Inverse_Clipping";
+		const string ShaderPropIsBaseMapAlphaAsClippingMask = "_IsBaseMapAlphaAsClippingMask";
+		const string ShaderPropIsLightColor_Base = "_Is_LightColor_Base";
+		const string ShaderPropCameraRolling_Stabilizer = "_CameraRolling_Stabilizer";
+		const string ShaderPropIs_Ortho = "_Is_Ortho";
+		const string ShaderPropGI_Intensity = "_GI_Intensity";
+		const string ShaderPropUnlit_Intensity = "_Unlit_Intensity";
+		const string ShaderPropIs_Filter_LightColor = "_Is_Filter_LightColor";
+		const string ShaderPropIs_LightColor_1st_Shade = "_Is_LightColor_1st_Shade";
+		const string ShaderPropIs_LightColor_2nd_Shade = "_Is_LightColor_2nd_Shade";
+		const string ShaderPropIs_LightColor_HighColor = "_Is_LightColor_HighColor";
+		const string ShaderPropIs_LightColor_RimLight = "_Is_LightColor_RimLight";
+		const string ShaderPropIs_LightColor_Ap_RimLight = "_Is_LightColor_Ap_RimLight";
+		const string ShaderPropIs_LightColor_MatCap = "_Is_LightColor_MatCap";
+		const string ShaderPropIs_LightColor_AR = "_Is_LightColor_AR";
+		const string ShaderPropIs_LightColor_Outline = "_Is_LightColor_Outline";
+		const string ShaderPropInverse_MatcapMask = "_Inverse_MatcapMask";
+		const string ShaderPropUse_BaseAs1st = "_Use_BaseAs1st";
+		const string ShaderPropUse_1stAs2nd = "_Use_1stAs2nd";
+		const string ShaderPropIs_NormalMapToBase = "_Is_NormalMapToBase";
+		const string ShaderPropIs_ColorShift = "_Is_ColorShift";
+		const string ShaderPropRimLight = "_RimLight";
+		const string ShaderPropRimLight_FeatherOff = "_RimLight_FeatherOff";
+		const string ShaderPropAp_RimLight_FeatherOff = "_Ap_RimLight_FeatherOff";
+		const string ShaderPropIs_BlendAddToMatCap = "_Is_BlendAddToMatCap";
+		const string ShaderPropARSampler_AlphaOn = "_ARSampler_AlphaOn";
+		const string ShaderPropIs_UseTweakHighColorOnShadow = "_Is_UseTweakHighColorOnShadow";
+
+		const string ShaderPropIs_SpecularToHighColor = "_Is_SpecularToHighColor";
+		const string ShaderPropIs_BlendAddToHiColor = "_Is_BlendAddToHiColor";
+
+		const string ShaderPropAdd_Antipodean_RimLight = "_Add_Antipodean_RimLight";
+		const string ShaderPropLightDirection_MaskOn = "_LightDirection_MaskOn";
+
+		const string ShaderProp1st_ShadeColor_Step = "_1st_ShadeColor_Step";
+		const string ShaderPropBaseColor_Step = "_BaseColor_Step";
+		const string ShaderProp1st_ShadeColor_Feather = "_1st_ShadeColor_Feather";
+		const string ShaderPropBaseShade_Feather = "_BaseShade_Feather";
+		const string ShaderProp2nd_ShadeColor_Step = "_2nd_ShadeColor_Step";
+		const string ShaderPropShadeColor_Step = "_ShadeColor_Step";
+		const string ShaderProp2nd_ShadeColor_Feather = "_2nd_ShadeColor_Feather";
+		const string ShaderProp1st2nd_Shades_Feather = "_1st2nd_Shades_Feather";
+		const string ShaderPropIs_NormalMapForMatCap = "_Is_NormalMapForMatCap";
+		const string ShaderPropIs_UseTweakMatCapOnShadow = "_Is_UseTweakMatCapOnShadow";
+		const string ShaderPropIs_ViewCoord_Scroll = "_Is_ViewCoord_Scroll";
+		const string ShaderPropIs_PingPong_Base = "_Is_PingPong_Base";
+
+		const string ShaderPropIs_ViewShift = "_Is_ViewShift";
+		const string ShaderPropIs_BlendBaseColor = "_Is_BlendBaseColor";
+		const string ShaderPropIs_OutlineTex = "_Is_OutlineTex";
+		const string ShaderPropIs_BakedNormal = "_Is_BakedNormal";
+		const string ShaderPropIs_BLD = "_Is_BLD";
+		const string ShaderPropInverse_Z_Axis_BLD = "_Inverse_Z_Axis_BLD";
+
+		const string ShaderDefineIS_OUTLINE_CLIPPING_NO = "_IS_OUTLINE_CLIPPING_NO";
+		const string ShaderDefineIS_OUTLINE_CLIPPING_YES = "_IS_OUTLINE_CLIPPING_YES";
+
+		const string ShaderDefineIS_CLIPPING_OFF = "_IS_CLIPPING_OFF";
+		const string ShaderDefineIS_CLIPPING_MODE = "_IS_CLIPPING_MODE";
+		const string ShaderDefineIS_CLIPPING_TRANSMODE = "_IS_CLIPPING_TRANSMODE";
+
+		const string ShaderDefineIS_TRANSCLIPPING_OFF = "_IS_TRANSCLIPPING_OFF";
+		const string ShaderDefineIS_TRANSCLIPPING_ON = "_IS_TRANSCLIPPING_ON";
+
+
+		const string STR_ONSTATE = "Active";
+		const string STR_OFFSTATE = "Off";
+
+		const string SRPDefaultLightModeName = "SRPDefaultUnlit";
+		const string SRPDefaultColorMask = "_SPRDefaultUnlitColorMask";
+		const string SRPDefaultCullMode = "_SRPDefaultUnlitColMode";
+
+
+		public enum TransClippingMode
 		{
-			DoubleSideWithFeather,
-			ShadingGradeMap,
-			OutlineObject
+			Off,
+			On,
 		}
 
-		public enum _OutlineMode
+		public enum Transparent
+		{
+			Off,
+			On,
+		}
+
+		public enum ToonStencilMode
+		{
+			Off,
+			StencilOut,
+			StencilMask
+		}
+
+		public enum StencilType
+		{
+			Keep,     // Keep the current contents of the buffer.
+			Zero,     // Write 0 into the buffer.
+			Replace,  // Write the reference value into the buffer.
+			IncrSat,  // Increment the current value in the buffer. If the value is 255 already, it stays at 255.
+			DecrSat,  // Decrement the current value in the buffer. If the value is 0 already, it stays at 0.
+			Invert,   // Negate all the bits.
+			IncrWrap, // Increment the current value in the buffer. If the value is 255 already, it becomes 0.
+			DecrWrap, // Decrement the current value in the buffer. If the value is 0 already, it becomes 255.
+		}
+
+		public enum StencilCompFunction
+		{
+			Disabled,     // Depth or stencil test is disabled.
+			Never,        // Never pass depth or stencil test.
+			Less,         // Pass depth or stencil test when new value is less than old one.
+			Equal,        // Pass depth or stencil test when values are equal.
+			LessEqual,    // Pass depth or stencil test when new value is less or equal than old one.
+			Greater,      // Pass depth or stencil test when new value is greater than old one.
+			NotEqual,     // Pass depth or stencil test when values are different.
+			GreaterEqual, // Pass depth or stencil test when new value is greater or equal than old one.
+			Always,       // Always pass depth or stencil test.
+		}
+
+		public enum OutlineMode
 		{
 			NormalDirection,
 			PositionScaling
 		}
 
-		public enum _CullingMode
+		public enum CullingMode
 		{
 			CullingOff,
 			FrontCulling,
 			BackCulling
 		}
 
-		public enum _EmissiveMode
+		public enum EmissiveMode
 		{
 			SimpleEmissive,
 			EmissiveAnimation
 		}
 
-		public _OutlineMode outlineMode;
-		public _CullingMode cullingMode;
-		public _EmissiveMode emissiveMode;
+		public int _autoRenderQueue = 1;
+		public int _renderQueue = (int)UnityEngine.Rendering.RenderQueue.Geometry;
+		public OutlineMode outlineMode;
+		public CullingMode cullingMode;
+		public EmissiveMode emissiveMode;
+
 
 		public GUILayoutOption[] shortButtonStyle = new GUILayoutOption[] { GUILayout.Width(130) };
 		public GUILayoutOption[] middleButtonStyle = new GUILayoutOption[] { GUILayout.Width(130) };
 
-		static float _UTS2VersionNumber = 2.075f;
+
+		static Transparent _Transparent_Setting;
 		static int _StencilNo_Setting;
 		static bool _OriginalInspector = false;
 		static bool _SimpleUI = false;
-
 		bool _Use_VrcRecommend = false;
-		bool _RemovedUnusedKeywordsMessage = false;
 
 		static bool _BasicShaderSettings_Foldout = false;
 		static bool _BasicThreeColors_Foldout = true;
@@ -53,18 +190,23 @@ namespace ToonShade
 		static bool _StepAndFeather_Foldout = true;
 		static bool _AdditionalLookdevs_Foldout = false;
 		static bool _HighColor_Foldout = true;
+
 		static bool _RimLight_Foldout = true;
 		static bool _MatCap_Foldout = true;
 		static bool _AngelRing_Foldout = true;
 		static bool _Emissive_Foldout = true;
 		static bool _Outline_Foldout = true;
 		static bool _AdvancedOutline_Foldout = false;
+		static bool _Tessellation_Foldout = false;
 		static bool _LightColorContribution_Foldout = false;
 		static bool _AdditionalLightingSettings_Foldout = false;
 
+		private MaterialProperty transparentMode = null;
+		private MaterialProperty clippingMode = null;
 		private MaterialProperty clippingMask = null;
 		private MaterialProperty clipping_Level = null;
 		private MaterialProperty tweak_transparency = null;
+		private MaterialProperty stencilMode = null;
 		private MaterialProperty mainTex = null;
 		private MaterialProperty baseColor = null;
 		private MaterialProperty firstShadeMap = null;
@@ -88,14 +230,12 @@ namespace ToonShade
 		private MaterialProperty second_ShadeColor_Step = null;
 		private MaterialProperty second_ShadeColor_Feather = null;
 		private MaterialProperty stepOffset = null;
-
 		private MaterialProperty highColor_Tex = null;
 		private MaterialProperty highColor = null;
 		private MaterialProperty highColor_Power = null;
 		private MaterialProperty tweakHighColorOnShadow = null;
 		private MaterialProperty set_HighColorMask = null;
 		private MaterialProperty tweak_HighColorMaskLevel = null;
-
 		private MaterialProperty rimLightColor = null;
 		private MaterialProperty rimLight_Power = null;
 		private MaterialProperty rimLight_InsideMask = null;
@@ -115,12 +255,10 @@ namespace ToonShade
 		private MaterialProperty tweakMatCapOnShadow = null;
 		private MaterialProperty set_MatcapMask = null;
 		private MaterialProperty tweak_MatcapMaskLevel = null;
-
 		private MaterialProperty angelRing_Sampler = null;
 		private MaterialProperty angelRing_Color = null;
 		private MaterialProperty ar_OffsetU = null;
 		private MaterialProperty ar_OffsetV = null;
-
 		private MaterialProperty emissive_Tex = null;
 		private MaterialProperty emissive_Color = null;
 		private MaterialProperty base_Speed = null;
@@ -130,7 +268,6 @@ namespace ToonShade
 		private MaterialProperty colorShift = null;
 		private MaterialProperty colorShift_Speed = null;
 		private MaterialProperty viewShift = null;
-
 		private MaterialProperty outline_Width = null;
 		private MaterialProperty outline_Color = null;
 		private MaterialProperty outline_Sampler = null;
@@ -139,23 +276,49 @@ namespace ToonShade
 		private MaterialProperty nearest_Distance = null;
 		private MaterialProperty outlineTex = null;
 		private MaterialProperty bakedNormal = null;
-
 		private MaterialProperty tessEdgeLength = null;
 		private MaterialProperty tessPhongStrength = null;
 		private MaterialProperty tessExtrusionAmount = null;
-
 		private MaterialProperty gi_Intensity = null;
 		private MaterialProperty unlit_Intensity = null;
 		private MaterialProperty offset_X_Axis_BLD = null;
 		private MaterialProperty offset_Y_Axis_BLD = null;
 
-		private MaterialEditor m_MaterialEditor;
+		private MaterialEditor m_MaterialEditor = default;
+
+		private bool IsClippingMaskPropertyAvailable()
+		{
+			Material material = m_MaterialEditor.target as Material;
+			bool bRet = (TransClippingMode)material.GetInt(ShaderPropClippingMode) != TransClippingMode.Off;
+			return bRet;
+		}
+
+		private bool ClippingModePropertyAvailable
+		{
+			get
+			{
+				Material material = m_MaterialEditor.target as Material;
+				return material.GetInt(ShaderPropClippingMode) != 0;
+			}
+		}
+
+		private bool StencilShaderPropertyAvailable => true;
+
+
+		public static GUIContent transparentModeText = new GUIContent("Transparent Mode", "Transparent  mode that fits you. ");
+		public static GUIContent clippingmodeModeText0 = new GUIContent("Clipping Mode", "Select clipping mode that fits you. ");
+		public static GUIContent clippingmodeModeText1 = new GUIContent("Trans Clipping", "Select clipping mode that fits you. ");
+		public static GUIContent stencilmodeModeText = new GUIContent("Stencil Mode", "Select stencil mode that fits you. ");
+
 
 		public void FindProperties(MaterialProperty[] props)
 		{
-			clippingMask = FindProperty("_ClippingMask", props, false);
+			transparentMode = FindProperty(ShaderPropTransparentEnabled, props);
+			clippingMask = FindProperty(ShaderPropClippingMask, props);
+			clippingMode = FindProperty(ShaderPropClippingMode, props);
 			clipping_Level = FindProperty("_Clipping_Level", props, false);
 			tweak_transparency = FindProperty("_Tweak_transparency", props, false);
+			stencilMode = FindProperty(ShaderPropStencilMode, props);
 			mainTex = FindProperty("_MainTex", props);
 			baseColor = FindProperty("_BaseColor", props);
 			firstShadeMap = FindProperty("_1st_ShadeMap", props);
@@ -170,14 +333,14 @@ namespace ToonShade
 			tweak_ShadingGradeMapLevel = FindProperty("_Tweak_ShadingGradeMapLevel", props, false);
 			blurLevelSGM = FindProperty("_BlurLevelSGM", props, false);
 			tweak_SystemShadowsLevel = FindProperty("_Tweak_SystemShadowsLevel", props);
-			baseColor_Step = FindProperty("_BaseColor_Step", props);
-			baseShade_Feather = FindProperty("_BaseShade_Feather", props);
-			shadeColor_Step = FindProperty("_ShadeColor_Step", props);
-			first2nd_Shades_Feather = FindProperty("_1st2nd_Shades_Feather", props);
-			first_ShadeColor_Step = FindProperty("_1st_ShadeColor_Step", props);
-			first_ShadeColor_Feather = FindProperty("_1st_ShadeColor_Feather", props);
-			second_ShadeColor_Step = FindProperty("_2nd_ShadeColor_Step", props);
-			second_ShadeColor_Feather = FindProperty("_2nd_ShadeColor_Feather", props);
+			baseColor_Step = FindProperty(ShaderPropBaseColor_Step, props);
+			baseShade_Feather = FindProperty(ShaderPropBaseShade_Feather, props);
+			shadeColor_Step = FindProperty(ShaderPropShadeColor_Step, props);
+			first2nd_Shades_Feather = FindProperty(ShaderProp1st2nd_Shades_Feather, props);
+			first_ShadeColor_Step = FindProperty(ShaderProp1st_ShadeColor_Step, props);
+			first_ShadeColor_Feather = FindProperty(ShaderProp1st_ShadeColor_Feather, props);
+			second_ShadeColor_Step = FindProperty(ShaderProp2nd_ShadeColor_Step, props);
+			second_ShadeColor_Feather = FindProperty(ShaderProp2nd_ShadeColor_Feather, props);
 			stepOffset = FindProperty("_StepOffset", props, false);
 			highColor_Tex = FindProperty("_HighColor_Tex", props);
 			highColor = FindProperty("_HighColor", props);
@@ -228,18 +391,18 @@ namespace ToonShade
 			tessEdgeLength = FindProperty("_TessEdgeLength", props, false);
 			tessPhongStrength = FindProperty("_TessPhongStrength", props, false);
 			tessExtrusionAmount = FindProperty("_TessExtrusionAmount", props, false);
-			gi_Intensity = FindProperty("_GI_Intensity", props);
-			unlit_Intensity = FindProperty("_Unlit_Intensity", props);
+			gi_Intensity = FindProperty(ShaderPropGI_Intensity, props);
+			unlit_Intensity = FindProperty(ShaderPropUnlit_Intensity, props);
 			offset_X_Axis_BLD = FindProperty("_Offset_X_Axis_BLD", props);
 			offset_Y_Axis_BLD = FindProperty("_Offset_Y_Axis_BLD", props);
 		}
 
-		private static void Line()
+		static void Line()
 		{
 			GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
 		}
 
-		private static bool Foldout(bool display, string title)
+		static bool Foldout(bool display, string title)
 		{
 			var style = new GUIStyle("ShurikenModuleTitle");
 			style.font = new GUIStyle(EditorStyles.boldLabel).font;
@@ -249,25 +412,21 @@ namespace ToonShade
 
 			var rect = GUILayoutUtility.GetRect(16f, 22f, style);
 			GUI.Box(rect, title, style);
-
 			var e = Event.current;
-
 			var toggleRect = new Rect(rect.x + 4f, rect.y + 2f, 13f, 13f);
 			if (e.type == EventType.Repaint)
 			{
 				EditorStyles.foldout.Draw(toggleRect, false, false, display, false);
 			}
-
 			if (e.type == EventType.MouseDown && rect.Contains(e.mousePosition))
 			{
 				display = !display;
 				e.Use();
 			}
-
 			return display;
 		}
 
-		private static bool FoldoutSubMenu(bool display, string title)
+		static bool FoldoutSubMenu(bool display, string title)
 		{
 			var style = new GUIStyle("ShurikenModuleTitle");
 			style.font = new GUIStyle(EditorStyles.boldLabel).font;
@@ -286,7 +445,6 @@ namespace ToonShade
 			{
 				EditorStyles.foldout.Draw(toggleRect, false, false, display, false);
 			}
-
 			if (e.type == EventType.MouseDown && rect.Contains(e.mousePosition))
 			{
 				display = !display;
@@ -295,7 +453,6 @@ namespace ToonShade
 
 			return display;
 		}
-
 
 		private static class Styles
 		{
@@ -319,7 +476,6 @@ namespace ToonShade
 			public static GUIContent clippingMaskText = new GUIContent("Clipping Mask", "Clipping Mask : Texture(linear)");
 		}
 
-
 		public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] props)
 		{
 			EditorGUIUtility.fieldWidth = 0;
@@ -327,26 +483,14 @@ namespace ToonShade
 			m_MaterialEditor = materialEditor;
 			Material material = materialEditor.target as Material;
 
-			if (material.GetFloat("_utsVersion") < _UTS2VersionNumber)
-			{
-				if (material.GetTexture("_BaseMap") != null)
-				{
-					material.SetTexture("_MainTex", material.GetTexture("_BaseMap"));
-					material.SetFloat("_utsVersion", _UTS2VersionNumber);
-				}
-				else
-				{
-					material.SetFloat("_utsVersion", _UTS2VersionNumber);
-				}
-			}
-
-			CheckUtsTechnique(material);
+			_Transparent_Setting = (Transparent)material.GetInt(ShaderPropTransparentEnabled);
+			_StencilNo_Setting = material.GetInt(ShaderPropStencilNo);
 
 			EditorGUILayout.BeginHorizontal();
 
-			if (material.HasProperty("_simpleUI"))
+			if (material.HasProperty(ShaderPropSimpleUI))
 			{
-				var selectedUI = material.GetInt("_simpleUI");
+				var selectedUI = material.GetInt(ShaderPropSimpleUI);
 				if (selectedUI == 2)
 				{
 					_OriginalInspector = true;
@@ -355,13 +499,12 @@ namespace ToonShade
 				{
 					_SimpleUI = true;
 				}
-
 				if (_OriginalInspector)
 				{
 					if (GUILayout.Button("Change CustomUI", middleButtonStyle))
 					{
 						_OriginalInspector = false;
-						material.SetInt("_simpleUI", 0);
+						material.SetInt(ShaderPropSimpleUI, 0);
 					}
 					EditorGUILayout.EndHorizontal();
 					m_MaterialEditor.PropertiesDefaultGUI(props);
@@ -370,41 +513,47 @@ namespace ToonShade
 				if (GUILayout.Button("Show All properties", middleButtonStyle))
 				{
 					_OriginalInspector = true;
-					material.SetInt("_simpleUI", 2);
+					material.SetInt(ShaderPropSimpleUI, 2);
 				}
 			}
 
 			EditorGUILayout.EndHorizontal();
 			EditorGUI.BeginChangeCheck();
-			EditorGUILayout.Space();
 
+			EditorGUILayout.Space();
+			_autoRenderQueue = material.GetInt(ShaderPropAutoRenderQueue);
+			_renderQueue = material.renderQueue;
+
+			EditorGUILayout.Space();
 			_BasicShaderSettings_Foldout = Foldout(_BasicShaderSettings_Foldout, "Basic Shader Settings");
 			if (_BasicShaderSettings_Foldout)
 			{
 				EditorGUI.indentLevel++;
 				GUI_SetCullingMode(material);
-
-				if (material.HasProperty("_StencilNo"))
+				GUI_SetRenderQueue(material);
+				GUI_Tranparent(material);
+				if (StencilShaderPropertyAvailable)
 				{
+					GUI_StencilMode(material);
 
-					GUI_SetStencilNo(material);
 				}
 
-				if (material.HasProperty("_ClippingMask"))
+				//GUILayout.Label("TransClipping Shader", EditorStyles.boldLabel);
+				//DoPopup(clippingmodeModeText1, clippingMode, System.Enum.GetNames(typeof(TransClippingMode)));
+
+				EditorGUILayout.Space();
+				if (IsClippingMaskPropertyAvailable())
 				{
 					GUI_SetClippingMask(material);
-				}
-				if (material.HasProperty("_Tweak_transparency"))
-				{
 					GUI_SetTransparencySetting(material);
 				}
-				GUI_OptionMenu(material);
+
+				//GUI_OptionMenu(material);
 				EditorGUI.indentLevel--;
 			}
 
 			EditorGUILayout.Space();
-
-			_BasicThreeColors_Foldout = Foldout(_BasicThreeColors_Foldout, "【Basic Three Colors and Control Maps Setups】");
+			_BasicThreeColors_Foldout = Foldout(_BasicThreeColors_Foldout, "【Basic Three Colors Settings】");
 			if (_BasicThreeColors_Foldout)
 			{
 				EditorGUI.indentLevel++;
@@ -413,8 +562,7 @@ namespace ToonShade
 			}
 
 			EditorGUILayout.Space();
-
-			_StepAndFeather_Foldout = Foldout(_StepAndFeather_Foldout, "【Basic Lookdevs : Shading Step and Feather Settings】");
+			_StepAndFeather_Foldout = Foldout(_StepAndFeather_Foldout, "【Basic Band Step Settings】");
 			if (_StepAndFeather_Foldout)
 			{
 				EditorGUI.indentLevel++;
@@ -423,7 +571,6 @@ namespace ToonShade
 			}
 
 			EditorGUILayout.Space();
-
 			_HighColor_Foldout = Foldout(_HighColor_Foldout, "【HighColor Settings】");
 			if (_HighColor_Foldout)
 			{
@@ -434,7 +581,6 @@ namespace ToonShade
 			}
 
 			EditorGUILayout.Space();
-
 			_RimLight_Foldout = Foldout(_RimLight_Foldout, "【RimLight Settings】");
 			if (_RimLight_Foldout)
 			{
@@ -445,8 +591,7 @@ namespace ToonShade
 			}
 
 			EditorGUILayout.Space();
-
-			_MatCap_Foldout = Foldout(_MatCap_Foldout, "【MatCap : Texture Projection Settings】");
+			_MatCap_Foldout = Foldout(_MatCap_Foldout, "【MatCap Settings】");
 			if (_MatCap_Foldout)
 			{
 				EditorGUI.indentLevel++;
@@ -456,22 +601,17 @@ namespace ToonShade
 			}
 
 			EditorGUILayout.Space();
-
-			if (material.HasProperty("_AngelRing"))
+			_AngelRing_Foldout = Foldout(_AngelRing_Foldout, "【AngelRing Settings】");
+			if (_AngelRing_Foldout)
 			{
-				_AngelRing_Foldout = Foldout(_AngelRing_Foldout, "【AngelRing Projection Settings】");
-				if (_AngelRing_Foldout)
-				{
-					EditorGUI.indentLevel++;
-					EditorGUILayout.Space();
-					GUI_AngelRing(material);
-					EditorGUI.indentLevel--;
-				}
-
+				EditorGUI.indentLevel++;
 				EditorGUILayout.Space();
+				GUI_AngelRing(material);
+				EditorGUI.indentLevel--;
 			}
 
-			_Emissive_Foldout = Foldout(_Emissive_Foldout, "【Emissive : Self-luminescence Settings】");
+			EditorGUILayout.Space();
+			_Emissive_Foldout = Foldout(_Emissive_Foldout, "【Emissive Settings】");
 			if (_Emissive_Foldout)
 			{
 				EditorGUI.indentLevel++;
@@ -479,10 +619,11 @@ namespace ToonShade
 				EditorGUI.indentLevel--;
 			}
 
-			EditorGUILayout.Space();
 
-			if (material.HasProperty("_OUTLINE"))
+			EditorGUILayout.Space();
+			if (material.HasProperty(ShaderPropOutline) && _Transparent_Setting != Transparent.On)
 			{
+				SetuOutline(material);
 				_Outline_Foldout = Foldout(_Outline_Foldout, "【Outline Settings】");
 				if (_Outline_Foldout)
 				{
@@ -493,6 +634,11 @@ namespace ToonShade
 				}
 				EditorGUILayout.Space();
 			}
+			else
+			{
+				SetupOverDrawTransparentObject(material);
+			}
+
 
 			if (!_SimpleUI)
 			{
@@ -518,95 +664,161 @@ namespace ToonShade
 				EditorGUILayout.Space();
 			}
 
+			ApplyClippingMode(material);
+			ApplyStencilMode(material);
+			ApplyAngelRing(material);
+			ApplyMatCapMode(material);
+			ApplyQueueAndRenderType(material);
+
 			if (EditorGUI.EndChangeCheck())
 			{
 				m_MaterialEditor.PropertiesChanged();
 			}
-
 		}
 
-		private void CheckUtsTechnique(Material material)
+		private void GUI_SetRTHS(Material material)
 		{
-			if (material.HasProperty("_utsTechnique"))
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.PrefixLabel("Raytraced Hard Shadow");
+			var isRTHSenabled = material.IsKeywordEnabled(ShaderDefineUTS_USE_RAYTRACING_SHADOW);
+
+			if (isRTHSenabled)
 			{
-				if (material.GetInt("_utsTechnique") == (int)_UTS_Technique.DoubleSideWithFeather)
+				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 				{
-					if (!material.HasProperty("_Set_1st_ShadePosition"))
-					{
-						material.SetInt("_utsTechnique", (int)_UTS_Technique.ShadingGradeMap);
-					}
-				}
-				else if (material.GetInt("_utsTechnique") == (int)_UTS_Technique.ShadingGradeMap)
-				{
-					if (!material.HasProperty("_ShadingGradeMap"))
-					{
-						material.SetInt("_utsTechnique", (int)_UTS_Technique.DoubleSideWithFeather);
-					}
+					material.DisableKeyword(ShaderDefineUTS_USE_RAYTRACING_SHADOW);
 				}
 			}
+			else
+			{
+				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
+				{
+					material.EnableKeyword(ShaderDefineUTS_USE_RAYTRACING_SHADOW);
+				}
+			}
+
+			EditorGUILayout.EndHorizontal();
+			if (isRTHSenabled)
+			{
+				EditorGUILayout.LabelField("ShadowRaytracer component must be attached to the camera when this feature is enabled.");
+			}
+		}
+
+		private void GUI_SetRenderQueue(Material material)
+		{
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.PrefixLabel("Auto Queue");
+
+			if (_autoRenderQueue == 0)
+			{
+				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
+				{
+					material.SetInt(ShaderPropAutoRenderQueue, _autoRenderQueue = 1);
+				}
+			}
+			else
+			{
+				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
+				{
+					material.SetInt(ShaderPropAutoRenderQueue, _autoRenderQueue = 0);
+				}
+			}
+			EditorGUILayout.EndHorizontal();
+			EditorGUI.BeginDisabledGroup(_autoRenderQueue == 1);
+			_renderQueue = (int)EditorGUILayout.IntField("Render Queue", _renderQueue);
+			EditorGUI.EndDisabledGroup();
 		}
 
 		private void GUI_SetCullingMode(Material material)
 		{
-			int _CullMode_Setting = material.GetInt("_CullMode");
-			if ((int)_CullingMode.CullingOff == _CullMode_Setting)
+			const string _CullMode = "_CullMode";
+			int _CullMode_Setting = material.GetInt(_CullMode);
+			if ((int)CullingMode.CullingOff == _CullMode_Setting)
 			{
-				cullingMode = _CullingMode.CullingOff;
+				cullingMode = CullingMode.CullingOff;
 			}
-			else if ((int)_CullingMode.FrontCulling == _CullMode_Setting)
+			else if ((int)CullingMode.FrontCulling == _CullMode_Setting)
 			{
-				cullingMode = _CullingMode.FrontCulling;
-			}
-			else
-			{
-				cullingMode = _CullingMode.BackCulling;
-			}
-			cullingMode = (_CullingMode)EditorGUILayout.EnumPopup("Culling Mode", cullingMode);
-			if (cullingMode == _CullingMode.CullingOff)
-			{
-				material.SetFloat("_CullMode", 0);
-			}
-			else if (cullingMode == _CullingMode.FrontCulling)
-			{
-				material.SetFloat("_CullMode", 1);
+				cullingMode = CullingMode.FrontCulling;
 			}
 			else
 			{
-				material.SetFloat("_CullMode", 2);
+				cullingMode = CullingMode.BackCulling;
+			}
+			cullingMode = (CullingMode)EditorGUILayout.EnumPopup("Culling Mode", cullingMode);
+			if (_CullMode_Setting != (int)cullingMode)
+			{
+				switch (cullingMode)
+				{
+					case CullingMode.CullingOff:
+						material.SetInt(_CullMode, 0);
+						break;
+					case CullingMode.FrontCulling:
+						material.SetInt(_CullMode, 1);
+						break;
+					default:
+						material.SetInt(_CullMode, 2);
+						break;
+				}
+
+			}
+
+
+		}
+
+		private void GUI_Tranparent(Material material)
+		{
+			//GUILayout.Label("Transparent Shader", EditorStyles.boldLabel);
+			DoPopup(transparentModeText, transparentMode, System.Enum.GetNames(typeof(Transparent)));
+			const string _ZWriteMode = "_ZWriteMode";
+			const string _ZOverDrawMode = "_ZOverDrawMode";
+
+			if (_Transparent_Setting == Transparent.On)
+			{
+				material.SetInt(ShaderPropClippingMode, (int)TransClippingMode.On);
+				material.SetInt(_ZWriteMode, 0);
+				material.SetFloat(_ZOverDrawMode, 1);
+			}
+			else
+			{
+				material.SetInt(_ZWriteMode, 1);
+				material.SetFloat(_ZOverDrawMode, 0);
 			}
 		}
 
-		private void GUI_SetStencilNo(Material material)
+		private void GUI_StencilMode(Material material)
 		{
-			GUILayout.Label("For _StencilMask or _StencilOut Shader", EditorStyles.boldLabel);
-			_StencilNo_Setting = material.GetInt("_StencilNo");
+			//GUILayout.Label("StencilMask or StencilOut Shader", EditorStyles.boldLabel);
+			DoPopup(stencilmodeModeText, stencilMode, System.Enum.GetNames(typeof(ToonStencilMode)));
+
 			int _Current_StencilNo = _StencilNo_Setting;
 			_Current_StencilNo = (int)EditorGUILayout.IntField("Stencil No.", _Current_StencilNo);
 			if (_StencilNo_Setting != _Current_StencilNo)
 			{
-				material.SetInt("_StencilNo", _Current_StencilNo);
+				material.SetInt(ShaderPropStencilNo, _Current_StencilNo);
 			}
+
 		}
 
 		private void GUI_SetClippingMask(Material material)
 		{
-			GUILayout.Label("For _Clipping or _TransClipping Shader", EditorStyles.boldLabel);
+			//GUILayout.Label("Options for Clipping or TransClipping features", EditorStyles.boldLabel);
 			m_MaterialEditor.TexturePropertySingleLine(Styles.clippingMaskText, clippingMask);
 
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Inverse Clipping Mask");
-			if (material.GetFloat("_Inverse_Clipping") == 0)
+			if (material.GetFloat(ShaderPropInverseClipping) == 0)
 			{
-				if (GUILayout.Button("Off", shortButtonStyle))
+				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Inverse_Clipping", 1);
+					material.SetFloat(ShaderPropInverseClipping, 1);
 				}
 			}
 			else
 			{
-				if (GUILayout.Button("Active", shortButtonStyle))
+				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Inverse_Clipping", 0);
+					material.SetFloat(ShaderPropInverseClipping, 0);
 				}
 			}
 			EditorGUILayout.EndHorizontal();
@@ -615,63 +827,59 @@ namespace ToonShade
 
 		private void GUI_SetTransparencySetting(Material material)
 		{
-
-			GUILayout.Label("For _TransClipping Shader", EditorStyles.boldLabel);
+			//GUILayout.Label("Options for TransClipping or Transparent features", EditorStyles.boldLabel);
 			m_MaterialEditor.RangeProperty(tweak_transparency, "Transparency Level");
+
 			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.PrefixLabel("Use BaseMap α as Clipping Mask");
-			if (material.GetFloat("_IsBaseMapAlphaAsClippingMask") == 0)
+			EditorGUILayout.PrefixLabel("BaseMap As Clipping Mask");
+			if (material.GetFloat(ShaderPropIsBaseMapAlphaAsClippingMask) == 0)
 			{
-				if (GUILayout.Button("Off", shortButtonStyle))
+				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_IsBaseMapAlphaAsClippingMask", 1);
+					material.SetFloat(ShaderPropIsBaseMapAlphaAsClippingMask, 1);
 				}
 			}
 			else
 			{
-				if (GUILayout.Button("Active", shortButtonStyle))
+				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_IsBaseMapAlphaAsClippingMask", 0);
+					material.SetFloat(ShaderPropIsBaseMapAlphaAsClippingMask, 0);
 				}
 			}
 			EditorGUILayout.EndHorizontal();
 		}
 
+		/// <summary>
+		/// @TODO
+		/// </summary>
+		/// <param name="material"></param>
 		private void GUI_OptionMenu(Material material)
 		{
 			GUILayout.Label("Option Menu", EditorStyles.boldLabel);
-			if (material.HasProperty("_simpleUI"))
+			if (material.HasProperty(ShaderPropSimpleUI))
 			{
-				if (material.GetInt("_simpleUI") == 1)
-				{
-					_SimpleUI = true;
-				}
-				else
-				{
-					_SimpleUI = false;
-				}
+				_SimpleUI = (material.GetInt(ShaderPropSimpleUI) == 1) ? true : false;
 			}
-
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Current UI Type");
 			if (_SimpleUI == false)
 			{
 				if (GUILayout.Button("Pro / Full Control", middleButtonStyle))
 				{
-					material.SetInt("_simpleUI", 1);
+					material.SetInt(ShaderPropSimpleUI, 1);
 				}
 			}
 			else
 			{
 				if (GUILayout.Button("Biginner", middleButtonStyle))
 				{
-					material.SetInt("_simpleUI", 0);
+					material.SetInt(ShaderPropSimpleUI, 0);
 				}
 			}
 			EditorGUILayout.EndHorizontal();
-
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("VRChat Recommendation");
+
 			if (GUILayout.Button("Apply Settings", middleButtonStyle))
 			{
 				Set_Vrchat_Recommendation(material);
@@ -682,143 +890,56 @@ namespace ToonShade
 			{
 				EditorGUILayout.HelpBox("UTS2 : Applied VRChat Recommended Settings.", MessageType.Info);
 			}
-
-			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.PrefixLabel("Remove Unused Keywords/Properties from Material");
-			if (GUILayout.Button("Execute", middleButtonStyle))
-			{
-				RemoveUnusedKeywordsUtility(material);
-				_RemovedUnusedKeywordsMessage = true;
-			}
-			EditorGUILayout.EndHorizontal();
-			if (_RemovedUnusedKeywordsMessage)
-			{
-				EditorGUILayout.HelpBox("Unused Material Properties and ShaderKeywords are removed.", MessageType.Info);
-			}
 		}
 
-		private void RemoveUnusedKeywordsUtility(Material material)
-		{
-			RemoveUnusedMaterialProperties(material);
-			RemoveShaderKeywords(material);
-		}
-
-		private void RemoveShaderKeywords(Material material)
-		{
-			string shaderKeywords = "";
-			if (material.HasProperty("_EMISSIVE"))
-			{
-				float outlineMode = material.GetFloat("_EMISSIVE");
-				if (outlineMode == 0)
-				{
-					shaderKeywords = shaderKeywords + "_EMISSIVE_SIMPLE";
-				}
-				else
-				{
-					shaderKeywords = shaderKeywords + "_EMISSIVE_ANIMATION";
-				}
-			}
-			if (material.HasProperty("_OUTLINE"))
-			{
-				float outlineMode = material.GetFloat("_OUTLINE");
-				if (outlineMode == 0)
-				{
-					shaderKeywords = shaderKeywords + " _OUTLINE_NML";
-				}
-				else
-				{
-					shaderKeywords = shaderKeywords + " _OUTLINE_POS";
-				}
-			}
-			var so = new SerializedObject(material);
-			so.Update();
-			so.FindProperty("m_ShaderKeywords").stringValue = shaderKeywords;
-			so.ApplyModifiedProperties();
-		}
-
-		private void RemoveUnusedMaterialProperties(Material material)
-		{
-			var sourceProps = new SerializedObject(material);
-			sourceProps.Update();
-			var savedProp = sourceProps.FindProperty("m_SavedProperties");
-			var texProp = savedProp.FindPropertyRelative("m_TexEnvs");
-			for (int i = texProp.arraySize - 1; i >= 0; i--)
-			{
-				var propertyName = texProp.GetArrayElementAtIndex(i).FindPropertyRelative("first").stringValue;
-				if (!material.HasProperty(propertyName))
-				{
-					texProp.DeleteArrayElementAtIndex(i);
-				}
-			}
-			var floatProp = savedProp.FindPropertyRelative("m_Floats");
-			for (int i = floatProp.arraySize - 1; i >= 0; i--)
-			{
-				var propertyName = floatProp.GetArrayElementAtIndex(i).FindPropertyRelative("first").stringValue;
-				if (!material.HasProperty(propertyName))
-				{
-					floatProp.DeleteArrayElementAtIndex(i);
-				}
-			}
-			var colorProp = savedProp.FindPropertyRelative("m_Colors");
-			for (int i = colorProp.arraySize - 1; i >= 0; i--)
-			{
-				var propertyName = colorProp.GetArrayElementAtIndex(i).FindPropertyRelative("first").stringValue;
-				if (!material.HasProperty(propertyName))
-				{
-					colorProp.DeleteArrayElementAtIndex(i);
-				}
-			}
-			sourceProps.ApplyModifiedProperties();
-		}
-
+		/// <summary>
+		/// @TODO
+		/// </summary>
+		/// <param name="material"></param>
 		private void Set_Vrchat_Recommendation(Material material)
 		{
-			material.SetFloat("_Is_LightColor_Base", 1);
-			material.SetFloat("_Is_LightColor_1st_Shade", 1);
-			material.SetFloat("_Is_LightColor_2nd_Shade", 1);
-			material.SetFloat("_Is_LightColor_HighColor", 1);
-			material.SetFloat("_Is_LightColor_RimLight", 1);
-			material.SetFloat("_Is_LightColor_Ap_RimLight", 1);
-			material.SetFloat("_Is_LightColor_MatCap", 1);
-			if (material.HasProperty("_AngelRing"))
+			material.SetFloat(ShaderPropIsLightColor_Base, 1);
+			material.SetFloat(ShaderPropIs_LightColor_1st_Shade, 1);
+			material.SetFloat(ShaderPropIs_LightColor_2nd_Shade, 1);
+			material.SetFloat(ShaderPropIs_LightColor_HighColor, 1);
+			material.SetFloat(ShaderPropIs_LightColor_RimLight, 1);
+			material.SetFloat(ShaderPropIs_LightColor_Ap_RimLight, 1);
+			material.SetFloat(ShaderPropIs_LightColor_MatCap, 1);
+			if (material.HasProperty(ShaderPropAngelRing))
 			{
-				material.SetFloat("_Is_LightColor_AR", 1);
+				material.SetFloat(ShaderPropIs_LightColor_AR, 1);
 			}
-			if (material.HasProperty("_OUTLINE"))
+			if (material.HasProperty(ShaderPropOutline))
 			{
-				material.SetFloat("_Is_LightColor_Outline", 1);
+				material.SetFloat(ShaderPropIs_LightColor_Outline, 1);
 			}
-			material.SetFloat("_Set_SystemShadowsToBase", 1);
-			material.SetFloat("_Is_Filter_HiCutPointLightColor", 1);
-			material.SetFloat("_CameraRolling_Stabilizer", 1);
-			material.SetFloat("_Is_Ortho", 0);
-			material.SetFloat("_GI_Intensity", 0);
-			material.SetFloat("_Unlit_Intensity", 1);
-			material.SetFloat("_Is_Filter_LightColor", 1);
+			material.SetFloat(ShaderPropSetSystemShadowsToBase, 1);
+			material.SetFloat(ShaderPropIsFilterHiCutPointLightColor, 1);
+			material.SetFloat(ShaderPropCameraRolling_Stabilizer, 1);
+			material.SetFloat(ShaderPropIs_Ortho, 0);
+			material.SetFloat(ShaderPropGI_Intensity, 0);
+			material.SetFloat(ShaderPropUnlit_Intensity, 1);
+			material.SetFloat(ShaderPropIs_Filter_LightColor, 1);
 		}
 
 		private void GUI_BasicThreeColors(Material material)
 		{
-			GUILayout.Label("3 Basic Colors Settings : Textures × Colors", EditorStyles.boldLabel);
-
 			EditorGUILayout.BeginHorizontal();
 			m_MaterialEditor.TexturePropertySingleLine(Styles.baseColorText, mainTex, baseColor);
-			if (material.HasProperty("_Color"))
-			{
-				material.SetColor("_Color", material.GetColor("_BaseColor"));
-			}
-			if (material.GetFloat("_Use_BaseAs1st") == 0)
+			material.SetColor("_Color", material.GetColor("_BaseColor"));
+
+			if (material.GetFloat(ShaderPropUse_BaseAs1st) == 0)
 			{
 				if (GUILayout.Button("No Sharing", middleButtonStyle))
 				{
-					material.SetFloat("_Use_BaseAs1st", 1);
+					material.SetFloat(ShaderPropUse_BaseAs1st, 1);
 				}
 			}
 			else
 			{
 				if (GUILayout.Button("With 1st ShadeMap", middleButtonStyle))
 				{
-					material.SetFloat("_Use_BaseAs1st", 0);
+					material.SetFloat(ShaderPropUse_BaseAs1st, 0);
 				}
 			}
 			GUILayout.Space(60);
@@ -826,85 +947,84 @@ namespace ToonShade
 
 			EditorGUILayout.BeginHorizontal();
 			m_MaterialEditor.TexturePropertySingleLine(Styles.firstShadeColorText, firstShadeMap, firstShadeColor);
-			if (material.GetFloat("_Use_1stAs2nd") == 0)
+			if (material.GetFloat(ShaderPropUse_1stAs2nd) == 0)
 			{
 				if (GUILayout.Button("No Sharing", middleButtonStyle))
 				{
-					material.SetFloat("_Use_1stAs2nd", 1);
+					material.SetFloat(ShaderPropUse_1stAs2nd, 1);
 				}
 			}
 			else
 			{
 				if (GUILayout.Button("With 2nd ShadeMap", middleButtonStyle))
 				{
-					material.SetFloat("_Use_1stAs2nd", 0);
+					material.SetFloat(ShaderPropUse_1stAs2nd, 0);
 				}
 			}
 			GUILayout.Space(60);
 			EditorGUILayout.EndHorizontal();
-
 			m_MaterialEditor.TexturePropertySingleLine(Styles.secondShadeColorText, secondShadeMap, secondShadeColor);
-
 			EditorGUILayout.Space();
-
 			_NormalMap_Foldout = FoldoutSubMenu(_NormalMap_Foldout, "● NormalMap Settings");
 			if (_NormalMap_Foldout)
 			{
 				m_MaterialEditor.TexturePropertySingleLine(Styles.normalMapText, normalMap, bumpScale);
 				m_MaterialEditor.TextureScaleOffsetProperty(normalMap);
-				GUILayout.Label("NormalMap Effectiveness", EditorStyles.boldLabel);
+
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("3 Basic Colors");
-				if (material.GetFloat("_Is_NormalMapToBase") == 0)
+				if (material.GetFloat(ShaderPropIs_NormalMapToBase) == 0)
 				{
-					if (GUILayout.Button("Off", shortButtonStyle))
+					if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 					{
-						material.SetFloat("_Is_NormalMapToBase", 1);
+						material.SetFloat(ShaderPropIs_NormalMapToBase, 1);
 					}
 				}
 				else
 				{
-					if (GUILayout.Button("Active", shortButtonStyle))
+					if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 					{
-						material.SetFloat("_Is_NormalMapToBase", 0);
+						material.SetFloat(ShaderPropIs_NormalMapToBase, 0);
 					}
 				}
 				EditorGUILayout.EndHorizontal();
+
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("HighColor");
-				if (material.GetFloat("_Is_NormalMapToHighColor") == 0)
+				if (material.GetFloat(ShaderPropNormalMapToHighColor) == 0)
 				{
-					if (GUILayout.Button("Off", shortButtonStyle))
+					if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 					{
-						material.SetFloat("_Is_NormalMapToHighColor", 1);
+						material.SetFloat(ShaderPropNormalMapToHighColor, 1);
 					}
 				}
 				else
 				{
-					if (GUILayout.Button("Active", shortButtonStyle))
+					if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 					{
-						material.SetFloat("_Is_NormalMapToHighColor", 0);
+						material.SetFloat(ShaderPropNormalMapToHighColor, 0);
 					}
 				}
 				EditorGUILayout.EndHorizontal();
 
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("RimLight");
-				if (material.GetFloat("_Is_NormalMapToRimLight") == 0)
+				if (material.GetFloat(ShaderPropIsNormalMapToRimLight) == 0)
 				{
-					if (GUILayout.Button("Off", shortButtonStyle))
+					if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 					{
-						material.SetFloat("_Is_NormalMapToRimLight", 1);
+						material.SetFloat(ShaderPropIsNormalMapToRimLight, 1);
 					}
 				}
 				else
 				{
-					if (GUILayout.Button("Active", shortButtonStyle))
+					if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 					{
-						material.SetFloat("_Is_NormalMapToRimLight", 0);
+						material.SetFloat(ShaderPropIsNormalMapToRimLight, 0);
 					}
 				}
 				EditorGUILayout.EndHorizontal();
+
 				EditorGUILayout.Space();
 			}
 
@@ -918,22 +1038,10 @@ namespace ToonShade
 
 		private void GUI_ShadowControlMaps(Material material)
 		{
-			if (material.HasProperty("_utsTechnique"))
-			{
-				if (material.GetInt("_utsTechnique") == (int)_UTS_Technique.DoubleSideWithFeather)
-				{
-					GUILayout.Label("Technipue : Double Shade With Feather", EditorStyles.boldLabel);
-					m_MaterialEditor.TexturePropertySingleLine(Styles.firstPositionMapText, set_1st_ShadePosition);
-					m_MaterialEditor.TexturePropertySingleLine(Styles.secondPositionMapText, set_2nd_ShadePosition);
-				}
-				else if (material.GetInt("_utsTechnique") == (int)_UTS_Technique.ShadingGradeMap)
-				{
-					GUILayout.Label("Technipue : Shading Grade Map", EditorStyles.boldLabel);
-					m_MaterialEditor.TexturePropertySingleLine(Styles.shadingGradeMapText, shadingGradeMap);
-					m_MaterialEditor.RangeProperty(tweak_ShadingGradeMapLevel, "ShadingGradeMap Level");
-					m_MaterialEditor.RangeProperty(blurLevelSGM, "Blur Level of ShadingGradeMap");
-				}
-			}
+			//GUILayout.Label("Technipue : Shading Grade Map", EditorStyles.boldLabel);
+			m_MaterialEditor.TexturePropertySingleLine(Styles.shadingGradeMapText, shadingGradeMap);
+			m_MaterialEditor.RangeProperty(tweak_ShadingGradeMapLevel, "ShadingGradeMap Level");
+			m_MaterialEditor.RangeProperty(blurLevelSGM, "Blur Level of ShadingGradeMap");
 		}
 
 		private void GUI_StepAndFeather(Material material)
@@ -957,30 +1065,30 @@ namespace ToonShade
 
 		private void GUI_SystemShadows(Material material)
 		{
-
-			GUILayout.Label("System Shadows : Self Shadows Receiving", EditorStyles.boldLabel);
+			//GUILayout.Label("System Shadows : Self Shadows Receiving", EditorStyles.boldLabel);
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Receive System Shadows");
-			if (material.GetFloat("_Set_SystemShadowsToBase") == 0)
+			if (material.GetFloat(ShaderPropSetSystemShadowsToBase) == 0)
 			{
-				if (GUILayout.Button("Off", shortButtonStyle))
+				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Set_SystemShadowsToBase", 1);
+					material.SetFloat(ShaderPropSetSystemShadowsToBase, 1);
 				}
 			}
 			else
 			{
-				if (GUILayout.Button("Active", shortButtonStyle))
+				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Set_SystemShadowsToBase", 0);
+					material.SetFloat(ShaderPropSetSystemShadowsToBase, 0);
 				}
 			}
 			EditorGUILayout.EndHorizontal();
 
-			if (material.GetFloat("_Set_SystemShadowsToBase") == 1)
+			if (material.GetFloat(ShaderPropSetSystemShadowsToBase) == 1)
 			{
 				EditorGUI.indentLevel++;
 				m_MaterialEditor.RangeProperty(tweak_SystemShadowsLevel, "System Shadows Level");
+				GUI_SetRTHS(material);
 				EditorGUI.indentLevel--;
 				EditorGUILayout.Space();
 			}
@@ -989,64 +1097,43 @@ namespace ToonShade
 
 		private void GUI_BasicLookdevs(Material material)
 		{
-			if (material.HasProperty("_utsTechnique"))
-			{
-				if (material.GetInt("_utsTechnique") == (int)_UTS_Technique.DoubleSideWithFeather)
-				{
-					GUILayout.Label("Technipue : Double Shade With Feather", EditorStyles.boldLabel);
-					m_MaterialEditor.RangeProperty(baseColor_Step, "BaseColor Step");
-					m_MaterialEditor.RangeProperty(baseShade_Feather, "Base/Shade Feather");
-					m_MaterialEditor.RangeProperty(shadeColor_Step, "ShadeColor Step");
-					m_MaterialEditor.RangeProperty(first2nd_Shades_Feather, "1st/2nd_Shades Feather");
-					material.SetFloat("_1st_ShadeColor_Step", material.GetFloat("_BaseColor_Step"));
-					material.SetFloat("_1st_ShadeColor_Feather", material.GetFloat("_BaseShade_Feather"));
-					material.SetFloat("_2nd_ShadeColor_Step", material.GetFloat("_ShadeColor_Step"));
-					material.SetFloat("_2nd_ShadeColor_Feather", material.GetFloat("_1st2nd_Shades_Feather"));
-				}
-				else if (material.GetInt("_utsTechnique") == (int)_UTS_Technique.ShadingGradeMap)
-				{
-					GUILayout.Label("Technipue : Shading Grade Map", EditorStyles.boldLabel);
-					m_MaterialEditor.RangeProperty(first_ShadeColor_Step, "1st ShaderColor Step");
-					m_MaterialEditor.RangeProperty(first_ShadeColor_Feather, "1st ShadeColor Feather");
-					m_MaterialEditor.RangeProperty(second_ShadeColor_Step, "2nd ShadeColor Step");
-					m_MaterialEditor.RangeProperty(second_ShadeColor_Feather, "2nd ShadeColor Feather");
-					material.SetFloat("_BaseColor_Step", material.GetFloat("_1st_ShadeColor_Step"));
-					material.SetFloat("_BaseShade_Feather", material.GetFloat("_1st_ShadeColor_Feather"));
-					material.SetFloat("_ShadeColor_Step", material.GetFloat("_2nd_ShadeColor_Step"));
-					material.SetFloat("_1st2nd_Shades_Feather", material.GetFloat("_2nd_ShadeColor_Feather"));
-				}
-				else
-				{
-					return;
-				}
-			}
+			//GUILayout.Label("Technipue : Shading Grade Map", EditorStyles.boldLabel);
+			m_MaterialEditor.RangeProperty(first_ShadeColor_Step, "1st ShaderColor Step");
+			m_MaterialEditor.RangeProperty(first_ShadeColor_Feather, "1st ShadeColor Feather");
+			m_MaterialEditor.RangeProperty(second_ShadeColor_Step, "2nd ShadeColor Step");
+			m_MaterialEditor.RangeProperty(second_ShadeColor_Feather, "2nd ShadeColor Feather");
+			material.SetFloat(ShaderPropBaseColor_Step, material.GetFloat(ShaderProp1st_ShadeColor_Step));
+			material.SetFloat(ShaderPropBaseShade_Feather, material.GetFloat(ShaderProp1st_ShadeColor_Feather));
+			material.SetFloat(ShaderPropShadeColor_Step, material.GetFloat(ShaderProp2nd_ShadeColor_Step));
+			material.SetFloat(ShaderProp1st2nd_Shades_Feather, material.GetFloat(ShaderProp2nd_ShadeColor_Feather));
+
 			EditorGUILayout.Space();
 		}
 
 		private void GUI_AdditionalLookdevs(Material material)
 		{
-			GUILayout.Label("Settings for PointLights in ForwardAdd Pass");
-			EditorGUI.indentLevel++;
+			//GUILayout.Label("Settings for PointLights in ForwardAdd Pass");
+			//EditorGUI.indentLevel++;
 			m_MaterialEditor.RangeProperty(stepOffset, "Step Offset for PointLights");
 
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("PointLights Hi-Cut Filter");
-			if (material.GetFloat("_Is_Filter_HiCutPointLightColor") == 0)
+			if (material.GetFloat(ShaderPropIsFilterHiCutPointLightColor) == 0)
 			{
-				if (GUILayout.Button("Off", shortButtonStyle))
+				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Is_Filter_HiCutPointLightColor", 1);
+					material.SetFloat(ShaderPropIsFilterHiCutPointLightColor, 1);
 				}
 			}
 			else
 			{
-				if (GUILayout.Button("Active", shortButtonStyle))
+				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 				{
 					material.SetFloat("_Is_Filter_HiCutPointLightColor", 0);
 				}
 			}
 			EditorGUILayout.EndHorizontal();
-			EditorGUI.indentLevel--;
+			//EditorGUI.indentLevel--;
 			EditorGUILayout.Space();
 		}
 
@@ -1059,43 +1146,43 @@ namespace ToonShade
 			{
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("Specular Mode");
-				if (material.GetFloat("_Is_SpecularToHighColor") == 0)
+				if (material.GetFloat(ShaderPropIs_SpecularToHighColor) == 0)
 				{
-					if (GUILayout.Button("Off", shortButtonStyle))
+					if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 					{
-						material.SetFloat("_Is_SpecularToHighColor", 1);
-						material.SetFloat("_Is_BlendAddToHiColor", 1);
+						material.SetFloat(ShaderPropIs_SpecularToHighColor, 1);
+						material.SetFloat(ShaderPropIs_BlendAddToHiColor, 1);
 					}
 				}
 				else
 				{
-					if (GUILayout.Button("Active", shortButtonStyle))
+					if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 					{
-						material.SetFloat("_Is_SpecularToHighColor", 0);
+						material.SetFloat(ShaderPropIs_SpecularToHighColor, 0);
 					}
 				}
 				EditorGUILayout.EndHorizontal();
 
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("Color Blend Mode");
-				if (material.GetFloat("_Is_BlendAddToHiColor") == 0)
+				if (material.GetFloat(ShaderPropIs_BlendAddToHiColor) == 0)
 				{
 					if (GUILayout.Button("Multiply", shortButtonStyle))
 					{
-						material.SetFloat("_Is_BlendAddToHiColor", 1);
+						material.SetFloat(ShaderPropIs_BlendAddToHiColor, 1);
 					}
 				}
 				else
 				{
 					if (GUILayout.Button("Additive", shortButtonStyle))
 					{
-						if (material.GetFloat("_Is_SpecularToHighColor") == 1)
+						if (material.GetFloat(ShaderPropIs_SpecularToHighColor) == 1)
 						{
-							material.SetFloat("_Is_BlendAddToHiColor", 1);
+							material.SetFloat(ShaderPropIs_BlendAddToHiColor, 1);
 						}
 						else
 						{
-							material.SetFloat("_Is_BlendAddToHiColor", 0);
+							material.SetFloat(ShaderPropIs_BlendAddToHiColor, 0);
 						}
 					}
 				}
@@ -1103,36 +1190,37 @@ namespace ToonShade
 
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("ShadowMask on HihgColor");
-				if (material.GetFloat("_Is_UseTweakHighColorOnShadow") == 0)
+				if (material.GetFloat(ShaderPropIs_UseTweakHighColorOnShadow) == 0)
 				{
-					if (GUILayout.Button("Off", shortButtonStyle))
+					if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 					{
-						material.SetFloat("_Is_UseTweakHighColorOnShadow", 1);
+						material.SetFloat(ShaderPropIs_UseTweakHighColorOnShadow, 1);
 					}
 				}
 				else
 				{
-					if (GUILayout.Button("Active", shortButtonStyle))
+					if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 					{
-						material.SetFloat("_Is_UseTweakHighColorOnShadow", 0);
+						material.SetFloat(ShaderPropIs_UseTweakHighColorOnShadow, 0);
 					}
 				}
 				EditorGUILayout.EndHorizontal();
 
-				if (material.GetFloat("_Is_UseTweakHighColorOnShadow") == 1)
+				if (material.GetFloat(ShaderPropIs_UseTweakHighColorOnShadow) == 1)
 				{
 					EditorGUI.indentLevel++;
 					m_MaterialEditor.RangeProperty(tweakHighColorOnShadow, "HighColor Power on Shadow");
 					EditorGUI.indentLevel--;
 				}
 			}
+
 			EditorGUILayout.Space();
 
-			GUILayout.Label("HighColor Mask", EditorStyles.boldLabel);
-			EditorGUI.indentLevel++;
+			//GUILayout.Label("HighColor Mask", EditorStyles.boldLabel);
+			//EditorGUI.indentLevel++;
 			m_MaterialEditor.TexturePropertySingleLine(Styles.highColorMaskText, set_HighColorMask);
 			m_MaterialEditor.RangeProperty(tweak_HighColorMaskLevel, "HighColor Mask Level");
-			EditorGUI.indentLevel--;
+			//EditorGUI.indentLevel--;
 
 			EditorGUILayout.Space();
 		}
@@ -1141,26 +1229,26 @@ namespace ToonShade
 		{
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("RimLight");
-			if (material.GetFloat("_RimLight") == 0)
+			if (material.GetFloat(ShaderPropRimLight) == 0)
 			{
-				if (GUILayout.Button("Off", shortButtonStyle))
+				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_RimLight", 1);
+					material.SetFloat(ShaderPropRimLight, 1);
 				}
 			}
 			else
 			{
-				if (GUILayout.Button("Active", shortButtonStyle))
+				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_RimLight", 0);
+					material.SetFloat(ShaderPropRimLight, 0);
 				}
 			}
 			EditorGUILayout.EndHorizontal();
 
-			if (material.GetFloat("_RimLight") == 1)
+			if (material.GetFloat(ShaderPropRimLight) == 1)
 			{
-				EditorGUI.indentLevel++;
-				GUILayout.Label("RimLight Settings", EditorStyles.boldLabel);
+				//EditorGUI.indentLevel++;
+				//GUILayout.Label("RimLight Settings", EditorStyles.boldLabel);
 				m_MaterialEditor.ColorProperty(rimLightColor, "RimLight Color");
 				m_MaterialEditor.RangeProperty(rimLight_Power, "RimLight Power");
 
@@ -1170,63 +1258,63 @@ namespace ToonShade
 
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.PrefixLabel("RimLight FeatherOff");
-					if (material.GetFloat("_RimLight_FeatherOff") == 0)
+					if (material.GetFloat(ShaderPropRimLight_FeatherOff) == 0)
 					{
-						if (GUILayout.Button("Off", shortButtonStyle))
+						if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 						{
-							material.SetFloat("_RimLight_FeatherOff", 1);
+							material.SetFloat(ShaderPropRimLight_FeatherOff, 1);
 						}
 					}
 					else
 					{
-						if (GUILayout.Button("Active", shortButtonStyle))
+						if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 						{
-							material.SetFloat("_RimLight_FeatherOff", 0);
+							material.SetFloat(ShaderPropRimLight_FeatherOff, 0);
 						}
 					}
 					EditorGUILayout.EndHorizontal();
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.PrefixLabel("LightDirection Mask");
-					if (material.GetFloat("_LightDirection_MaskOn") == 0)
+					if (material.GetFloat(ShaderPropLightDirection_MaskOn) == 0)
 					{
-						if (GUILayout.Button("Off", shortButtonStyle))
+						if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 						{
-							material.SetFloat("_LightDirection_MaskOn", 1);
+							material.SetFloat(ShaderPropLightDirection_MaskOn, 1);
 						}
 					}
 					else
 					{
-						if (GUILayout.Button("Active", shortButtonStyle))
+						if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 						{
-							material.SetFloat("_LightDirection_MaskOn", 0);
+							material.SetFloat(ShaderPropLightDirection_MaskOn, 0);
 						}
 					}
 					EditorGUILayout.EndHorizontal();
 
-					if (material.GetFloat("_LightDirection_MaskOn") == 1)
+					if (material.GetFloat(ShaderPropLightDirection_MaskOn) == 1)
 					{
 						EditorGUI.indentLevel++;
 						m_MaterialEditor.RangeProperty(tweak_LightDirection_MaskLevel, "LightDirection MaskLevel");
 
 						EditorGUILayout.BeginHorizontal();
 						EditorGUILayout.PrefixLabel("Antipodean(Ap)_RimLight");
-						if (material.GetFloat("_Add_Antipodean_RimLight") == 0)
+						if (material.GetFloat(ShaderPropAdd_Antipodean_RimLight) == 0)
 						{
-							if (GUILayout.Button("Off", shortButtonStyle))
+							if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 							{
-								material.SetFloat("_Add_Antipodean_RimLight", 1);
+								material.SetFloat(ShaderPropAdd_Antipodean_RimLight, 1);
 							}
 						}
 						else
 						{
-							if (GUILayout.Button("Active", shortButtonStyle))
+							if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 							{
-								material.SetFloat("_Add_Antipodean_RimLight", 0);
+								material.SetFloat(ShaderPropAdd_Antipodean_RimLight, 0);
 							}
 						}
 						EditorGUILayout.EndHorizontal();
 
-						if (material.GetFloat("_Add_Antipodean_RimLight") == 1)
+						if (material.GetFloat(ShaderPropAdd_Antipodean_RimLight) == 1)
 						{
 							EditorGUI.indentLevel++;
 							GUILayout.Label("Ap_RimLight Settings", EditorStyles.boldLabel);
@@ -1235,32 +1323,35 @@ namespace ToonShade
 
 							EditorGUILayout.BeginHorizontal();
 							EditorGUILayout.PrefixLabel("Ap_RimLight FeatherOff");
-							if (material.GetFloat("_Ap_RimLight_FeatherOff") == 0)
+							if (material.GetFloat(ShaderPropAp_RimLight_FeatherOff) == 0)
 							{
-								if (GUILayout.Button("Off", shortButtonStyle))
+								if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 								{
-									material.SetFloat("_Ap_RimLight_FeatherOff", 1);
+									material.SetFloat(ShaderPropAp_RimLight_FeatherOff, 1);
 								}
 							}
 							else
 							{
-								if (GUILayout.Button("Active", shortButtonStyle))
+								if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 								{
-									material.SetFloat("_Ap_RimLight_FeatherOff", 0);
+									material.SetFloat(ShaderPropAp_RimLight_FeatherOff, 0);
 								}
 							}
 							EditorGUILayout.EndHorizontal();
 							EditorGUI.indentLevel--;
 						}
+
 						EditorGUI.indentLevel--;
+
 					}
 				}
-				EditorGUILayout.Space();
 
-				GUILayout.Label("RimLight Mask", EditorStyles.boldLabel);
+				EditorGUILayout.Space();
+				//GUILayout.Label("RimLight Mask", EditorStyles.boldLabel);
 				m_MaterialEditor.TexturePropertySingleLine(Styles.rimLightMaskText, set_RimLightMask);
 				m_MaterialEditor.RangeProperty(tweak_RimLightMaskLevel, "RimLight Mask Level");
-				EditorGUI.indentLevel--;
+
+				//EditorGUI.indentLevel--;
 				EditorGUILayout.Space();
 			}
 		}
@@ -1269,27 +1360,26 @@ namespace ToonShade
 		{
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("MatCap");
-			if (material.GetFloat("_MatCap") == 0)
+			if (material.GetFloat(ShaderPropMatCap) == 0)
 			{
-				if (GUILayout.Button("Off", shortButtonStyle))
+				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_MatCap", 1);
+					material.SetFloat(ShaderPropMatCap, 1);
 				}
 			}
 			else
 			{
-				if (GUILayout.Button("Active", shortButtonStyle))
+				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_MatCap", 0);
+					material.SetFloat(ShaderPropMatCap, 0);
 				}
 			}
 			EditorGUILayout.EndHorizontal();
 
-			if (material.GetFloat("_MatCap") == 1)
+			if (material.GetFloat(ShaderPropMatCap) == 1)
 			{
-				GUILayout.Label("MatCap Settings", EditorStyles.boldLabel);
+				//GUILayout.Label("MatCap Settings", EditorStyles.boldLabel);
 				m_MaterialEditor.TexturePropertySingleLine(Styles.matCapSamplerText, matCap_Sampler, matCapColor);
-				EditorGUI.indentLevel++;
 				m_MaterialEditor.TextureScaleOffsetProperty(matCap_Sampler);
 
 				if (!_SimpleUI)
@@ -1299,64 +1389,62 @@ namespace ToonShade
 
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.PrefixLabel("Color Blend Mode");
-					if (material.GetFloat("_Is_BlendAddToMatCap") == 0)
+					if (material.GetFloat(ShaderPropIs_BlendAddToMatCap) == 0)
 					{
 						if (GUILayout.Button("Multipy", shortButtonStyle))
 						{
-							material.SetFloat("_Is_BlendAddToMatCap", 1);
+							material.SetFloat(ShaderPropIs_BlendAddToMatCap, 1);
 						}
 					}
 					else
 					{
 						if (GUILayout.Button("Additive", shortButtonStyle))
 						{
-							material.SetFloat("_Is_BlendAddToMatCap", 0);
+							material.SetFloat(ShaderPropIs_BlendAddToMatCap, 0);
 						}
 					}
 					EditorGUILayout.EndHorizontal();
-
 					m_MaterialEditor.RangeProperty(tweak_MatCapUV, "Scale MatCapUV");
 					m_MaterialEditor.RangeProperty(rotate_MatCapUV, "Rotate MatCapUV");
 
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.PrefixLabel("CameraRolling Stabilizer");
-					if (material.GetFloat("_CameraRolling_Stabilizer") == 0)
+					if (material.GetFloat(ShaderPropCameraRolling_Stabilizer) == 0)
 					{
-						if (GUILayout.Button("Off", shortButtonStyle))
+						if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 						{
-							material.SetFloat("_CameraRolling_Stabilizer", 1);
+							material.SetFloat(ShaderPropCameraRolling_Stabilizer, 1);
 						}
 					}
 					else
 					{
-						if (GUILayout.Button("Active", shortButtonStyle))
+						if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 						{
-							material.SetFloat("_CameraRolling_Stabilizer", 0);
+							material.SetFloat(ShaderPropCameraRolling_Stabilizer, 0);
 						}
 					}
 					EditorGUILayout.EndHorizontal();
 
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.PrefixLabel("NormalMap for MatCap");
-					if (material.GetFloat("_Is_NormalMapForMatCap") == 0)
+					if (material.GetFloat(ShaderPropIs_NormalMapForMatCap) == 0)
 					{
-						if (GUILayout.Button("Off", shortButtonStyle))
+						if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 						{
-							material.SetFloat("_Is_NormalMapForMatCap", 1);
+							material.SetFloat(ShaderPropIs_NormalMapForMatCap, 1);
 						}
 					}
 					else
 					{
-						if (GUILayout.Button("Active", shortButtonStyle))
+						if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 						{
-							material.SetFloat("_Is_NormalMapForMatCap", 0);
+							material.SetFloat(ShaderPropIs_NormalMapForMatCap, 0);
 						}
 					}
 					EditorGUILayout.EndHorizontal();
-					if (material.GetFloat("_Is_NormalMapForMatCap") == 1)
+					if (material.GetFloat(ShaderPropIs_NormalMapForMatCap) == 1)
 					{
 						EditorGUI.indentLevel++;
-						GUILayout.Label("NormalMap for MatCap as SpecularMask", EditorStyles.boldLabel);
 						m_MaterialEditor.TexturePropertySingleLine(Styles.normalMapText, normalMapForMatCap, bumpScaleMatcap);
 						m_MaterialEditor.TextureScaleOffsetProperty(normalMapForMatCap);
 						m_MaterialEditor.RangeProperty(rotate_NormalMapForMatCapUV, "Rotate NormalMapUV");
@@ -1365,22 +1453,22 @@ namespace ToonShade
 
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.PrefixLabel("MatCap on Shadow");
-					if (material.GetFloat("_Is_UseTweakMatCapOnShadow") == 0)
+					if (material.GetFloat(ShaderPropIs_UseTweakMatCapOnShadow) == 0)
 					{
-						if (GUILayout.Button("Off", shortButtonStyle))
+						if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 						{
-							material.SetFloat("_Is_UseTweakMatCapOnShadow", 1);
+							material.SetFloat(ShaderPropIs_UseTweakMatCapOnShadow, 1);
 						}
 					}
 					else
 					{
-						if (GUILayout.Button("Active", shortButtonStyle))
+						if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 						{
-							material.SetFloat("_Is_UseTweakMatCapOnShadow", 0);
+							material.SetFloat(ShaderPropIs_UseTweakMatCapOnShadow, 0);
 						}
 					}
 					EditorGUILayout.EndHorizontal();
-					if (material.GetFloat("_Is_UseTweakMatCapOnShadow") == 1)
+					if (material.GetFloat(ShaderPropIs_UseTweakMatCapOnShadow) == 1)
 					{
 						EditorGUI.indentLevel++;
 						m_MaterialEditor.RangeProperty(tweakMatCapOnShadow, "MatCap Power on Shadow");
@@ -1389,49 +1477,47 @@ namespace ToonShade
 
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.PrefixLabel("MatCap Projection Camera");
-					if (material.GetFloat("_Is_Ortho") == 0)
+					if (material.GetFloat(ShaderPropIs_Ortho) == 0)
 					{
 						if (GUILayout.Button("Perspective", middleButtonStyle))
 						{
-							material.SetFloat("_Is_Ortho", 1);
+							material.SetFloat(ShaderPropIs_Ortho, 1);
 						}
 					}
 					else
 					{
 						if (GUILayout.Button("Orthographic", middleButtonStyle))
 						{
-							material.SetFloat("_Is_Ortho", 0);
+							material.SetFloat(ShaderPropIs_Ortho, 0);
 						}
 					}
 					EditorGUILayout.EndHorizontal();
 				}
-				EditorGUILayout.Space();
 
-				GUILayout.Label("MatCap Mask", EditorStyles.boldLabel);
+				EditorGUILayout.Space();
 				m_MaterialEditor.TexturePropertySingleLine(Styles.matCapMaskText, set_MatcapMask);
 				m_MaterialEditor.TextureScaleOffsetProperty(set_MatcapMask);
 				m_MaterialEditor.RangeProperty(tweak_MatcapMaskLevel, "MatCap Mask Level");
 
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("Inverse Matcap Mask");
-
-				if (material.GetFloat("_Inverse_MatcapMask") == 0)
+				if (material.GetFloat(ShaderPropInverse_MatcapMask) == 0)
 				{
-					if (GUILayout.Button("Off", shortButtonStyle))
+					if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 					{
-						material.SetFloat("_Inverse_MatcapMask", 1);
+						material.SetFloat(ShaderPropInverse_MatcapMask, 1);
 					}
 				}
 				else
 				{
-					if (GUILayout.Button("Active", shortButtonStyle))
+					if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 					{
-						material.SetFloat("_Inverse_MatcapMask", 0);
+						material.SetFloat(ShaderPropInverse_MatcapMask, 0);
 					}
 				}
 				EditorGUILayout.EndHorizontal();
 
-				EditorGUI.indentLevel--;
+				//EditorGUI.indentLevel--;
 			}
 		}
 
@@ -1439,77 +1525,210 @@ namespace ToonShade
 		{
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("AngelRing Projection");
-			if (material.GetFloat("_AngelRing") == 0)
+			if (material.GetFloat(ShaderPropAngelRing) == 0)
 			{
-				if (GUILayout.Button("Off", shortButtonStyle))
+				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_AngelRing", 1);
-					material.EnableKeyword("_IS_ANGELRING_ON");
+					material.SetFloat(ShaderPropAngelRing, 1);
 				}
 			}
 			else
 			{
-				if (GUILayout.Button("Active", shortButtonStyle))
+				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_AngelRing", 0);
-					material.DisableKeyword("_IS_ANGELRING_ON");
+					material.SetFloat(ShaderPropAngelRing, 0);
 				}
 			}
 			EditorGUILayout.EndHorizontal();
 
-			if (material.GetFloat("_AngelRing") == 1)
+
+			if (material.GetFloat(ShaderPropAngelRing) == 1)
 			{
-				GUILayout.Label("AngelRing Sampler Settings", EditorStyles.boldLabel);
+				EditorGUILayout.Space();
 				m_MaterialEditor.TexturePropertySingleLine(Styles.angelRingText, angelRing_Sampler, angelRing_Color);
-				EditorGUI.indentLevel++;
 				m_MaterialEditor.RangeProperty(ar_OffsetU, "Offset U");
 				m_MaterialEditor.RangeProperty(ar_OffsetV, "Offset V");
 
 				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.PrefixLabel("Use α channel as Clipping Mask");
-				if (material.GetFloat("_ARSampler_AlphaOn") == 0)
+				EditorGUILayout.PrefixLabel("Use α channel as Clipping");
+
+				if (material.GetFloat(ShaderPropARSampler_AlphaOn) == 0)
 				{
-					if (GUILayout.Button("Off", shortButtonStyle))
+					if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 					{
-						material.SetFloat("_ARSampler_AlphaOn", 1);
+						material.SetFloat(ShaderPropARSampler_AlphaOn, 1);
 					}
 				}
 				else
 				{
-					if (GUILayout.Button("Active", shortButtonStyle))
+					if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 					{
-						material.SetFloat("_ARSampler_AlphaOn", 0);
+						material.SetFloat(ShaderPropARSampler_AlphaOn, 0);
 					}
 				}
 				EditorGUILayout.EndHorizontal();
-				EditorGUI.indentLevel--;
+			}
+
+		}
+
+		private void ApplyQueueAndRenderType(Material material)
+		{
+			var stencilMode = (ToonStencilMode)material.GetInt(ShaderPropStencilMode);
+			if (_autoRenderQueue == 1)
+			{
+				material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Geometry;
+			}
+
+			const string OPAQUE = "Opaque";
+			const string TRANSPARENTCUTOUT = "TransparentCutOut";
+			const string TRANSPARENT = "Transparent";
+			const string RENDERTYPE = "RenderType";
+			const string IGNOREPROJECTION = "IgnoreProjection";
+			const string DO_IGNOREPROJECTION = "True";
+			const string DONT_IGNOREPROJECTION = "False";
+			var renderType = OPAQUE;
+			var ignoreProjection = DONT_IGNOREPROJECTION;
+
+			if (_Transparent_Setting == Transparent.On)
+			{
+				renderType = TRANSPARENT;
+				ignoreProjection = DO_IGNOREPROJECTION;
+			}
+			else
+			{
+				TransClippingMode transClippingMode = (TransClippingMode)material.GetInt(ShaderPropClippingMode);
+				if (transClippingMode == TransClippingMode.Off)
+				{
+				}
+				else
+				{
+					renderType = TRANSPARENTCUTOUT;
+
+				}
+			}
+
+			if (_autoRenderQueue == 1)
+			{
+				if (_Transparent_Setting == Transparent.On)
+				{
+					material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+				}
+				else if (stencilMode == ToonStencilMode.StencilMask)
+				{
+					material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest - 1;
+				}
+				else if (stencilMode == ToonStencilMode.StencilOut)
+				{
+					material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
+				}
+			}
+			else
+			{
+				material.renderQueue = _renderQueue;
+			}
+
+			material.SetOverrideTag(RENDERTYPE, renderType);
+			material.SetOverrideTag(IGNOREPROJECTION, ignoreProjection);
+		}
+
+		private void ApplyMatCapMode(Material material)
+		{
+			if (material.GetInt(ShaderPropClippingMode) == 0)
+			{
+				if (material.GetFloat(ShaderPropMatCap) == 1)
+				{
+					material.EnableKeyword(ShaderPropMatCap);
+				}
+				else
+				{
+					material.DisableKeyword(ShaderPropMatCap);
+				}
+			}
+			else
+			{
+				material.DisableKeyword(ShaderPropMatCap);
+			}
+		}
+
+		private void ApplyAngelRing(Material material)
+		{
+			int angelRingEnabled = material.GetInt(ShaderPropAngelRing);
+			if (angelRingEnabled == 0)
+			{
+				material.DisableKeyword(ShaderDefineANGELRING_ON);
+				material.EnableKeyword(ShaderDefineANGELRING_OFF);
+			}
+			else
+			{
+				material.EnableKeyword(ShaderDefineANGELRING_ON);
+				material.DisableKeyword(ShaderDefineANGELRING_OFF);
+			}
+		}
+
+		private void ApplyStencilMode(Material material)
+		{
+			ToonStencilMode mode = (ToonStencilMode)(material.GetInt(ShaderPropStencilMode));
+			switch (mode)
+			{
+				case ToonStencilMode.Off:
+					material.SetInt(ShaderPropStencilComp, (int)StencilCompFunction.Disabled);
+					material.SetInt(ShaderPropStencilOpPass, (int)StencilType.Keep);
+					material.SetInt(ShaderPropStencilOpFail, (int)StencilType.Keep);
+					break;
+				case ToonStencilMode.StencilMask:
+					material.SetInt(ShaderPropStencilComp, (int)StencilCompFunction.Always);
+					material.SetInt(ShaderPropStencilOpPass, (int)StencilType.Replace);
+					material.SetInt(ShaderPropStencilOpFail, (int)StencilType.Replace);
+					break;
+				case ToonStencilMode.StencilOut:
+					material.SetInt(ShaderPropStencilComp, (int)StencilCompFunction.NotEqual);
+					material.SetInt(ShaderPropStencilOpPass, (int)StencilType.Keep);
+					material.SetInt(ShaderPropStencilOpFail, (int)StencilType.Keep);
+					break;
+			}
+		}
+
+		private void ApplyClippingMode(Material material)
+		{
+			material.DisableKeyword(ShaderDefineIS_CLIPPING_OFF);
+			material.DisableKeyword(ShaderDefineIS_CLIPPING_MODE);
+			material.DisableKeyword(ShaderDefineIS_CLIPPING_TRANSMODE);
+			switch (material.GetInt(ShaderPropClippingMode))
+			{
+				case 0:
+					material.EnableKeyword(ShaderDefineIS_TRANSCLIPPING_OFF);
+					material.DisableKeyword(ShaderDefineIS_TRANSCLIPPING_ON);
+					break;
+				default:
+					material.DisableKeyword(ShaderDefineIS_TRANSCLIPPING_OFF);
+					material.EnableKeyword(ShaderDefineIS_TRANSCLIPPING_ON);
+					break;
+
 			}
 		}
 
 		private void GUI_Emissive(Material material)
 		{
-			GUILayout.Label("Emissive Tex × HDR Color", EditorStyles.boldLabel);
-			GUILayout.Label("(Bloom Post-Processing Effect necessary)");
+			GUILayout.Label("Bloom Post-Processing Effect Necessary", EditorStyles.boldLabel);
 			EditorGUILayout.Space();
 			m_MaterialEditor.TexturePropertySingleLine(Styles.emissiveTexText, emissive_Tex, emissive_Color);
 			m_MaterialEditor.TextureScaleOffsetProperty(emissive_Tex);
 
 			int _EmissiveMode_Setting = material.GetInt("_EMISSIVE");
-			if ((int)_EmissiveMode.SimpleEmissive == _EmissiveMode_Setting)
+			if ((int)EmissiveMode.SimpleEmissive == _EmissiveMode_Setting)
 			{
-				emissiveMode = _EmissiveMode.SimpleEmissive;
+				emissiveMode = EmissiveMode.SimpleEmissive;
 			}
-			else if ((int)_EmissiveMode.EmissiveAnimation == _EmissiveMode_Setting)
+			else if ((int)EmissiveMode.EmissiveAnimation == _EmissiveMode_Setting)
 			{
-				emissiveMode = _EmissiveMode.EmissiveAnimation;
+				emissiveMode = EmissiveMode.EmissiveAnimation;
 			}
 			EditorGUILayout.Space();
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Emissive Animation");
-
-			if (emissiveMode == _EmissiveMode.SimpleEmissive)
+			if (emissiveMode == EmissiveMode.SimpleEmissive)
 			{
-				if (GUILayout.Button("Off", shortButtonStyle))
+				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 				{
 					material.SetFloat("_EMISSIVE", 1);
 					material.EnableKeyword("_EMISSIVE_ANIMATION");
@@ -1518,7 +1737,7 @@ namespace ToonShade
 			}
 			else
 			{
-				if (GUILayout.Button("Active", shortButtonStyle))
+				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 				{
 					material.SetFloat("_EMISSIVE", 0);
 					material.EnableKeyword("_EMISSIVE_SIMPLE");
@@ -1527,26 +1746,25 @@ namespace ToonShade
 			}
 			EditorGUILayout.EndHorizontal();
 
-			if (emissiveMode == _EmissiveMode.EmissiveAnimation)
+			if (emissiveMode == EmissiveMode.EmissiveAnimation)
 			{
 				EditorGUI.indentLevel++;
-
 				EditorGUILayout.BeginHorizontal();
 				m_MaterialEditor.FloatProperty(base_Speed, "Base Speed (Time)");
 				if (!_SimpleUI)
 				{
-					if (material.GetFloat("_Is_ViewCoord_Scroll") == 0)
+					if (material.GetFloat(ShaderPropIs_ViewCoord_Scroll) == 0)
 					{
 						if (GUILayout.Button("UV Coord Scroll", shortButtonStyle))
 						{
-							material.SetFloat("_Is_ViewCoord_Scroll", 1);
+							material.SetFloat(ShaderPropIs_ViewCoord_Scroll, 1);
 						}
 					}
 					else
 					{
 						if (GUILayout.Button("View Coord Scroll", shortButtonStyle))
 						{
-							material.SetFloat("_Is_ViewCoord_Scroll", 0);
+							material.SetFloat(ShaderPropIs_ViewCoord_Scroll, 0);
 						}
 					}
 				}
@@ -1558,18 +1776,18 @@ namespace ToonShade
 
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("PingPong Move for Base");
-				if (material.GetFloat("_Is_PingPong_Base") == 0)
+				if (material.GetFloat(ShaderPropIs_PingPong_Base) == 0)
 				{
-					if (GUILayout.Button("Off", shortButtonStyle))
+					if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 					{
-						material.SetFloat("_Is_PingPong_Base", 1);
+						material.SetFloat(ShaderPropIs_PingPong_Base, 1);
 					}
 				}
 				else
 				{
-					if (GUILayout.Button("Active", shortButtonStyle))
+					if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 					{
-						material.SetFloat("_Is_PingPong_Base", 0);
+						material.SetFloat(ShaderPropIs_PingPong_Base, 0);
 					}
 				}
 				EditorGUILayout.EndHorizontal();
@@ -1580,24 +1798,23 @@ namespace ToonShade
 					EditorGUILayout.Space();
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.PrefixLabel("ColorShift with Time");
-
-					if (material.GetFloat("_Is_ColorShift") == 0)
+					if (material.GetFloat(ShaderPropIs_ColorShift) == 0)
 					{
-						if (GUILayout.Button("Off", shortButtonStyle))
+						if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 						{
-							material.SetFloat("_Is_ColorShift", 1);
+							material.SetFloat(ShaderPropIs_ColorShift, 1);
 						}
 					}
 					else
 					{
-						if (GUILayout.Button("Active", shortButtonStyle))
+						if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 						{
-							material.SetFloat("_Is_ColorShift", 0);
+							material.SetFloat(ShaderPropIs_ColorShift, 0);
 						}
 					}
 					EditorGUILayout.EndHorizontal();
 					EditorGUI.indentLevel++;
-					if (material.GetFloat("_Is_ColorShift") == 1)
+					if (material.GetFloat(ShaderPropIs_ColorShift) == 1)
 					{
 						m_MaterialEditor.ColorProperty(colorShift, "Destination Color");
 						m_MaterialEditor.FloatProperty(colorShift_Speed, "ColorShift Speed (Time)");
@@ -1608,23 +1825,23 @@ namespace ToonShade
 
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.PrefixLabel("ViewShift of Color");
-					if (material.GetFloat("_Is_ViewShift") == 0)
+					if (material.GetFloat(ShaderPropIs_ViewShift) == 0)
 					{
-						if (GUILayout.Button("Off", shortButtonStyle))
+						if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 						{
-							material.SetFloat("_Is_ViewShift", 1);
+							material.SetFloat(ShaderPropIs_ViewShift, 1);
 						}
 					}
 					else
 					{
-						if (GUILayout.Button("Active", shortButtonStyle))
+						if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 						{
-							material.SetFloat("_Is_ViewShift", 0);
+							material.SetFloat(ShaderPropIs_ViewShift, 0);
 						}
 					}
 					EditorGUILayout.EndHorizontal();
 					EditorGUI.indentLevel++;
-					if (material.GetFloat("_Is_ViewShift") == 1)
+					if (material.GetFloat(ShaderPropIs_ViewShift) == 1)
 					{
 						m_MaterialEditor.ColorProperty(viewShift, "ViewShift Color");
 					}
@@ -1634,27 +1851,74 @@ namespace ToonShade
 			EditorGUILayout.Space();
 		}
 
+		private void SetupOverDrawTransparentObject(Material material)
+		{
+			var srpDefaultLightModeTag = material.GetTag("LightMode", false, SRPDefaultLightModeName);
+			if (srpDefaultLightModeTag == SRPDefaultLightModeName)
+			{
+				material.SetShaderPassEnabled(SRPDefaultLightModeName, true);
+				material.SetInt(SRPDefaultColorMask, 0);
+				material.SetInt(SRPDefaultCullMode, (int)CullingMode.BackCulling);
+			}
+		}
+
+		private void SetuOutline(Material material)
+		{
+			var srpDefaultLightModeTag = material.GetTag("LightMode", false, SRPDefaultLightModeName);
+			if (srpDefaultLightModeTag == SRPDefaultLightModeName)
+			{
+				material.SetInt(SRPDefaultColorMask, 15);
+				material.SetInt(SRPDefaultCullMode, (int)CullingMode.FrontCulling);
+			}
+		}
+
 		private void GUI_Outline(Material material)
 		{
-			int _OutlineMode_Setting = material.GetInt("_OUTLINE");
-			if ((int)_OutlineMode.NormalDirection == _OutlineMode_Setting)
+			var srpDefaultLightModeTag = material.GetTag("LightMode", false, SRPDefaultLightModeName);
+			bool isOutlineEnabled = true;
+			if (srpDefaultLightModeTag == SRPDefaultLightModeName)
 			{
-				outlineMode = _OutlineMode.NormalDirection;
+				EditorGUILayout.BeginHorizontal();
+				EditorGUILayout.PrefixLabel("Outline");
+				if (isOutlineEnabled = material.GetShaderPassEnabled(SRPDefaultLightModeName))
+				{
+					if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
+					{
+						material.SetShaderPassEnabled(SRPDefaultLightModeName, false);
+					}
+				}
+				else
+				{
+					if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
+					{
+						material.SetShaderPassEnabled(SRPDefaultLightModeName, true);
+					}
+				}
+				EditorGUILayout.EndHorizontal();
 			}
-			else if ((int)_OutlineMode.PositionScaling == _OutlineMode_Setting)
+			if (!isOutlineEnabled)
 			{
-				outlineMode = _OutlineMode.PositionScaling;
+				return;
 			}
-			outlineMode = (_OutlineMode)EditorGUILayout.EnumPopup("Outline Mode", outlineMode);
-			if (outlineMode == _OutlineMode.NormalDirection)
+			int _OutlineMode_Setting = material.GetInt(ShaderPropOutline);
+			if ((int)OutlineMode.NormalDirection == _OutlineMode_Setting)
 			{
-				material.SetFloat("_OUTLINE", 0);
+				outlineMode = OutlineMode.NormalDirection;
+			}
+			else if ((int)OutlineMode.PositionScaling == _OutlineMode_Setting)
+			{
+				outlineMode = OutlineMode.PositionScaling;
+			}
+			outlineMode = (OutlineMode)EditorGUILayout.EnumPopup("Outline Mode", outlineMode);
+			if (outlineMode == OutlineMode.NormalDirection)
+			{
+				material.SetFloat(ShaderPropOutline, 0);
 				material.EnableKeyword("_OUTLINE_NML");
 				material.DisableKeyword("_OUTLINE_POS");
 			}
-			else if (outlineMode == _OutlineMode.PositionScaling)
+			else if (outlineMode == OutlineMode.PositionScaling)
 			{
-				material.SetFloat("_OUTLINE", 1);
+				material.SetFloat(ShaderPropOutline, 1);
 				material.EnableKeyword("_OUTLINE_POS");
 				material.DisableKeyword("_OUTLINE_NML");
 			}
@@ -1663,26 +1927,27 @@ namespace ToonShade
 			m_MaterialEditor.ColorProperty(outline_Color, "Outline Color");
 
 			EditorGUILayout.BeginHorizontal();
-			EditorGUILayout.PrefixLabel("Blend BaseColor to Outline");
-			if (material.GetFloat("_Is_BlendBaseColor") == 0)
+			EditorGUILayout.PrefixLabel("Blend BaseColor");
+			if (material.GetFloat(ShaderPropIs_BlendBaseColor) == 0)
 			{
-				if (GUILayout.Button("Off", shortButtonStyle))
+				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Is_BlendBaseColor", 1);
+					material.SetFloat(ShaderPropIs_BlendBaseColor, 1);
 				}
 			}
 			else
 			{
-				if (GUILayout.Button("Active", shortButtonStyle))
+				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Is_BlendBaseColor", 0);
+					material.SetFloat(ShaderPropIs_BlendBaseColor, 0);
 				}
 			}
 			EditorGUILayout.EndHorizontal();
 
 			m_MaterialEditor.TexturePropertySingleLine(Styles.outlineSamplerText, outline_Sampler);
-			m_MaterialEditor.FloatProperty(offset_Z, "Offset Outline with Camera Z-axis");
+			m_MaterialEditor.FloatProperty(offset_Z, "Camera Z-axis");
 
+			EditorGUILayout.Space();
 			if (!_SimpleUI)
 			{
 				_AdvancedOutline_Foldout = FoldoutSubMenu(_AdvancedOutline_Foldout, "● Advanced Outline Settings");
@@ -1690,47 +1955,47 @@ namespace ToonShade
 				{
 					EditorGUI.indentLevel++;
 					GUILayout.Label("Camera Distance for Outline Width");
-					m_MaterialEditor.FloatProperty(farthest_Distance, "● Farthest Distance to vanish");
-					m_MaterialEditor.FloatProperty(nearest_Distance, "● Nearest Distance to draw with Outline Width");
+					m_MaterialEditor.FloatProperty(farthest_Distance, "● Farthest Distance");
+					m_MaterialEditor.FloatProperty(nearest_Distance, "● Nearest Distance");
 					EditorGUI.indentLevel--;
 
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.PrefixLabel("Use Outline Texture");
-					if (material.GetFloat("_Is_OutlineTex") == 0)
+					if (material.GetFloat(ShaderPropIs_OutlineTex) == 0)
 					{
-						if (GUILayout.Button("Off", shortButtonStyle))
+						if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 						{
-							material.SetFloat("_Is_OutlineTex", 1);
+							material.SetFloat(ShaderPropIs_OutlineTex, 1);
 						}
 						EditorGUILayout.EndHorizontal();
 					}
 					else
 					{
-						if (GUILayout.Button("Active", shortButtonStyle))
+						if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 						{
-							material.SetFloat("_Is_OutlineTex", 0);
+							material.SetFloat(ShaderPropIs_OutlineTex, 0);
 						}
 						EditorGUILayout.EndHorizontal();
 						m_MaterialEditor.TexturePropertySingleLine(Styles.outlineTexText, outlineTex);
 					}
 
-					if (outlineMode == _OutlineMode.NormalDirection)
+					if (outlineMode == OutlineMode.NormalDirection)
 					{
 						EditorGUILayout.BeginHorizontal();
-						EditorGUILayout.PrefixLabel("Use Baked Normal for Outline");
-						if (material.GetFloat("_Is_BakedNormal") == 0)
+						EditorGUILayout.PrefixLabel("Use Baked Normal");
+						if (material.GetFloat(ShaderPropIs_BakedNormal) == 0)
 						{
-							if (GUILayout.Button("Off", shortButtonStyle))
+							if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 							{
-								material.SetFloat("_Is_BakedNormal", 1);
+								material.SetFloat(ShaderPropIs_BakedNormal, 1);
 							}
 							EditorGUILayout.EndHorizontal();
 						}
 						else
 						{
-							if (GUILayout.Button("Active", shortButtonStyle))
+							if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 							{
-								material.SetFloat("_Is_BakedNormal", 0);
+								material.SetFloat(ShaderPropIs_BakedNormal, 0);
 							}
 							EditorGUILayout.EndHorizontal();
 							m_MaterialEditor.TexturePropertySingleLine(Styles.bakedNormalOutlineText, bakedNormal);
@@ -1745,167 +2010,165 @@ namespace ToonShade
 			GUILayout.Label("Realtime LightColor Contribution to each colors", EditorStyles.boldLabel);
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Base Color");
-			if (material.GetFloat("_Is_LightColor_Base") == 0)
+
+			if (material.GetFloat(ShaderPropIsLightColor_Base) == 0)
 			{
-				if (GUILayout.Button("Off", shortButtonStyle))
+				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Is_LightColor_Base", 1);
+					material.SetFloat(ShaderPropIsLightColor_Base, 1);
 				}
 			}
 			else
 			{
-				if (GUILayout.Button("Active", shortButtonStyle))
+				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Is_LightColor_Base", 0);
+					material.SetFloat(ShaderPropIsLightColor_Base, 0);
 				}
 			}
 			EditorGUILayout.EndHorizontal();
 
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("1st ShadeColor");
-			if (material.GetFloat("_Is_LightColor_1st_Shade") == 0)
+			if (material.GetFloat(ShaderPropIs_LightColor_1st_Shade) == 0)
 			{
-				if (GUILayout.Button("Off", shortButtonStyle))
+				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Is_LightColor_1st_Shade", 1);
+					material.SetFloat(ShaderPropIs_LightColor_1st_Shade, 1);
 				}
 			}
 			else
 			{
-				if (GUILayout.Button("Active", shortButtonStyle))
+				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Is_LightColor_1st_Shade", 0);
+					material.SetFloat(ShaderPropIs_LightColor_1st_Shade, 0);
 				}
 			}
 			EditorGUILayout.EndHorizontal();
 
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("2nd ShadeColor");
-			if (material.GetFloat("_Is_LightColor_2nd_Shade") == 0)
+			if (material.GetFloat(ShaderPropIs_LightColor_2nd_Shade) == 0)
 			{
-				if (GUILayout.Button("Off", shortButtonStyle))
+				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Is_LightColor_2nd_Shade", 1);
+					material.SetFloat(ShaderPropIs_LightColor_2nd_Shade, 1);
 				}
 			}
 			else
 			{
-				if (GUILayout.Button("Active", shortButtonStyle))
+				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Is_LightColor_2nd_Shade", 0);
+					material.SetFloat(ShaderPropIs_LightColor_2nd_Shade, 0);
 				}
 			}
 			EditorGUILayout.EndHorizontal();
 
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("HighColor");
-			if (material.GetFloat("_Is_LightColor_HighColor") == 0)
+			if (material.GetFloat(ShaderPropIs_LightColor_HighColor) == 0)
 			{
-				if (GUILayout.Button("Off", shortButtonStyle))
+				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Is_LightColor_HighColor", 1);
+					material.SetFloat(ShaderPropIs_LightColor_HighColor, 1);
 				}
 			}
 			else
 			{
-				if (GUILayout.Button("Active", shortButtonStyle))
+				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Is_LightColor_HighColor", 0);
+					material.SetFloat(ShaderPropIs_LightColor_HighColor, 0);
 				}
 			}
 			EditorGUILayout.EndHorizontal();
 
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("RimLight");
-			if (material.GetFloat("_Is_LightColor_RimLight") == 0)
+			if (material.GetFloat(ShaderPropIs_LightColor_RimLight) == 0)
 			{
-				if (GUILayout.Button("Off", shortButtonStyle))
+				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Is_LightColor_RimLight", 1);
+					material.SetFloat(ShaderPropIs_LightColor_RimLight, 1);
 				}
 			}
 			else
 			{
-				if (GUILayout.Button("Active", shortButtonStyle))
+				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Is_LightColor_RimLight", 0);
+					material.SetFloat(ShaderPropIs_LightColor_RimLight, 0);
 				}
 			}
 			EditorGUILayout.EndHorizontal();
 
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Ap_RimLight");
-			if (material.GetFloat("_Is_LightColor_Ap_RimLight") == 0)
+			if (material.GetFloat(ShaderPropIs_LightColor_Ap_RimLight) == 0)
 			{
-				if (GUILayout.Button("Off", shortButtonStyle))
+				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Is_LightColor_Ap_RimLight", 1);
+					material.SetFloat(ShaderPropIs_LightColor_Ap_RimLight, 1);
 				}
 			}
 			else
 			{
-				if (GUILayout.Button("Active", shortButtonStyle))
+				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Is_LightColor_Ap_RimLight", 0);
+					material.SetFloat(ShaderPropIs_LightColor_Ap_RimLight, 0);
 				}
 			}
 			EditorGUILayout.EndHorizontal();
+
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("MatCap");
-
-			if (material.GetFloat("_Is_LightColor_MatCap") == 0)
+			if (material.GetFloat(ShaderPropIs_LightColor_MatCap) == 0)
 			{
-				if (GUILayout.Button("Off", shortButtonStyle))
+				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Is_LightColor_MatCap", 1);
+					material.SetFloat(ShaderPropIs_LightColor_MatCap, 1);
 				}
 			}
 			else
 			{
-				if (GUILayout.Button("Active", shortButtonStyle))
+				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Is_LightColor_MatCap", 0);
+					material.SetFloat(ShaderPropIs_LightColor_MatCap, 0);
 				}
 			}
 			EditorGUILayout.EndHorizontal();
 
-			if (material.HasProperty("_AngelRing"))
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayout.PrefixLabel("Angel Ring");
+			if (material.GetFloat(ShaderPropIs_LightColor_AR) == 0)
 			{
-				EditorGUILayout.BeginHorizontal();
-				EditorGUILayout.PrefixLabel("Angel Ring");
-				if (material.GetFloat("_Is_LightColor_AR") == 0)
+				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 				{
-					if (GUILayout.Button("Off", shortButtonStyle))
-					{
-						material.SetFloat("_Is_LightColor_AR", 1);
-					}
+					material.SetFloat(ShaderPropIs_LightColor_AR, 1);
 				}
-				else
-				{
-					if (GUILayout.Button("Active", shortButtonStyle))
-					{
-						material.SetFloat("_Is_LightColor_AR", 0);
-					}
-				}
-				EditorGUILayout.EndHorizontal();
 			}
+			else
+			{
+				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
+				{
+					material.SetFloat(ShaderPropIs_LightColor_AR, 0);
+				}
+			}
+			EditorGUILayout.EndHorizontal();
 
-			if (material.HasProperty("_OUTLINE"))
+			if (material.HasProperty(ShaderPropOutline))
 			{
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("Outline");
-				if (material.GetFloat("_Is_LightColor_Outline") == 0)
+				if (material.GetFloat(ShaderPropIs_LightColor_Outline) == 0)
 				{
-					if (GUILayout.Button("Off", shortButtonStyle))
+					if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 					{
-						material.SetFloat("_Is_LightColor_Outline", 1);
+						material.SetFloat(ShaderPropIs_LightColor_Outline, 1);
 					}
 				}
 				else
 				{
-					if (GUILayout.Button("Active", shortButtonStyle))
+					if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 					{
-						material.SetFloat("_Is_LightColor_Outline", 0);
+						material.SetFloat(ShaderPropIs_LightColor_Outline, 0);
 					}
 				}
 				EditorGUILayout.EndHorizontal();
@@ -1920,47 +2183,49 @@ namespace ToonShade
 
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("SceneLights Hi-Cut Filter");
-			if (material.GetFloat("_Is_Filter_LightColor") == 0)
+			//GUILayout.Space(60);
+			if (material.GetFloat(ShaderPropIs_Filter_LightColor) == 0)
 			{
-				if (GUILayout.Button("Off", shortButtonStyle))
+				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Is_Filter_LightColor", 1);
-					material.SetFloat("_Is_LightColor_Base", 1);
-					material.SetFloat("_Is_LightColor_1st_Shade", 1);
-					material.SetFloat("_Is_LightColor_2nd_Shade", 1);
-					if (material.HasProperty("_OUTLINE"))
+					material.SetFloat(ShaderPropIs_Filter_LightColor, 1);
+					material.SetFloat(ShaderPropIsLightColor_Base, 1);
+					material.SetFloat(ShaderPropIs_LightColor_1st_Shade, 1);
+					material.SetFloat(ShaderPropIs_LightColor_2nd_Shade, 1);
+					if (material.HasProperty(ShaderPropOutline))
 					{
-						material.SetFloat("_Is_LightColor_Outline", 1);
+						material.SetFloat(ShaderPropIs_LightColor_Outline, 1);
 					}
 				}
 			}
 			else
 			{
-				if (GUILayout.Button("Active", shortButtonStyle))
+				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Is_Filter_LightColor", 0);
+					material.SetFloat(ShaderPropIs_Filter_LightColor, 0);
 				}
 			}
 			EditorGUILayout.EndHorizontal();
 
 			EditorGUILayout.BeginHorizontal();
 			EditorGUILayout.PrefixLabel("Built-in Light Direction");
-			if (material.GetFloat("_Is_BLD") == 0)
+			//GUILayout.Space(60);
+			if (material.GetFloat(ShaderPropIs_BLD) == 0)
 			{
-				if (GUILayout.Button("Off", shortButtonStyle))
+				if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Is_BLD", 1);
+					material.SetFloat(ShaderPropIs_BLD, 1);
 				}
 			}
 			else
 			{
-				if (GUILayout.Button("Active", shortButtonStyle))
+				if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 				{
-					material.SetFloat("_Is_BLD", 0);
+					material.SetFloat(ShaderPropIs_BLD, 0);
 				}
 			}
 			EditorGUILayout.EndHorizontal();
-			if (material.GetFloat("_Is_BLD") == 1)
+			if (material.GetFloat(ShaderPropIs_BLD) == 1)
 			{
 				GUILayout.Label("Built-in Light Direction Settings");
 				EditorGUI.indentLevel++;
@@ -1969,18 +2234,18 @@ namespace ToonShade
 
 				EditorGUILayout.BeginHorizontal();
 				EditorGUILayout.PrefixLabel("● Inverse Z-Axis Direction");
-				if (material.GetFloat("_Inverse_Z_Axis_BLD") == 0)
+				if (material.GetFloat(ShaderPropInverse_Z_Axis_BLD) == 0)
 				{
-					if (GUILayout.Button("Off", shortButtonStyle))
+					if (GUILayout.Button(STR_OFFSTATE, shortButtonStyle))
 					{
-						material.SetFloat("_Inverse_Z_Axis_BLD", 1);
+						material.SetFloat(ShaderPropInverse_Z_Axis_BLD, 1);
 					}
 				}
 				else
 				{
-					if (GUILayout.Button("Active", shortButtonStyle))
+					if (GUILayout.Button(STR_ONSTATE, shortButtonStyle))
 					{
-						material.SetFloat("_Inverse_Z_Axis_BLD", 0);
+						material.SetFloat(ShaderPropInverse_Z_Axis_BLD, 0);
 					}
 				}
 				EditorGUILayout.EndHorizontal();
@@ -1989,6 +2254,30 @@ namespace ToonShade
 			EditorGUILayout.Space();
 		}
 
+		public void DoPopup(GUIContent label, MaterialProperty property, string[] options)
+		{
+			DoPopup(label, property, options, m_MaterialEditor);
+		}
+
+		public static void DoPopup(GUIContent label, MaterialProperty property, string[] options, MaterialEditor materialEditor)
+		{
+			if (property == null)
+			{
+				throw new System.ArgumentNullException("property");
+			}
+
+			EditorGUI.showMixedValue = property.hasMixedValue;
+			var mode = property.floatValue;
+			EditorGUI.BeginChangeCheck();
+			mode = EditorGUILayout.Popup(label, (int)mode, options);
+			if (EditorGUI.EndChangeCheck())
+			{
+				materialEditor.RegisterPropertyChangeUndo(label.text);
+				property.floatValue = mode;
+			}
+
+			EditorGUI.showMixedValue = false;
+		}
 	}
 
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace Unity.Animations.SpringBones
 {
+#if UNITY_EDITOR
     [CustomEditor(typeof(SpringBonePivot))]
     [CanEditMultipleObjects]
     public class SpringBonePivotInspector : Editor
@@ -58,4 +59,5 @@ namespace Unity.Animations.SpringBones
                 .ToArray();
         }
     }
+#endif
 }

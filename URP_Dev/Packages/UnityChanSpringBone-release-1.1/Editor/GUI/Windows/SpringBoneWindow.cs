@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Unity.Animations.SpringBones
 {
+#if UNITY_EDITOR
     public class SpringBoneWindow : EditorWindow
     {
         [MenuItem("UTJ/スプリングボーン窓")]
@@ -300,4 +301,5 @@ namespace Unity.Animations.SpringBones
             }
         }
     }
+#endif
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Unity.Animations.SpringBones
 {
+#if UNITY_EDITOR
     public class LoadSpringBoneSetupWindow : EditorWindow
     {
         public static void ShowWindow()
@@ -230,4 +231,5 @@ namespace Unity.Animations.SpringBones
             Close();
         }
     }
+#endif
 }

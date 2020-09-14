@@ -7,6 +7,7 @@ namespace Unity.Animations.SpringBones
     {
         public class PropertyInfo
         {
+#if UNITY_EDITOR
             public SerializedProperty serializedProperty;
 
             public PropertyInfo(string newName, string labelText)
@@ -28,6 +29,7 @@ namespace Unity.Animations.SpringBones
             protected GUIContent label;
 
             private string name;
+#endif
         }
     }
 }

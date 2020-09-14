@@ -6,7 +6,8 @@ using UnityEngine;
 
 namespace Unity.Animations.SpringBones
 {
-    public class FindGameObjectsWindow : EditorWindow
+#if UNITY_EDITOR
+	public class FindGameObjectsWindow : EditorWindow
     {
         [MenuItem("UTJ/名前で選択窓")]
         public static void ShowWindow()
@@ -305,4 +306,5 @@ namespace Unity.Animations.SpringBones
             isInitialShow = true;
         }
     }
+#endif
 }

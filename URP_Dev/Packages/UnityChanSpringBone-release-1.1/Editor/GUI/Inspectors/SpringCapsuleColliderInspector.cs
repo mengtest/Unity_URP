@@ -3,7 +3,8 @@ using UnityEditor;
 
 namespace Unity.Animations.SpringBones
 {
-    [CustomEditor(typeof(SpringCapsuleCollider))]
+#if UNITY_EDITOR
+	[CustomEditor(typeof(SpringCapsuleCollider))]
     [CanEditMultipleObjects]
     public class SpringCapsuleColliderInspector : Editor
     {
@@ -22,4 +23,5 @@ namespace Unity.Animations.SpringBones
 
         private SpringColliderBoneSelector boneSelector;
     }
+#endif
 }

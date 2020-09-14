@@ -7,7 +7,8 @@ namespace Unity.Animations.SpringBones
     {
         public class AngleLimitPropertyInfo : PropertyInfo
         {
-            public AngleLimitPropertyInfo(string newName, string labelText)
+#if UNITY_EDITOR
+			public AngleLimitPropertyInfo(string newName, string labelText)
                 : base(newName, labelText)
             {
                 minSlider = new FloatSlider("下限", 0f, -180f);
@@ -89,6 +90,7 @@ namespace Unity.Animations.SpringBones
             private FloatSlider minSlider;
             private FloatSlider maxSlider;
             private bool updateValuesTogether = false;
+#endif
         }
     }
 }

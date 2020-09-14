@@ -6,6 +6,7 @@ using Unity.Animations.SpringBones.GameObjectExtensions;
 
 namespace Unity.Animations.SpringBones
 {
+#if UNITY_EDITOR
     public class MirrorSpringBoneWindow : EditorWindow
     {
         public static void ShowWindow()
@@ -322,4 +323,5 @@ namespace Unity.Animations.SpringBones
             AcquireBonesFromSelection();
         }
     }
+#endif
 }

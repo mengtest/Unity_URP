@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Unity.Animations.SpringBones
 {
+#if UNITY_EDITOR
     using SpringManagerButton = SpringManagerInspector.InspectorButton<SpringManager>;
 
     [CustomEditor(typeof(SpringManager))]
@@ -76,4 +77,5 @@ namespace Unity.Animations.SpringBones
             SpringBoneSetup.FindAndAssignSpringBones(manager, true);
         }
     }
+#endif
 }
