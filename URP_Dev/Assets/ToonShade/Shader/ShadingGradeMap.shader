@@ -9,8 +9,8 @@ Shader "ToonShade/ShadingGradeMap"
 		[Enum(OFF,0, StencilOut,1, StencilMask,2)] _StencilMode("StencilMode",int) = 0
 		_StencilComp("Stencil Comparison", Float) = 8
 		_StencilNo("Stencil Ref Main", Range(0, 255)) = 0
-		_StencilOpPass("Stencil Operation", Float) = 0
-		_StencilOpFail("Stencil Operation", Float) = 0
+		_StencilOpPass("Stencil OpPass", Float) = 0
+		_StencilOpFail("Stencil OpFail", Float) = 0
 
 		// 0 : _ClippingMode_Off 1 : _ClippingMode_ON
 		[Enum(OFF,0, ON,1)] _TransparentEnabled("Transparent Mode", int) = 0
@@ -48,10 +48,16 @@ Shader "ToonShade/ShadingGradeMap"
 		[Toggle(_)] _Is_NormalMapToBase("Is_NormalMapToBase", Float) = 0
 		[Toggle(_)] _Set_SystemShadowsToBase("Set_SystemShadowsToBase", Float) = 1
 		_Tweak_SystemShadowsLevel("Tweak_SystemShadowsLevel", Range(-0.5, 0.5)) = 0
+
 		_BaseColor_Step("BaseColor_Step", Range(0, 1)) = 0.5
 		_BaseShade_Feather("Base/Shade_Feather", Range(0.0001, 1)) = 0.0001
 		_ShadeColor_Step("ShadeColor_Step", Range(0, 1)) = 0
 		_1st2nd_Shades_Feather("1st/2nd_Shades_Feather", Range(0.0001, 1)) = 0.0001
+		_Set_1st_ShadePosition("1st ShadePosition", 2D) = "white" {}
+		_Set_2nd_ShadePosition("2nd ShadePosition", 2D) = "white" {}
+		_ShadingGradeMap("ShadingGradeMap", 2D) = "white" {}
+		_Tweak_ShadingGradeMapLevel("Tweak ShadingGradeMapLevel", Range(-0.5, 0.5)) = 0
+		_BlurLevelSGM("Blur Level of ShadingGradeMap", Range(0, 10)) = 0
 
 		[Header(Realtime LightColor Contribution to each colors)]
 		[Toggle(_)] _Is_LightColor_Base("Is_LightColor_Base", Float) = 1
@@ -71,69 +77,68 @@ Shader "ToonShade/ShadingGradeMap"
 		[HideInInspector] _2nd_ShadeColor_Step("2nd_ShadeColor_Step", Range(0, 1)) = 0
 		[HideInInspector] _2nd_ShadeColor_Feather("2nd_ShadeColor_Feather", Range(0.0001, 1)) = 0.0001
 
-		_StepOffset("Step_Offset (ForwardAdd Only)", Range(-0.5, 0.5)) = 0
-		[Toggle(_)] _Is_Filter_HiCutPointLightColor("PointLights HiCut_Filter (ForwardAdd Only)", Float) = 1
+		[Header(Foward Delta)]
+		_StepOffset("Step ShadeOffset", Range(-0.5, 0.5)) = 0
+		[Toggle(_)] _Is_Filter_HiCutPointLightColor("PointLights HiCut Filter", Float) = 1
 
-		_Set_1st_ShadePosition("Set_1st_ShadePosition", 2D) = "white" {}
-		_Set_2nd_ShadePosition("Set_2nd_ShadePosition", 2D) = "white" {}
-		_ShadingGradeMap("ShadingGradeMap", 2D) = "white" {}
-		_Tweak_ShadingGradeMapLevel("Tweak_ShadingGradeMapLevel", Range(-0.5, 0.5)) = 0
-		_BlurLevelSGM("Blur Level of ShadingGradeMap", Range(0, 10)) = 0
-
+		[Header(HighColor Setting)]
 		_HighColor("HighColor", Color) = (0,0,0,1)
 		_HighColor_Tex("HighColor_Tex", 2D) = "white" {}
-		[Toggle(_)] _Is_NormalMapToHighColor("Is_NormalMapToHighColor", Float) = 0
 		_HighColor_Power("HighColor_Power", Range(0, 1)) = 0
-		[Toggle(_)] _Is_SpecularToHighColor("Is_SpecularToHighColor", Float) = 0
-		[Toggle(_)] _Is_BlendAddToHiColor("Is_BlendAddToHiColor", Float) = 0
-		[Toggle(_)] _Is_UseTweakHighColorOnShadow("Is_UseTweakHighColorOnShadow", Float) = 0
 		_TweakHighColorOnShadow("TweakHighColorOnShadow", Range(0, 1)) = 0
 		_Set_HighColorMask("Set_HighColorMask", 2D) = "white" {}
 		_Tweak_HighColorMaskLevel("Tweak_HighColorMaskLevel", Range(-1, 1)) = 0
+		[Toggle(_)] _Is_NormalMapToHighColor("_Is_NormalMapToHighColor", Float) = 0
+		[Toggle(_)] _Is_SpecularToHighColor("_Is_SpecularToHighColor", Float) = 0
+		[Toggle(_)] _Is_BlendAddToHiColor("_Is_BlendAddToHiColor", Float) = 0
+		[Toggle(_)] _Is_UseTweakHighColorOnShadow("_Is_UseTweakHighColorOnShadow", Float) = 0
 
+		[Header(RimLight Setting)]
 		[Toggle(_)] _RimLight("RimLight", Float) = 0
 		_RimLightColor("RimLightColor", Color) = (1,1,1,1)
-		[Toggle(_)] _Is_NormalMapToRimLight("Is_NormalMapToRimLight", Float) = 0
 		_RimLight_Power("RimLight_Power", Range(0, 1)) = 0.1
 		_RimLight_InsideMask("RimLight_InsideMask", Range(0.0001, 1)) = 0.0001
-		[Toggle(_)] _RimLight_FeatherOff("RimLight_FeatherOff", Float) = 0
-		[Toggle(_)] _LightDirection_MaskOn("LightDirection_MaskOn", Float) = 0
 		_Tweak_LightDirection_MaskLevel("Tweak_LightDirection_MaskLevel", Range(0, 0.5)) = 0
-		[Toggle(_)] _Add_Antipodean_RimLight("Add_Antipodean_RimLight", Float) = 0
 		_Ap_RimLightColor("Ap_RimLightColor", Color) = (1,1,1,1)
-
 		_Ap_RimLight_Power("Ap_RimLight_Power", Range(0, 1)) = 0.1
-		[Toggle(_)] _Ap_RimLight_FeatherOff("Ap_RimLight_FeatherOff", Float) = 0
 		_Set_RimLightMask("Set_RimLightMask", 2D) = "white" {}
 		_Tweak_RimLightMaskLevel("Tweak_RimLightMaskLevel", Range(-1, 1)) = 0
+		[Toggle(_)] _Is_NormalMapToRimLight("Is_NormalMapToRimLight", Float) = 0
+		[Toggle(_)] _Is_RimLight_FeatherOff("Is_RimLight_FeatherOff", Float) = 0
+		[Toggle(_)] _Is_LightDirection_MaskOn("Is_LightDirection_MaskOn", Float) = 0
+		[Toggle(_)] _Is_Antipodean_RimLight("Is_Add_Antipodean_RimLight", Float) = 0
+		[Toggle(_)] _Is_ApRimLight_FeatherOff("Is_Ap_RimLight_FeatherOff", Float) = 0
 
+		[Header(MatCap Setting)]
 		[Toggle(_)] _MatCap("MatCap", Float) = 0
 		_MatCap_Sampler("MatCap_Sampler", 2D) = "black" {}
 		_BlurLevelMatcap("Blur Level of MatCap_Sampler", Range(0, 10)) = 0
 		_MatCapColor("MatCapColor", Color) = (1,1,1,1)
-		[Toggle(_)] _Is_BlendAddToMatCap("Is_BlendAddToMatCap", Float) = 1
 		_Tweak_MatCapUV("Tweak_MatCapUV", Range(-0.5, 0.5)) = 0
 		_Rotate_MatCapUV("Rotate_MatCapUV", Range(-1, 1)) = 0
-		[Toggle(_)] _CameraRolling_Stabilizer("Activate CameraRolling_Stabilizer", Float) = 0
-		[Toggle(_)] _Is_NormalMapForMatCap("Is_NormalMapForMatCap", Float) = 0
 		_NormalMapForMatCap("NormalMapForMatCap", 2D) = "bump" {}
 		_BumpScaleMatcap("Scale for NormalMapforMatCap", Range(0, 1)) = 1
 		_Rotate_NormalMapForMatCapUV("Rotate_NormalMapForMatCapUV", Range(-1, 1)) = 0
-		[Toggle(_)] _Is_UseTweakMatCapOnShadow("Is_UseTweakMatCapOnShadow", Float) = 0
 		_TweakMatCapOnShadow("TweakMatCapOnShadow", Range(0, 1)) = 0
 		_Set_MatcapMask("Set_MatcapMask", 2D) = "white" {}
 		_Tweak_MatcapMaskLevel("Tweak_MatcapMaskLevel", Range(-1, 1)) = 0
-		[Toggle(_)] _Inverse_MatcapMask("Inverse_MatcapMask", Float) = 0
+		[Toggle(_)] _Is_BlendAddToMatCap("Is_BlendAddToMatCap", Float) = 1
+		[Toggle(_)] _Is_CameraRolling("CameraRolling ", Float) = 0
+		[Toggle(_)] _Is_NormalMapForMatCap("Is_NormalMapForMatCap", Float) = 0
+		[Toggle(_)] _Is_UseTweakMatCapOnShadow("Is_UseTweakMatCapOnShadow", Float) = 0
+		[Toggle(_)] _Is_InverseMatcapMask("Inverse_MatcapMask", Float) = 0
 		[Toggle(_)] _Is_Ortho("Orthographic Projection for MatCap", Float) = 0
 
+		[Header(AngelRing Setting)]
 		[Toggle(_)] _AngelRing("AngelRing", Float) = 0
 		_AngelRing_Sampler("AngelRing_Sampler", 2D) = "black" {}
 		_AngelRing_Color("AngelRing_Color", Color) = (1,1,1,1)
 		_AR_OffsetU("AR_OffsetU", Range(0, 0.5)) = 0
 		_AR_OffsetV("AR_OffsetV", Range(0, 1)) = 0.3
-		[Toggle(_)] _ARSampler_AlphaOn("ARSampler_AlphaOn", Float) = 0
+		[Toggle(_)] _Is_AngelRingAlphaOn("AngelRing AlphaOn", Float) = 0
 
-		[Enum(OFF, 0, ON, 1)] _EMISSIVE("EMISSIVE MODE", Float) = 0
+		[Header(Emissive Setting)]
+		[Toggle(_)] _Emissive("Emissive", Float) = 0
 		_Emissive_Tex("Emissive_Tex", 2D) = "white" {}
 		[HDR]_Emissive_Color("Emissive_Color", Color) = (0,0,0,1)
 		_Base_Speed("Base_Speed", Float) = 0
@@ -148,19 +153,22 @@ Shader "ToonShade/ShadingGradeMap"
 		[HDR]_ViewShift("ViewSift", Color) = (0,0,0,1)
 		[Toggle(_)] _Is_ViewCoord_Scroll("Is_ViewCoord_Scroll", Float) = 0
 
+		[Header(Outline Setting)]
 		[KeywordEnum(NML, POS)] _OUTLINE("OUTLINE MODE", Float) = 0
-		_Outline_Width("Outline_Width", Float) = 0
-		_Outline_Sampler("Outline_Sampler", 2D) = "white" {}
-		_Outline_Color("Outline_Color", Color) = (0.5,0.5,0.5,1)
+		_Outline_Width("Outline Width", Float) = 0
+		_Outline_Sampler("Outline Sampler", 2D) = "white" {}
+		_Outline_Color("Outline Color", Color) = (0.5,0.5,0.5,1)
+		_OutlineTex("Outline Texture", 2D) = "white" {}
+		_Offset_Z("Camera Forward_Offset", Float) = 0
+		_BakedNormal("Baked Normal Outline", 2D) = "white" {}
 		[Toggle(_)] _Is_BlendBaseColor("Is_BlendBaseColor", Float) = 0
 		[Toggle(_)] _Is_OutlineTex("Is_OutlineTex", Float) = 0
-		_OutlineTex("OutlineTex", 2D) = "white" {}
-		_Offset_Z("Offset_Camera_Z", Float) = 0
 		[Toggle(_)] _Is_BakedNormal("Is_BakedNormal", Float) = 0
-		_BakedNormal("Baked Normal for Outline", 2D) = "white" {}
 
+		[Header(Environment)]
 		_GI_Intensity("GI_Intensity", Range(0, 1)) = 0
 		_Unlit_Intensity("Unlit_Intensity", Range(0.001, 4)) = 1
+
 		//[Toggle(_)] _Is_Filter_LightColor("VRChat : SceneLights HiCut_Filter", Float) = 0
 		//[Toggle(_)] _Is_BLD("Advanced : Activate Built-in Light Direction", Float) = 0
 		//_Offset_X_Axis_BLD("Offset X-Axis (Built-in Light Direction)", Range(-1, 1)) = -0.05

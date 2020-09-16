@@ -6,65 +6,72 @@ namespace ToonShade
 
 	public static class ToonShadeDifinition
 	{
+		// pragma define
 		public static string ShaderDefineANGELRING_ON = "_ANGELRING_ON";
 		public static string ShaderDefineANGELRING_OFF = "_ANGELRING_OFF";
-
 		public static string ShaderDefineEMISSIVE_ON = "_EMISSIVE_ON";
 		public static string ShaderDefineEMISSIVE_OFF = "_EMISSIVE_OFF";
-
 		public static string ShaderDefineRAYTRACING_ON = "_RAYTRACINGSHADOW_ON";
-
 		public static string ShaderDefineIS_TRANSCLIPPING_OFF = "_IS_TRANSCLIPPING_OFF";
 		public static string ShaderDefineIS_TRANSCLIPPING_ON = "_IS_TRANSCLIPPING_ON";
-
 		public static string ShaderDefineIS_OUTLINE_CLIPPING_NO = "_IS_OUTLINE_CLIPPING_NO";
 		public static string ShaderDefineIS_OUTLINE_CLIPPING_YES = "_IS_OUTLINE_CLIPPING_YES";
-
 		public static string ShaderDefineIS_CLIPPING_OFF = "_IS_CLIPPING_OFF";
 		public static string ShaderDefineIS_CLIPPING_MODE = "_IS_CLIPPING_MODE";
 		public static string ShaderDefineIS_CLIPPING_TRANSMODE = "_IS_CLIPPING_TRANSMODE";
 
-		public static string ShaderPropEmissive = "_EMISSIVE";
-		public static string ShaderPropAngelRing = "_AngelRing";
-		public static string ShaderPropRTHS = "_RTHS";
-		public static string ShaderPropMatCap = "_MatCap";
-
-		public static string ShaderPropClippingLevel = "_ClippingLevel";
-
-		public static string ShaderPropClippingMode = "_ClippingMode";
-		public static string ShaderPropClippingMask = "_ClippingMask";
-		public static string ShaderPropTransparentEnabled = "_TransparentEnabled";
-
+		// Props
 		public static string ShaderPropSimpleUI = "_simpleUI";
 		public static string ShaderPropAutoRenderQueue = "_AutoRenderQueue";
 
+		// Stencil Mask | Out
 		public static string ShaderPropStencilMode = "_StencilMode";
-		public static string ShaderPropStencilNo = "_StencilNo";
 		public static string ShaderPropStencilComp = "_StencilComp";
+		public static string ShaderPropStencilNo = "_StencilNo";
 		public static string ShaderPropStencilOpPass = "_StencilOpPass";
 		public static string ShaderPropStencilOpFail = "_StencilOpFail";
-		public static string ShaderPropStencilWriteMask = "_StencilWriteMask";
-		public static string ShaderPropStencilReadMask = "_StencilReadMask";
+		public static string ShaderPropTransparentEnabled = "_TransparentEnabled";
+		public static string ShaderPropClippingMode = "_ClippingMode";
+		public static string ShaderPropCullingMode = "_CullMode";
+		public static string ShaderPropZWriteMode = "_ZWriteMode";
+		public static string ShaderPropZOverDrawMode = "_ZOverDrawMode";
+		public static string ShaderPropColorMask = "_SPRDefaultUnlitColorMask";
+		public static string ShaderPropOutlineCullMode = "_SRPDefaultUnlitColMode";
 
-		public static string ShaderPropOutline = "_OUTLINE";
-
-		public static string ShaderPropNormalMapToHighColor = "_Is_NormalMapToHighColor";
-		public static string ShaderPropIsNormalMapToRimLight = "_Is_NormalMapToRimLight";
-		public static string ShaderPropSetSystemShadowsToBase = "_Set_SystemShadowsToBase";
-
-		public static string ShaderPropStepOffset = "_StepOffset";
-		public static string ShaderPropIsFilterHiCutPointLightColor = "_Is_Filter_HiCutPointLightColor";
+		// Cutout
+		public static string ShaderPropClippingMask = "_ClippingMask";
 		public static string ShaderPropInverseClipping = "_Inverse_Clipping";
+		public static string ShaderPropClippingLevel = "_ClippingLevel";
+		public static string ShaderPropTweakTransparency = "_Tweak_transparency";
 		public static string ShaderPropIsBaseMapAlphaAsClippingMask = "_IsBaseMapAlphaAsClippingMask";
 
-		public static string ShaderPropCameraRolling_Stabilizer = "_CameraRolling_Stabilizer";
-		public static string ShaderPropIs_Ortho = "_Is_Ortho";
-		public static string ShaderPropGI_Intensity = "_GI_Intensity";
-		public static string ShaderPropUnlit_Intensity = "_Unlit_Intensity";
+		// Basic
+		public static string ShaderPropMainTex = "_MainTex";
+		public static string ShaderPropBaseColor = "_BaseColor";
+		public static string ShaderProp1stShadeMap = "_1st_ShadeMap";
+		public static string ShaderPropUse_BaseAs1st = "_Use_BaseAs1st";
+		public static string ShaderProp1stShadeColor = "_1st_ShadeColor";
+		public static string ShaderProp2ndShadeMap = "_2nd_ShadeMap";
+		public static string ShaderPropUse_1stAs2nd = "_Use_1stAs2nd";
+		public static string ShaderProp2ndShadeColor = "_2nd_ShadeColor";
 
-		public static string ShaderPropIs_Filter_LightColor = "_Is_Filter_LightColor";
+		public static string ShaderPropNormalMap = "_NormalMap";
+		public static string ShaderPropBumpScale = "_BumpScale";
+		public static string ShaderPropIs_NormalMapToBase = "_Is_NormalMapToBase";
+		public static string ShaderPropSetSystemShadowsToBase = "_Set_SystemShadowsToBase";
+		public static string ShaderPropTweakSystemShadowsLevel = "_Tweak_SystemShadowsLevel";
 
+		public static string ShaderPropBaseColor_Step = "_BaseColor_Step";
+		public static string ShaderPropBaseShade_Feather = "_BaseShade_Feather";
+		public static string ShaderPropShadeColor_Step = "_ShadeColor_Step";
+		public static string ShaderProp1st2nd_Shades_Feather = "_1st2nd_Shades_Feather";
+		public static string ShaderPropSet1stShadePosition = "_Set_1st_ShadePosition";
+		public static string ShaderPropSet2ndShadePosition = "_Set_2nd_ShadePosition";
+		public static string ShaderPropShadingGradeMap = "_ShadingGradeMap";
+		public static string ShaderPropTweakShadingGradeMapLevel = "_Tweak_ShadingGradeMapLevel";
+		public static string ShaderPropBlurLevel = "_BlurLevelSGM";
 
+		// Realtime LightColor Contribution to each colors
 		public static string ShaderPropIs_LightColor_Base = "_Is_LightColor_Base";
 		public static string ShaderPropIs_LightColor_1st_Shade = "_Is_LightColor_1st_Shade";
 		public static string ShaderPropIs_LightColor_2nd_Shade = "_Is_LightColor_2nd_Shade";
@@ -75,52 +82,118 @@ namespace ToonShade
 		public static string ShaderPropIs_LightColor_AR = "_Is_LightColor_AR";
 		public static string ShaderPropIs_LightColor_Outline = "_Is_LightColor_Outline";
 
-		public static string ShaderPropInverse_MatcapMask = "_Inverse_MatcapMask";
-		public static string ShaderPropUse_BaseAs1st = "_Use_BaseAs1st";
-		public static string ShaderPropUse_1stAs2nd = "_Use_1stAs2nd";
-		public static string ShaderPropIs_NormalMapToBase = "_Is_NormalMapToBase";
-		public static string ShaderPropIs_ColorShift = "_Is_ColorShift";
-		public static string ShaderPropRimLight = "_RimLight";
-		public static string ShaderPropRimLight_FeatherOff = "_RimLight_FeatherOff";
-		public static string ShaderPropAp_RimLight_FeatherOff = "_Ap_RimLight_FeatherOff";
-		public static string ShaderPropIs_BlendAddToMatCap = "_Is_BlendAddToMatCap";
-		public static string ShaderPropARSampler_AlphaOn = "_ARSampler_AlphaOn";
-		public static string ShaderPropIs_UseTweakHighColorOnShadow = "_Is_UseTweakHighColorOnShadow";
+		// HideInInspector
+		public static string ShaderPropBaseMap = "_BaseMap";
+		public static string ShaderPropColor = "_Color";
+		public static string ShaderProp1st_ShadeColor_Step = "_1st_ShadeColor_Step";
+		public static string ShaderProp1st_ShadeColor_Feather = "_1st_ShadeColor_Feather";
+		public static string ShaderProp2nd_ShadeColor_Step = "_2nd_ShadeColor_Step";
+		public static string ShaderProp2nd_ShadeColor_Feather = "_2nd_ShadeColor_Feather";
 
+		// Forward Delta
+		public static string ShaderPropStepOffset = "_StepOffset";
+		public static string ShaderPropIsFilterHiCutPointLightColor = "_Is_Filter_HiCutPointLightColor";
+
+		// HighColor
+		public static string ShaderPropHighColor = "_HighColor";
+		public static string ShaderPropHighColorTex = "_HighColor_Tex";
+		public static string ShaderPropHighColorPow = "_HighColor_Power";
+		public static string ShaderPropHighColorOnShadow = "_TweakHighColorOnShadow";
+		public static string ShaderPropHighColorMask = "_Set_HighColorMask";
+		public static string ShaderPropHighColorMaskLevel = "_Tweak_HighColorMaskLevel";
+		public static string ShaderPropIs_NormalMapToHighColor = "_Is_NormalMapToHighColor";
 		public static string ShaderPropIs_SpecularToHighColor = "_Is_SpecularToHighColor";
+		public static string ShaderPropIs_UseTweakHighColorOnShadow = "_Is_UseTweakHighColorOnShadow";
 		public static string ShaderPropIs_BlendAddToHiColor = "_Is_BlendAddToHiColor";
 
-		public static string ShaderPropAdd_Antipodean_RimLight = "_Add_Antipodean_RimLight";
-		public static string ShaderPropLightDirection_MaskOn = "_LightDirection_MaskOn";
+		// RimLight
+		public static string ShaderPropIs_RimLight = "_RimLight";
+		public static string ShaderPropRimLightColor = "_RimLightColor";
+		public static string ShaderPropRimLightPow = "_RimLight_Power";
+		public static string ShaderPropRimLightInsideMask = "_RimLight_InsideMask";
+		public static string ShaderPropRimLightTweakLightMaskLevel = "_Tweak_LightDirection_MaskLevel";
+		public static string ShaderPropAPRimLightColor = "_Ap_RimLightColor";
+		public static string ShaderPropAPRimLightPow = "_Ap_RimLight_Power";
+		public static string ShaderPropRimLightMask = "_Set_RimLightMask";
+		public static string ShaderPropRimLightTweakMaskLevel = "_Tweak_RimLightMaskLevel";
+		public static string ShaderPropIs_NormalMapToRimLight = "_Is_NormalMapToRimLight";
+		public static string ShaderPropIs_RimLight_FeatherOff = "_Is_RimLight_FeatherOff";
+		public static string ShaderPropIs_LightDirectionMaskOn = "_Is_LightDirection_MaskOn";
+		public static string ShaderPropIs_Antipodean_RimLight = "_Is_Antipodean_RimLight";
+		public static string ShaderPropAp_RimLight_FeatherOff = "_Is_ApRimLight_FeatherOff";
 
-		public static string ShaderProp1st_ShadeColor_Step = "_1st_ShadeColor_Step";
-		public static string ShaderPropBaseColor_Step = "_BaseColor_Step";
-		public static string ShaderProp1st_ShadeColor_Feather = "_1st_ShadeColor_Feather";
-		public static string ShaderPropBaseShade_Feather = "_BaseShade_Feather";
-		public static string ShaderProp2nd_ShadeColor_Step = "_2nd_ShadeColor_Step";
-		public static string ShaderPropShadeColor_Step = "_ShadeColor_Step";
-		public static string ShaderProp2nd_ShadeColor_Feather = "_2nd_ShadeColor_Feather";
-		public static string ShaderProp1st2nd_Shades_Feather = "_1st2nd_Shades_Feather";
+		// MatCap
+		public static string ShaderPropIs_MatCap = "_MatCap";
+		public static string ShaderPropMatCapSampler = "_MatCap_Sampler";
+		public static string ShaderPropMatCapBlurLevel = "_BlurLevelMatcap";
+		public static string ShaderPropMatCapColor = "_MatCapColor";
+		public static string ShaderPropMatCapTweakUV = "_Tweak_MatCapUV";
+		public static string ShaderPropMatCapRotateUV = "_Rotate_MatCapUV";
+		public static string ShaderPropMatCapForNormalMap = "_NormalMapForMatCap";
+		public static string ShaderPropMatCapBumpScale = "_BumpScaleMatcap";
+		public static string ShaderPropMatCapRotateNormalMapUV = "_Rotate_NormalMapForMatCapUV";
+		public static string ShaderPropMatCapTweakShadow = "_TweakMatCapOnShadow";
+		public static string ShaderPropMatCapMask = "_Set_MatcapMask";
+		public static string ShaderPropMatCapMaskLevel = "_Tweak_MatcapMaskLevel";
+		public static string ShaderPropIs_BlendAddToMatCap = "_Is_BlendAddToMatCap";
+		public static string ShaderPropIs_CameraRolling = "_Is_CameraRolling";
 		public static string ShaderPropIs_NormalMapForMatCap = "_Is_NormalMapForMatCap";
 		public static string ShaderPropIs_UseTweakMatCapOnShadow = "_Is_UseTweakMatCapOnShadow";
-		public static string ShaderPropIs_ViewCoord_Scroll = "_Is_ViewCoord_Scroll";
-		public static string ShaderPropIs_PingPong_Base = "_Is_PingPong_Base";
+		public static string ShaderPropIs_InverseMatcapMask = "_Is_InverseMatcapMask";
+		public static string ShaderPropIs_Ortho = "_Is_Ortho";
 
+		// AngelRing
+		public static string ShaderPropIs_AngelRing = "_AngelRing";
+		public static string ShaderPropAngelRingSampler = "_AngelRing_Sampler";
+		public static string ShaderPropAngelRingColor = "_AngelRing_Color";
+		public static string ShaderPropAngelRingOffsetU = "_AR_OffsetU";
+		public static string ShaderPropAngelRingOffsetV = "_AR_OffsetV";
+		public static string ShaderPropIs_AngelRingAlphaOn = "_Is_AngelRingAlphaOn";
+
+		// Emissive
+		public static string ShaderPropEmissive = "_Emissive";
+		public static string ShaderPropEmissiveTex = "_Emissive_Tex";
+		public static string ShaderPropEmissiveColor = "_Emissive_Color";
+		public static string ShaderPropEmissiveSpeed = "_Base_Speed";
+		public static string ShaderPropEmissiveScrollU = "_Scroll_EmissiveU";
+		public static string ShaderPropEmissiveScrollV = "_Scroll_EmissiveV";
+		public static string ShaderPropEmissiveRotateUV = "_Rotate_EmissiveUV";
+		public static string ShaderPropIs_PingPong_Base = "_Is_PingPong_Base";
+		public static string ShaderPropIs_ColorShift = "_Is_ColorShift";
+		public static string ShaderPropEmissiveColorShift = "_ColorShift";
+		public static string ShaderPropEmissiveColorShiftSpeed = "_ColorShift_Speed";
 		public static string ShaderPropIs_ViewShift = "_Is_ViewShift";
-		public static string ShaderPropIs_BlendBaseColor = "_Is_BlendBaseColor";
+		public static string ShaderPropEmissiveViewShift = "_ViewShift";
+		public static string ShaderPropIs_ViewCoord_Scroll = "_Is_ViewCoord_Scroll";
+
+		// Outline
+		// EnumSetting... prefix not Is_Props
+		public static string ShaderPropOutline = "_OUTLINE";
+		public static string ShaderPropOutlineWidth = "_Outline_Width";
+		public static string ShaderPropOutlineSampler = "_Outline_Sampler";
+		public static string ShaderPropOutlineColor = "_Outline_Color";
+		public static string ShaderPropOutlineTex = "_OutlineTex";
+		public static string ShaderPropOutlineOffsetZ = "_Offset_Z";
+		public static string ShaderPropOutlineBakedNormal = "_BakedNormal";
+		public static string ShaderPropIs_BlendBaseColor  = "_Is_BlendBaseColor";
 		public static string ShaderPropIs_OutlineTex = "_Is_OutlineTex";
 		public static string ShaderPropIs_BakedNormal = "_Is_BakedNormal";
+
+		// Environment
+		public static string ShaderPropGI_Intensity = "_GI_Intensity";
+		public static string ShaderPropUnlit_Intensity = "_Unlit_Intensity";
+
+#if false
+		public static string ShaderPropIs_Filter_LightColor = "_Is_Filter_LightColor";
 		public static string ShaderPropIs_BLD = "_Is_BLD";
 		public static string ShaderPropInverse_Z_Axis_BLD = "_Inverse_Z_Axis_BLD";
-
+#endif
 
 		public static string STR_ONSTATE = "Active";
 		public static string STR_OFFSTATE = "Off";
 
+		// Outline LightMode
 		public static string SRPDefaultLightModeName = "SRPDefaultUnlit";
-		public static string SRPDefaultColorMask = "_SPRDefaultUnlitColorMask";
-		public static string SRPDefaultCullMode = "_SRPDefaultUnlitColMode";
-
 		public static string URPDefaultLightModeKey = "RenderPipeline";
 		public static string URPDefaultLightModeValue = "UniversalPipeline";
 
@@ -179,12 +252,6 @@ namespace ToonShade
 			CullingOff,
 			FrontCulling,
 			BackCulling
-		}
-
-		public enum EmissiveMode
-		{
-			Off,
-			On
 		}
 
 		public static void Line()

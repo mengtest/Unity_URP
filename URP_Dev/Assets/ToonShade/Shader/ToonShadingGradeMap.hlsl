@@ -5,13 +5,11 @@
 // Using pow often result to a warning like this
 // "pow(f, e) will not work for negative f, use abs(f) or conditionally handle negative values if you expect them"
 // PositivePow remove this warning when you know the value is positive and avoid inf/NAN.
-
 #include "ToonLib.hlsl"
 
 #define fixed  half
 
-// @NOTE
-// AdditionalPointLightRenderer
+// Forward Delta
 inline void AddtionalPointLight(VertexOutput i, InputData input, float4 baseColor, float3 viewDir, float3 normalDir, out float3 pointLightColor)
 {
 	int pixelLightCount = GetAdditionalLightsCount();
@@ -108,8 +106,141 @@ inline void AddtionalPointLight(VertexOutput i, InputData input, float4 baseColo
 	}
 }
 
-// @NOTE
-// EmissiveAnimation
+// High Color
+float3 SetHighColor(VertexOutput i, float3 normalDir, float3 halfDir, float3 lightColor, float3 finalBaseColor, float finalShadowMask)
+{
+	float4 highColorMaskTex = tex2D(_Set_HighColorMask, i.uv0);
+	float specular = 0.5 * dot(halfDir, lerp(i.normalDir, normalDir, _Is_NormalMapToHighColor)) + 0.5;
+	
+	float clampPow = PositivePow(specular, exp2(lerp(11, 1, _HighColor_Power)));
+	float tweakHighColorMask = (saturate((highColorMaskTex.g + _Tweak_HighColorMaskLevel)) *
+		lerp((1.0 - step(specular, (1.0 - pow(_HighColor_Power, 5)))), clampPow, _Is_SpecularToHighColor));
+	
+	
+	float4 highColorTex = tex2D(_HighColor_Tex, i.uv0);
+	float3 highColor = (lerp(
+		(highColorTex.rgb * _HighColor.rgb), 
+		((highColorTex.rgb * _HighColor.rgb) * lightColor), 
+		_Is_LightColor_HighColor) * 
+	tweakHighColorMask);
+	
+	float3 baseHighColor = (lerp(saturate((finalBaseColor - tweakHighColorMask)), finalBaseColor,
+		lerp(_Is_BlendAddToHiColor, 1.0, _Is_SpecularToHighColor)) +
+		lerp(highColor, (highColor * ((1.0 - finalShadowMask) + (finalShadowMask * _TweakHighColorOnShadow))), _Is_UseTweakHighColorOnShadow));
+	return baseHighColor;
+}
+
+// Rim Light
+float3 SetRimLight(VertexOutput i, float3 normalDir, float3 viewDir, float3 lightDir, float3 baseLightColor)
+{
+	float4 rimLightMask = tex2D(_Set_RimLightMask, i.uv0);
+	float3 lightColorRim = lerp(_RimLightColor.rgb, (_RimLightColor.rgb * baseLightColor), _Is_LightColor_RimLight);
+	float rimArea = (1.0 - dot(lerp(i.normalDir, normalDir, _Is_NormalMapToRimLight), viewDir));
+	float rimLightPower = PositivePow(rimArea, exp2(lerp(3, 0, _RimLight_Power)));
+	
+	float rimLightInsideMask = saturate(
+		lerp((0.0 + ((rimLightPower - _RimLight_InsideMask) * (1.0 - 0.0)) / (1.0 - _RimLight_InsideMask)),
+		step(_RimLight_InsideMask, rimLightPower), _Is_RimLight_FeatherOff));
+	
+	float vertHalfLambert = 0.5 * dot(i.normalDir, lightDir) + 0.5;
+	
+	float3 lightDirectionMask = lerp(
+		(lightColorRim * rimLightInsideMask),
+		(lightColorRim * saturate((rimLightInsideMask - ((1.0 - vertHalfLambert) + _Tweak_LightDirection_MaskLevel)))),
+		_Is_LightDirection_MaskOn);
+	
+	float powRimLight = PositivePow(rimArea, exp2(lerp(3, 0, _Ap_RimLight_Power)));
+	
+	float rimLightClamp = saturate((lerp((0.0 + ((powRimLight - _RimLight_InsideMask) * (1.0 - 0.0)) / (1.0 - _RimLight_InsideMask)),
+			step(_RimLight_InsideMask, powRimLight), _Is_ApRimLight_FeatherOff) - (saturate(vertHalfLambert) + _Tweak_LightDirection_MaskLevel)));
+	
+	float3 rimLightDirectionAdd = lerp(_Ap_RimLightColor.rgb, (_Ap_RimLightColor.rgb * baseLightColor), _Is_LightColor_Ap_RimLight) * rimLightClamp;
+	float3 baseRimLight = (saturate((rimLightMask.g + _Tweak_RimLightMaskLevel)) *
+		lerp(lightDirectionMask, (lightDirectionMask + (rimLightDirectionAdd * rimLightClamp)), _Is_Antipodean_RimLight));
+	return baseRimLight;
+}
+
+// MatCap UV
+float2 SetMatCapUV(VertexOutput i, float3x3 tangentTransform, float3 viewDir, float matcapUVAngle, fixed signMirror)
+{
+	float2 matcapRotateUV = RotateUV(i.uv0, (_Rotate_NormalMapForMatCapUV * PI), float2(0.5, 0.5), 1.0);
+	float3 normalMap4Matcap = UnpackNormalScale(tex2D(_NormalMapForMatCap, TRANSFORM_TEX(matcapRotateUV, _NormalMapForMatCap)), _BumpScaleMatcap);
+	float3 matcapMultiply = mul(normalMap4Matcap.rgb, tangentTransform).rgb;
+	float3 viewNormal = (mul(UNITY_MATRIX_V, float4(lerp(i.normalDir, matcapMultiply, _Is_NormalMapForMatCap), 0))).rgb;
+
+	float3 normalBlendMatcapUVDetail = viewNormal.rgb * float3(-1, -1, 1);
+	float3 normalBlendMatcapUVBase = (mul(UNITY_MATRIX_V, float4(viewDir, 0)).rgb * float3(-1, -1, 1)) + float3(0, 0, 1);
+	float viewNormalDot = dot(normalBlendMatcapUVBase, normalBlendMatcapUVDetail);
+	float3 noSknewViewNormal = normalBlendMatcapUVBase * viewNormalDot / (normalBlendMatcapUVBase.b - normalBlendMatcapUVDetail);
+	
+	float2 viewNormalMatCapUV = (lerp(noSknewViewNormal, viewNormal, _Is_Ortho).rg * 0.5) + 0.5;
+	float2 tweakMatCapUV = (0.0 + ((viewNormalMatCapUV - (0.0 + _Tweak_MatCapUV)) * (1.0 - 0.0)) / ((1.0 - _Tweak_MatCapUV) - (0.0 + _Tweak_MatCapUV)));
+	float2 rotateMatCapUV = RotateUV(tweakMatCapUV, matcapUVAngle, float2(0.5, 0.5), 1.0);
+	
+	if (signMirror < 0)
+	{
+		rotateMatCapUV.x = 1 - rotateMatCapUV.x;
+	}
+	else
+	{
+		rotateMatCapUV = rotateMatCapUV;
+	}
+	return rotateMatCapUV;
+
+}
+
+// MatCap Color
+float3 SetMatCap(VertexOutput i, float2 inUV, float3 lightColor, float finalShadowMask, float3 inHighColor, float3 inRimLight, float3 rimLight)
+{
+	float4 matcapSampler = tex2Dlod(_MatCap_Sampler, float4(TRANSFORM_TEX(inUV, _MatCap_Sampler), 0.0, _BlurLevelMatcap));
+	float4 matcapMask = tex2D(_Set_MatcapMask, i.uv0);
+	float tweakMatCapMaskLevel = saturate(lerp(matcapMask.g, (1.0 - matcapMask.g), _Is_InverseMatcapMask) + _Tweak_MatcapMaskLevel);
+	
+	float3 lightColorMatCap = lerp((matcapSampler.rgb * _MatCapColor.rgb),
+		((matcapSampler.rgb * _MatCapColor.rgb) * lightColor), _Is_LightColor_MatCap);
+	
+	float3 finalMatCapAdd = lerp(inHighColor * finalShadowMask * (1.0 - _TweakMatCapOnShadow), float3(0.0, 0.0, 0.0), _Is_BlendAddToMatCap);
+	
+	float3 baseMatCap = lerp(lightColorMatCap,
+		(lightColorMatCap * ((1.0 - finalShadowMask) + (finalShadowMask * _TweakMatCapOnShadow)) + finalMatCapAdd), _Is_UseTweakMatCapOnShadow);
+	
+	float3 matCapColorOnAddMode = rimLight + baseMatCap * tweakMatCapMaskLevel;
+	float matcapMaskLevelMultiplyMode = tweakMatCapMaskLevel *
+		lerp(1, (1 - (finalShadowMask) * (1 - _TweakMatCapOnShadow)), _Is_UseTweakMatCapOnShadow);
+	
+	float3 resultRim = lerp(float3(0, 0, 0), inRimLight, _RimLight);	
+	
+	float3 matCapColorOnMultiplyMode = inHighColor * (1 - matcapMaskLevelMultiplyMode) + inHighColor * baseMatCap * matcapMaskLevelMultiplyMode + resultRim;
+	return lerp(matCapColorOnMultiplyMode, matCapColorOnAddMode, _Is_BlendAddToMatCap);
+}
+
+// Angel Ring
+#ifdef _ANGELRING_OFF
+#else
+float3 AdditionalHairSpecular(VertexOutput i, fixed dir, float roll, float3 baseLightColor, float3 finalColor)
+{
+	float3 hairSpecularOffsetU = lerp(mul(UNITY_MATRIX_V, float4(i.normalDir, 0)).xyz, float3(0, 0, 1), _AR_OffsetU);
+	float2 hairSpecularViewNormal = hairSpecularOffsetU.xy * 0.5 + float2(0.5, 0.5);
+	float2 hairSpecularViewNormalRotate = RotateUV(hairSpecularViewNormal, -(dir * roll), float2(0.5, 0.5), 1.0);
+	float2 hairSpecularOffsetV = float2(hairSpecularViewNormalRotate.x, lerp(i.uv1.y, hairSpecularViewNormalRotate.y, _AR_OffsetV));
+	
+	float4 hairSpecularSampler = tex2D(_AngelRing_Sampler, hairSpecularOffsetV);
+	
+	float3 hairSpecular = lerp((hairSpecularSampler.rgb * _AngelRing_Color.rgb),
+		((hairSpecularSampler.rgb * _AngelRing_Color.rgb) * baseLightColor), _Is_LightColor_AR);
+	
+	float3 Set_AngelRing = hairSpecular;
+	Set_AngelRing += finalColor;
+	float Set_ARtexAlpha = hairSpecularSampler.a;
+	float3 Set_AngelRingWithAlpha = (hairSpecular * hairSpecularSampler.a);
+	float3 alphaResult = ((finalColor * (1.0 - Set_ARtexAlpha)) + Set_AngelRingWithAlpha);
+	return lerp(finalColor, lerp(Set_AngelRing, alphaResult, _Is_AngelRingAlphaOn), _AngelRing);
+}
+#endif
+
+// Emissive
+#ifdef _EMISSIVE_OFF
+#else
 inline void ViewNormalEmissive(VertexOutput i, float3 viewDir, float3 normalDir, fixed signMirror, fixed dir, float roll)
 {
 	float3 viewNormalEmissive = (mul(UNITY_MATRIX_V, float4(i.normalDir, 0))).xyz;
@@ -144,147 +275,7 @@ inline void ViewNormalEmissive(VertexOutput i, float3 viewDir, float3 normalDir,
 	float4 emissiveColor = lerp(colorShiftColor, viewShiftColor, _Is_ViewShift);
 	emissive = emissiveColor.rgb * emissiveTex.rgb * emissiveMask;
 }
-
-// @NOTE
-// Angel Ring
-#ifdef _ANGELRING_OFF
-#else
-float3 AdditionalHairSpecular(VertexOutput i, fixed dir, float roll, float3 baseLightColor, float3 finalColor)
-{
-	float3 hairSpecularOffsetU = lerp(mul(UNITY_MATRIX_V, float4(i.normalDir, 0)).xyz, float3(0, 0, 1), _AR_OffsetU);
-	float2 hairSpecularViewNormal = hairSpecularOffsetU.xy * 0.5 + float2(0.5, 0.5);
-	float2 hairSpecularViewNormalRotate = RotateUV(hairSpecularViewNormal, -(dir * roll), float2(0.5, 0.5), 1.0);
-	float2 hairSpecularOffsetV = float2(hairSpecularViewNormalRotate.x, lerp(i.uv1.y, hairSpecularViewNormalRotate.y, _AR_OffsetV));
-	
-	float4 hairSpecularSampler = tex2D(_AngelRing_Sampler, hairSpecularOffsetV);
-	
-	float3 hairSpecular = lerp((hairSpecularSampler.rgb * _AngelRing_Color.rgb),
-		((hairSpecularSampler.rgb * _AngelRing_Color.rgb) * baseLightColor), _Is_LightColor_AR);
-	
-	float3 Set_AngelRing = hairSpecular;
-	Set_AngelRing += finalColor;
-	float Set_ARtexAlpha = hairSpecularSampler.a;
-	float3 Set_AngelRingWithAlpha = (hairSpecular * hairSpecularSampler.a);
-	float3 alphaResult = ((finalColor * (1.0 - Set_ARtexAlpha)) + Set_AngelRingWithAlpha);
-	return lerp(finalColor, lerp(Set_AngelRing, alphaResult, _ARSampler_AlphaOn), _AngelRing);
-}
 #endif
-
-// @NOTE
-// High Color
-float3 SetHighColor(VertexOutput i, float3 normalDir, float3 halfDir, float3 lightColor, float3 finalBaseColor, float finalShadowMask)
-{
-	float4 highColorMaskTex = tex2D(_Set_HighColorMask, i.uv0);
-	float specular = 0.5 * dot(halfDir, lerp(i.normalDir, normalDir, _Is_NormalMapToHighColor)) + 0.5;
-	
-	float clampPow = PositivePow(specular, exp2(lerp(11, 1, _HighColor_Power)));
-	float tweakHighColorMask = (saturate((highColorMaskTex.g + _Tweak_HighColorMaskLevel)) *
-		lerp((1.0 - step(specular, (1.0 - pow(_HighColor_Power, 5)))), clampPow, _Is_SpecularToHighColor));
-	
-	
-	float4 highColorTex = tex2D(_HighColor_Tex, i.uv0);
-	float3 highColor = (lerp(
-		(highColorTex.rgb * _HighColor.rgb), 
-		((highColorTex.rgb * _HighColor.rgb) * lightColor), 
-		_Is_LightColor_HighColor) * 
-	tweakHighColorMask);
-	
-	float3 baseHighColor = (lerp(saturate((finalBaseColor - tweakHighColorMask)), finalBaseColor,
-		lerp(_Is_BlendAddToHiColor, 1.0, _Is_SpecularToHighColor)) +
-		lerp(highColor, (highColor * ((1.0 - finalShadowMask) + (finalShadowMask * _TweakHighColorOnShadow))), _Is_UseTweakHighColorOnShadow));
-	return baseHighColor;
-}
-
-// @NOTE
-// Rim Light
-float3 SetRimLight(VertexOutput i, float3 normalDir, float3 viewDir, float3 lightDir, float3 baseLightColor)
-{
-	float4 rimLightMask = tex2D(_Set_RimLightMask, i.uv0);
-	float3 lightColorRim = lerp(_RimLightColor.rgb, (_RimLightColor.rgb * baseLightColor), _Is_LightColor_RimLight);
-	float rimArea = (1.0 - dot(lerp(i.normalDir, normalDir, _Is_NormalMapToRimLight), viewDir));
-	float rimLightPower = PositivePow(rimArea, exp2(lerp(3, 0, _RimLight_Power)));
-	
-	float rimLightInsideMask = saturate(
-		lerp((0.0 + ((rimLightPower - _RimLight_InsideMask) * (1.0 - 0.0)) / (1.0 - _RimLight_InsideMask)),
-		step(_RimLight_InsideMask, rimLightPower), _RimLight_FeatherOff));
-	
-	float vertHalfLambert = 0.5 * dot(i.normalDir, lightDir) + 0.5;
-	
-	float3 lightDirectionMask = lerp(
-		(lightColorRim * rimLightInsideMask),
-		(lightColorRim * saturate((rimLightInsideMask - ((1.0 - vertHalfLambert) + _Tweak_LightDirection_MaskLevel)))),
-		_LightDirection_MaskOn);
-	
-	float powRimLight = PositivePow(rimArea, exp2(lerp(3, 0, _Ap_RimLight_Power)));
-	
-	float rimLightClamp = saturate((lerp((0.0 + ((powRimLight - _RimLight_InsideMask) * (1.0 - 0.0)) / (1.0 - _RimLight_InsideMask)),
-			step(_RimLight_InsideMask, powRimLight), _Ap_RimLight_FeatherOff) - (saturate(vertHalfLambert) + _Tweak_LightDirection_MaskLevel)));
-	
-	float3 rimLightDirectionAdd = lerp(_Ap_RimLightColor.rgb, (_Ap_RimLightColor.rgb * baseLightColor), _Is_LightColor_Ap_RimLight) * rimLightClamp;
-	float3 baseRimLight = (saturate((rimLightMask.g + _Tweak_RimLightMaskLevel)) *
-		lerp(lightDirectionMask, (lightDirectionMask + (rimLightDirectionAdd * rimLightClamp)), _Add_Antipodean_RimLight));
-	return baseRimLight;
-}
-
-// @NOTE
-// MatCap UV
-float2 SetMatCapUV(VertexOutput i, float3x3 tangentTransform, float3 viewDir, float matcapUVAngle, fixed signMirror)
-{
-	float2 matcapRotateUV = RotateUV(i.uv0, (_Rotate_NormalMapForMatCapUV * PI), float2(0.5, 0.5), 1.0);
-	float3 normalMap4Matcap = UnpackNormalScale(tex2D(_NormalMapForMatCap, TRANSFORM_TEX(matcapRotateUV, _NormalMapForMatCap)), _BumpScaleMatcap);
-	float3 matcapMultiply = mul(normalMap4Matcap.rgb, tangentTransform).rgb;
-	float3 viewNormal = (mul(UNITY_MATRIX_V, float4(lerp(i.normalDir, matcapMultiply, _Is_NormalMapForMatCap), 0))).rgb;
-
-	float3 normalBlendMatcapUVDetail = viewNormal.rgb * float3(-1, -1, 1);
-	float3 normalBlendMatcapUVBase = (mul(UNITY_MATRIX_V, float4(viewDir, 0)).rgb * float3(-1, -1, 1)) + float3(0, 0, 1);
-	float viewNormalDot = dot(normalBlendMatcapUVBase, normalBlendMatcapUVDetail);
-	float3 noSknewViewNormal = normalBlendMatcapUVBase * viewNormalDot / (normalBlendMatcapUVBase.b - normalBlendMatcapUVDetail);
-	
-	float2 viewNormalMatCapUV = (lerp(noSknewViewNormal, viewNormal, _Is_Ortho).rg * 0.5) + 0.5;
-	float2 tweakMatCapUV = (0.0 + ((viewNormalMatCapUV - (0.0 + _Tweak_MatCapUV)) * (1.0 - 0.0)) / ((1.0 - _Tweak_MatCapUV) - (0.0 + _Tweak_MatCapUV)));
-	float2 rotateMatCapUV = RotateUV(tweakMatCapUV, matcapUVAngle, float2(0.5, 0.5), 1.0);
-	
-	if (signMirror < 0)
-	{
-		rotateMatCapUV.x = 1 - rotateMatCapUV.x;
-	}
-	else
-	{
-		rotateMatCapUV = rotateMatCapUV;
-	}
-	return rotateMatCapUV;
-
-}
-
-// @NOTE
-// MatCap Color
-float3 SetMatCap(VertexOutput i, float2 inUV, float3 lightColor, float finalShadowMask, float3 baseHighColor, float3 baseRimLight, float3 rimLight)
-{
-	float4 matcapSampler = tex2Dlod(_MatCap_Sampler, float4(TRANSFORM_TEX(inUV, _MatCap_Sampler), 0.0, _BlurLevelMatcap));
-	float4 matcapMask = tex2D(_Set_MatcapMask, i.uv0);
-	float tweakMatCapMaskLevel = saturate(lerp(matcapMask.g, (1.0 - matcapMask.g), _Inverse_MatcapMask) + _Tweak_MatcapMaskLevel);
-	
-	float3 lightColorMatCap = lerp((matcapSampler.rgb * _MatCapColor.rgb),
-		((matcapSampler.rgb * _MatCapColor.rgb) * lightColor), _Is_LightColor_MatCap);
-	
-	float3 finalMatCapAdd = lerp(baseHighColor * finalShadowMask * (1.0 - _TweakMatCapOnShadow), float3(0.0, 0.0, 0.0), _Is_BlendAddToMatCap);
-	float3 baseMatCap = lerp(lightColorMatCap,
-		(lightColorMatCap * ((1.0 - finalShadowMask) + (finalShadowMask * _TweakMatCapOnShadow)) + finalMatCapAdd), _Is_UseTweakMatCapOnShadow);
-	
-	float3 matCapColorOnAddMode = rimLight + baseMatCap * tweakMatCapMaskLevel;
-	float matcapMaskLevelMultiplyMode = tweakMatCapMaskLevel *
-		lerp(1, (1 - (finalShadowMask) * (1 - _TweakMatCapOnShadow)), _Is_UseTweakMatCapOnShadow);
-	
-	float3 matCapColorOnMultiplyMode = baseHighColor *
-		(1 - matcapMaskLevelMultiplyMode) +
-		baseHighColor *
-		baseMatCap *
-		matcapMaskLevelMultiplyMode +
-		lerp(float3(0, 0, 0), baseRimLight, _RimLight);
-	
-	return lerp(matCapColorOnMultiplyMode, matCapColorOnAddMode, _Is_BlendAddToMatCap);
-}
-
 
 // VSInput
 VertexOutput vert(VertexInput v)
@@ -478,7 +469,7 @@ float4 frag(VertexOutput i, fixed facing : VFACE) : SV_TARGET
 	fixed cameraDir = (cameraRight.y < 0) ? -1 : 1;
 
 	// Create MatCap coordinate
-	float matcapUVAngle = (_Rotate_MatCapUV * PI) - cameraDir * cameraRoll * _CameraRolling_Stabilizer;
+	float matcapUVAngle = (_Rotate_MatCapUV * PI) - cameraDir * cameraRoll * _Is_CameraRolling;
 	float2 rotateMatCapUV = SetMatCapUV(i, tangentTransform, viewDirection, matcapUVAngle, signMirror);
 	
 	// Create MatCap color

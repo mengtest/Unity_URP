@@ -24,15 +24,6 @@
 	#endif
 #endif
 
-
-sampler2D _MainTex;
-float4 _MainTex_ST;
-#if TOON_URP
-#else
-float4 _BaseColor;
-#endif
-
-float4 _Color;
 fixed _Use_BaseAs1st;
 fixed _Use_1stAs2nd;
 fixed _Is_LightColor_Base;
@@ -46,93 +37,103 @@ fixed _Is_LightColor_MatCap;
 	fixed _Is_LightColor_AR;
 #endif
 
+sampler2D _MainTex; float4 _MainTex_ST;
+
+#if TOON_URP
+	//
+#else
+float4 _BaseColor;
+#endif
+
+float4 _Color;
 sampler2D _1st_ShadeMap; float4 _1st_ShadeMap_ST;
-float4 _1st_ShadeColor;
-
 sampler2D _2nd_ShadeMap; float4 _2nd_ShadeMap_ST;
-float4 _2nd_ShadeColor;
-
 sampler2D _NormalMap; float4 _NormalMap_ST;
+sampler2D _ShadingGradeMap; float4 _ShadingGradeMap_ST;
+float4 _1st_ShadeColor;
+float4 _2nd_ShadeColor;
+float _Tweak_SystemShadowsLevel;
+float _Tweak_ShadingGradeMapLevel;
+float _1st_ShadeColor_Step, _1st_ShadeColor_Feather;
+float _2nd_ShadeColor_Step, _2nd_ShadeColor_Feather;
+float _BlurLevelSGM;
 fixed _Is_NormalMapToBase;
 fixed _Set_SystemShadowsToBase;
-float _Tweak_SystemShadowsLevel;
-sampler2D _ShadingGradeMap; float4 _ShadingGradeMap_ST;
-float _Tweak_ShadingGradeMapLevel;
-fixed _BlurLevelSGM;
-float _1st_ShadeColor_Step;
-float _1st_ShadeColor_Feather;
-float _2nd_ShadeColor_Step;
-float _2nd_ShadeColor_Feather;
-
 
 float4 _HighColor;
 sampler2D _HighColor_Tex; float4 _HighColor_Tex_ST;
-fixed _Is_NormalMapToHighColor;
 float _HighColor_Power;
-fixed _Is_SpecularToHighColor;
-fixed _Is_BlendAddToHiColor;
-fixed _Is_UseTweakHighColorOnShadow;
 float _TweakHighColorOnShadow;
 sampler2D _Set_HighColorMask; float4 _Set_HighColorMask_ST;
 float _Tweak_HighColorMaskLevel;
+fixed _Is_NormalMapToHighColor;
+fixed _Is_SpecularToHighColor;
+fixed _Is_BlendAddToHiColor;
+fixed _Is_UseTweakHighColorOnShadow;
 
 fixed _RimLight;
 float4 _RimLightColor;
-fixed _Is_NormalMapToRimLight;
 float _RimLight_Power;
 float _RimLight_InsideMask;
-fixed _RimLight_FeatherOff;
-fixed _LightDirection_MaskOn;
 float _Tweak_LightDirection_MaskLevel;
-fixed _Add_Antipodean_RimLight;
 float4 _Ap_RimLightColor;
 float _Ap_RimLight_Power;
-fixed _Ap_RimLight_FeatherOff;
 sampler2D _Set_RimLightMask; float4 _Set_RimLightMask_ST;
 float _Tweak_RimLightMaskLevel;
+fixed _Is_NormalMapToRimLight;
+fixed _Is_RimLight_FeatherOff;
+fixed _Is_LightDirection_MaskOn;
+fixed _Is_Antipodean_RimLight;
+fixed _Is_ApRimLight_FeatherOff;
 
 fixed _MatCap;
 sampler2D _MatCap_Sampler; float4 _MatCap_Sampler_ST;
+float _BlurLevelMatcap;
 float4 _MatCapColor;
-fixed _Is_BlendAddToMatCap;
 float _Tweak_MatCapUV;
 float _Rotate_MatCapUV;
-fixed _Is_NormalMapForMatCap;
 sampler2D _NormalMapForMatCap; float4 _NormalMapForMatCap_ST;
 float _Rotate_NormalMapForMatCapUV;
-fixed _Is_UseTweakMatCapOnShadow;
 float _TweakMatCapOnShadow;
 sampler2D _Set_MatcapMask; float4 _Set_MatcapMask_ST;
 float _Tweak_MatcapMaskLevel;
+
+fixed _Is_BlendAddToMatCap;
+fixed _Is_NormalMapForMatCap;
+fixed _Is_UseTweakMatCapOnShadow;
 fixed _Is_Ortho;
-float _CameraRolling_Stabilizer;
-fixed _BlurLevelMatcap;
-fixed _Inverse_MatcapMask;
+fixed _Is_InverseMatcapMask;
+fixed _Is_CameraRolling;
 
 #if TOON_URP
+	//
 #else
 float _BumpScale;
 #endif
 float _BumpScaleMatcap;
 
+fixed _Emissive;
 sampler2D _Emissive_Tex; float4 _Emissive_Tex_ST;
 float4 _Emissive_Color;
-fixed _Is_ViewCoord_Scroll;
 float _Rotate_EmissiveUV;
 float _Base_Speed;
 float _Scroll_EmissiveU;
 float _Scroll_EmissiveV;
-fixed _Is_PingPong_Base;
 float4 _ColorShift;
 float4 _ViewShift;
 float _ColorShift_Speed;
+float3 emissive;
+fixed _Is_ViewCoord_Scroll;
+fixed _Is_PingPong_Base;
 fixed _Is_ColorShift;
 fixed _Is_ViewShift;
-float3 emissive;
 
+// Environment
 float _Unlit_Intensity;
-fixed _Is_Filter_HiCutPointLightColor;
 float _StepOffset;
+
+// ForwardDelta
+fixed _Is_Filter_HiCutPointLightColor;
 
 #if false	
 fixed _Is_Filter_LightColor;
@@ -153,14 +154,14 @@ fixed _Inverse_Z_Axis_BLD;
 
 float _GI_Intensity;
 #ifdef _ANGELRING_OFF
-#else
+	//
+#elif _ANGELRING_ON
 	fixed _AngelRing;
-sampler2D _AngelRing_Sampler;
-float4 _AngelRing_Sampler_ST;
-float4 _AngelRing_Color;
-float _AR_OffsetU;
-float _AR_OffsetV;
-	fixed _ARSampler_AlphaOn;
+	sampler2D _AngelRing_Sampler; float4 _AngelRing_Sampler_ST;
+	float4 _AngelRing_Color;
+	float _AR_OffsetU;
+	float _AR_OffsetV;
+	fixed _Is_AngelRingAlphaOn;
 #endif
 
 #define UNITY_PROJ_COORD(a) a
@@ -212,7 +213,6 @@ half3 GlobalIlluminationToonShade(BRDFData brdfData, half3 bakedGI, half occlusi
 	half3 indirectSpecular = GlossyEnvironmentReflection(reflectVector, brdfData.perceptualRoughness, occlusion);
 	return EnvironmentBRDF(brdfData, indirectDiffuse, indirectSpecular, fresnelTerm);
 }
-
 
 struct ToonLight
 {
@@ -423,7 +423,7 @@ struct VertexInput
 #ifdef _ANGELRING_ON
 	float2 texcoord1 : TEXCOORD1;
 	float2 lightmapUV : TEXCOORD2;	
-#else
+#elif _ANGELRING_OFF
 	float2 lightmapUV : TEXCOORD1;
 #endif
 	UNITY_VERTEX_INPUT_INSTANCE_ID
@@ -435,27 +435,8 @@ struct VertexOutput
 	// x: fogFactor, yzw: vertex light
 	float4 pos : SV_POSITION;
 	float2 uv0 : TEXCOORD0;
-
-#ifdef _ANGELRING_OFF
-	float4 posWorld : TEXCOORD1;
-	float3 normalDir : TEXCOORD2;
-	float3 tangentDir : TEXCOORD3;
-	float3 bitangentDir : TEXCOORD4;
-	float mirrorFlag : TEXCOORD5;
-	DECLARE_LIGHTMAP_OR_SH(lightmapUV, vertexSH, 6);
-	half4 fogFactorAndVertexLight : TEXCOORD7;
-
-	#ifndef _MAIN_LIGHT_SHADOWS
-		float4 positionCS : TEXCOORD8;
-		int mainLightID : TEXCOORD9;
-	#else
-		float4 shadowCoord : TEXCOORD8;
-		float4 positionCS : TEXCOORD9;
-		int mainLightID : TEXCOORD10;
-	#endif
-	UNITY_VERTEX_INPUT_INSTANCE_ID
-	UNITY_VERTEX_OUTPUT_STEREO
-#else 
+	
+#ifdef _ANGELRING_ON
 	float2 uv1 : TEXCOORD1;
 	float4 posWorld : TEXCOORD2;
 	float3 normalDir : TEXCOORD3;
@@ -475,9 +456,26 @@ struct VertexOutput
 	#endif
 	UNITY_VERTEX_INPUT_INSTANCE_ID
 	UNITY_VERTEX_OUTPUT_STEREO
+	
+#elif _ANGELRING_OFF
+	float4 posWorld : TEXCOORD1;
+	float3 normalDir : TEXCOORD2;
+	float3 tangentDir : TEXCOORD3;
+	float3 bitangentDir : TEXCOORD4;
+	float mirrorFlag : TEXCOORD5;
+	DECLARE_LIGHTMAP_OR_SH(lightmapUV, vertexSH, 6);
+	half4 fogFactorAndVertexLight : TEXCOORD7;
 
-	//LIGHTING_COORDS(7,8)
-	//UNITY_FOG_COORDS	
+	#ifndef _MAIN_LIGHT_SHADOWS
+		float4 positionCS : TEXCOORD8;
+		int mainLightID : TEXCOORD9;
+	#else
+		float4 shadowCoord : TEXCOORD8;
+		float4 positionCS : TEXCOORD9;
+		int mainLightID : TEXCOORD10;
+	#endif
+	UNITY_VERTEX_INPUT_INSTANCE_ID
+	UNITY_VERTEX_OUTPUT_STEREO
 #endif
 
 };
