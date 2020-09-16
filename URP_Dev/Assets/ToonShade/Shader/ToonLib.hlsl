@@ -93,24 +93,22 @@ float4 _MatCapColor;
 float _Tweak_MatCapUV;
 float _Rotate_MatCapUV;
 sampler2D _NormalMapForMatCap; float4 _NormalMapForMatCap_ST;
-float _Rotate_NormalMapForMatCapUV;
-float _TweakMatCapOnShadow;
-sampler2D _Set_MatcapMask; float4 _Set_MatcapMask_ST;
-float _Tweak_MatcapMaskLevel;
-
-fixed _Is_BlendAddToMatCap;
-fixed _Is_NormalMapForMatCap;
-fixed _Is_UseTweakMatCapOnShadow;
-fixed _Is_Ortho;
-fixed _Is_InverseMatcapMask;
-fixed _Is_CameraRolling;
-
 #if TOON_URP
 	//
 #else
 float _BumpScale;
 #endif
 float _BumpScaleMatcap;
+float _Rotate_NormalMapForMatCapUV;
+float _TweakMatCapOnShadow;
+sampler2D _Set_MatcapMask; float4 _Set_MatcapMask_ST;
+float _Tweak_MatcapMaskLevel;
+fixed _Is_BlendAddToMatCap;
+fixed _Is_NormalMapForMatCap;
+fixed _Is_UseTweakMatCapOnShadow;
+fixed _Is_Ortho;
+fixed _Is_InverseMatcapMask;
+fixed _Is_CameraRolling;
 
 fixed _Emissive;
 sampler2D _Emissive_Tex; float4 _Emissive_Tex_ST;
@@ -122,7 +120,6 @@ float _Scroll_EmissiveV;
 float4 _ColorShift;
 float4 _ViewShift;
 float _ColorShift_Speed;
-float3 emissive;
 fixed _Is_ViewCoord_Scroll;
 fixed _Is_PingPong_Base;
 fixed _Is_ColorShift;

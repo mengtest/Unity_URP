@@ -147,6 +147,7 @@ Material:
     - _Add_Antipodean_RimLight: 0
     - _AlphaClip: 0
     - _AngelRing: 0
+    - _AngelRingAlphaOn: 0
     - _Ap_RimLight_FeatherOff: 0
     - _Ap_RimLight_Power: 0.1
     - _AutoRenderQueue: 1
@@ -180,6 +181,9 @@ Material:
     - _Inverse_MatcapMask: 0
     - _Inverse_Z_Axis_BLD: 0
     - _IsBaseMapAlphaAsClippingMask: 0
+    - _Is_AngelRingAlphaOn: 0
+    - _Is_Antipodean_RimLight: 0
+    - _Is_ApRimLight_FeatherOff: 0
     - _Is_BLD: 0
     - _Is_BakedNormal: 0
     - _Is_BlendAddToHiColor: 1
@@ -199,6 +203,7 @@ Material:
     - _Is_LightColor_MatCap: 1
     - _Is_LightColor_Outline: 1
     - _Is_LightColor_RimLight: 1
+    - _Is_LightDirection_MaskOn: 0
     - _Is_NormalMapForMatCap: 0
     - _Is_NormalMapToBase: 0
     - _Is_NormalMapToHighColor: 0
@@ -206,6 +211,7 @@ Material:
     - _Is_Ortho: 0
     - _Is_OutlineTex: 0
     - _Is_PingPong_Base: 0
+    - _Is_RimLight_FeatherOff: 0
     - _Is_SpecularToHighColor: 0
     - _Is_UseTweakHighColorOnShadow: 1
     - _Is_UseTweakMatCapOnShadow: 0

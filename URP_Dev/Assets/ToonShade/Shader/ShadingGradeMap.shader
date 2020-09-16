@@ -34,11 +34,9 @@ Shader "ToonShade/ShadingGradeMap"
 
 		_MainTex("BaseMap", 2D) = "white" {}
 		_BaseColor("BaseColor", Color) = (1,1,1,1)
-
 		_1st_ShadeMap("1st_ShadeMap", 2D) = "white" {}
 		[Toggle(_)] _Use_BaseAs1st("Use BaseMap as 1st_ShadeMap", Float) = 0
 		_1st_ShadeColor("1st_ShadeColor", Color) = (1,1,1,1)
-
 		_2nd_ShadeMap("2nd_ShadeMap", 2D) = "white" {}
 		[Toggle(_)] _Use_1stAs2nd("Use 1st_ShadeMap as 2nd_ShadeMap", Float) = 0
 		_2nd_ShadeColor("2nd_ShadeColor", Color) = (1,1,1,1)
@@ -50,16 +48,15 @@ Shader "ToonShade/ShadingGradeMap"
 		_Tweak_SystemShadowsLevel("Tweak_SystemShadowsLevel", Range(-0.5, 0.5)) = 0
 
 		_BaseColor_Step("BaseColor_Step", Range(0, 1)) = 0.5
-		_BaseShade_Feather("Base/Shade_Feather", Range(0.0001, 1)) = 0.0001
-		_ShadeColor_Step("ShadeColor_Step", Range(0, 1)) = 0
-		_1st2nd_Shades_Feather("1st/2nd_Shades_Feather", Range(0.0001, 1)) = 0.0001
-		_Set_1st_ShadePosition("1st ShadePosition", 2D) = "white" {}
-		_Set_2nd_ShadePosition("2nd ShadePosition", 2D) = "white" {}
+		_BaseShade_Feather("Shade Feather", Range(0.0001, 1)) = 0.0001
+		_ShadeColor_Step("ShadeColor Step", Range(0, 1)) = 0
+		_1st2nd_Shades_Feather("1st/2nd Shades Feather", Range(0.0001, 1)) = 0.0001
+		_Set_1st_ShadePosition("1st ShadePosition Tex", 2D) = "white" {}
+		_Set_2nd_ShadePosition("2nd ShadePosition Tex", 2D) = "white" {}
 		_ShadingGradeMap("ShadingGradeMap", 2D) = "white" {}
-		_Tweak_ShadingGradeMapLevel("Tweak ShadingGradeMapLevel", Range(-0.5, 0.5)) = 0
-		_BlurLevelSGM("Blur Level of ShadingGradeMap", Range(0, 10)) = 0
+		_Tweak_ShadingGradeMapLevel("Tweak SGM Level", Range(-0.5, 0.5)) = 0
+		_BlurLevelSGM("Blur Level", Range(0, 10)) = 0
 
-		[Header(Realtime LightColor Contribution to each colors)]
 		[Toggle(_)] _Is_LightColor_Base("Is_LightColor_Base", Float) = 1
 		[Toggle(_)] _Is_LightColor_1st_Shade("Is_LightColor_1st_Shade", Float) = 1
 		[Toggle(_)] _Is_LightColor_2nd_Shade("Is_LightColor_2nd_Shade", Float) = 1
@@ -77,11 +74,9 @@ Shader "ToonShade/ShadingGradeMap"
 		[HideInInspector] _2nd_ShadeColor_Step("2nd_ShadeColor_Step", Range(0, 1)) = 0
 		[HideInInspector] _2nd_ShadeColor_Feather("2nd_ShadeColor_Feather", Range(0.0001, 1)) = 0.0001
 
-		[Header(Foward Delta)]
 		_StepOffset("Step ShadeOffset", Range(-0.5, 0.5)) = 0
 		[Toggle(_)] _Is_Filter_HiCutPointLightColor("PointLights HiCut Filter", Float) = 1
 
-		[Header(HighColor Setting)]
 		_HighColor("HighColor", Color) = (0,0,0,1)
 		_HighColor_Tex("HighColor_Tex", 2D) = "white" {}
 		_HighColor_Power("HighColor_Power", Range(0, 1)) = 0
@@ -93,7 +88,6 @@ Shader "ToonShade/ShadingGradeMap"
 		[Toggle(_)] _Is_BlendAddToHiColor("_Is_BlendAddToHiColor", Float) = 0
 		[Toggle(_)] _Is_UseTweakHighColorOnShadow("_Is_UseTweakHighColorOnShadow", Float) = 0
 
-		[Header(RimLight Setting)]
 		[Toggle(_)] _RimLight("RimLight", Float) = 0
 		_RimLightColor("RimLightColor", Color) = (1,1,1,1)
 		_RimLight_Power("RimLight_Power", Range(0, 1)) = 0.1
@@ -109,7 +103,6 @@ Shader "ToonShade/ShadingGradeMap"
 		[Toggle(_)] _Is_Antipodean_RimLight("Is_Add_Antipodean_RimLight", Float) = 0
 		[Toggle(_)] _Is_ApRimLight_FeatherOff("Is_Ap_RimLight_FeatherOff", Float) = 0
 
-		[Header(MatCap Setting)]
 		[Toggle(_)] _MatCap("MatCap", Float) = 0
 		_MatCap_Sampler("MatCap_Sampler", 2D) = "black" {}
 		_BlurLevelMatcap("Blur Level of MatCap_Sampler", Range(0, 10)) = 0
@@ -129,7 +122,6 @@ Shader "ToonShade/ShadingGradeMap"
 		[Toggle(_)] _Is_InverseMatcapMask("Inverse_MatcapMask", Float) = 0
 		[Toggle(_)] _Is_Ortho("Orthographic Projection for MatCap", Float) = 0
 
-		[Header(AngelRing Setting)]
 		[Toggle(_)] _AngelRing("AngelRing", Float) = 0
 		_AngelRing_Sampler("AngelRing_Sampler", 2D) = "black" {}
 		_AngelRing_Color("AngelRing_Color", Color) = (1,1,1,1)
@@ -137,7 +129,6 @@ Shader "ToonShade/ShadingGradeMap"
 		_AR_OffsetV("AR_OffsetV", Range(0, 1)) = 0.3
 		[Toggle(_)] _Is_AngelRingAlphaOn("AngelRing AlphaOn", Float) = 0
 
-		[Header(Emissive Setting)]
 		[Toggle(_)] _Emissive("Emissive", Float) = 0
 		_Emissive_Tex("Emissive_Tex", 2D) = "white" {}
 		[HDR]_Emissive_Color("Emissive_Color", Color) = (0,0,0,1)
@@ -153,7 +144,6 @@ Shader "ToonShade/ShadingGradeMap"
 		[HDR]_ViewShift("ViewSift", Color) = (0,0,0,1)
 		[Toggle(_)] _Is_ViewCoord_Scroll("Is_ViewCoord_Scroll", Float) = 0
 
-		[Header(Outline Setting)]
 		[KeywordEnum(NML, POS)] _OUTLINE("OUTLINE MODE", Float) = 0
 		_Outline_Width("Outline Width", Float) = 0
 		_Outline_Sampler("Outline Sampler", 2D) = "white" {}
@@ -165,7 +155,6 @@ Shader "ToonShade/ShadingGradeMap"
 		[Toggle(_)] _Is_OutlineTex("Is_OutlineTex", Float) = 0
 		[Toggle(_)] _Is_BakedNormal("Is_BakedNormal", Float) = 0
 
-		[Header(Environment)]
 		_GI_Intensity("GI_Intensity", Range(0, 1)) = 0
 		_Unlit_Intensity("Unlit_Intensity", Range(0.001, 4)) = 1
 

@@ -112,7 +112,7 @@ float4 frag(VertexOutput i) : SV_Target
 	float3 baseColor = _BaseColor.rgb * mainTex.rgb;
 	
 	float3 blendA = (_Outline_Color.rgb * lightColor);
-	float3 blendB = (_Outline_Color.rgb * baseColor * baseColor * lightColor);
+	float3 blendB = (_Outline_Color.rgb * lightColor * baseColor);
 	float3 lightBlendColor = lerp(blendA, blendB, _Is_BlendBaseColor);
 
 		

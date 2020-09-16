@@ -9,6 +9,21 @@
 
 #define fixed  half
 
+float GetShadowMask(float toonShade, float step, float feather)
+{
+	return saturate(
+		(1.0 + ((toonShade - (step - feather)) * (0.0 - 1.0)) /
+		(step - (step - feather))));
+	
+	//saturate(
+		//(1.0 + ((toonShade - (_2nd_ShadeColor_Step - _2nd_ShadeColor_Feather)) * (0.0 - 1.0)) / 
+		//(_2nd_ShadeColor_Step - (_2nd_ShadeColor_Step - _2nd_ShadeColor_Feather))));
+	
+	//saturate(
+		//(1.0 + ((toonShade - (_1st_ShadeColor_Step - _1st_ShadeColor_Feather)) * (0.0 - 1.0)) /
+		//(_1st_ShadeColor_Step - (_1st_ShadeColor_Step - _1st_ShadeColor_Feather))));
+}
+
 // Forward Delta
 inline void AddtionalPointLight(VertexOutput i, InputData input, float4 baseColor, float3 viewDir, float3 normalDir, out float3 pointLightColor)
 {
@@ -32,8 +47,8 @@ inline void AddtionalPointLight(VertexOutput i, InputData input, float4 baseColo
 			addPassLightColor *= additionalLightColor.rgb;	
 			float pureIntencity = max(0.001, (0.299 * additionalLightColor.r + 0.587 * additionalLightColor.g + 0.114 * additionalLightColor.b));
 			
-			float3 lightColor = max(0, lerp(addPassLightColor,
-				lerp(0, min(addPassLightColor, addPassLightColor / pureIntencity), notDirectional), 1 /*_Is_Filter_LightColor*/));
+			float3 addPassLightMin = min(addPassLightColor, addPassLightColor / pureIntencity);
+			float3 lightColor = max(0, lerp(addPassLightColor, lerp(0, addPassLightMin, notDirectional), 1 /*_Is_Filter_LightColor*/));
 			float3 halfDirection = normalize(viewDir + lightDirection);
 
 			_1st_ShadeColor_Step = saturate(_1st_ShadeColor_Step + _StepOffset);
@@ -42,41 +57,33 @@ inline void AddtionalPointLight(VertexOutput i, InputData input, float4 baseColo
 			float lightMaxIntensity = (0.299 * additionalLightColor.r + 0.587 * additionalLightColor.g + 0.114 * additionalLightColor.b);
 			float lightIntensity = lerp(0, lightMaxIntensity, notDirectional);
 			
-			float3 baseLightColor = lerp(lightColor,
-				lerp(lightColor, min(lightColor, additionalLightColor.rgb * _1st_ShadeColor_Step), notDirectional),
-			_Is_Filter_HiCutPointLightColor);
+			float3 lightMin = min(lightColor, additionalLightColor.rgb * _1st_ShadeColor_Step);
+			float3 baseLightColor = lerp(lightColor, lerp(lightColor, lightMin, notDirectional), _Is_Filter_HiCutPointLightColor);
 			
-			float3 diffuseColor = lerp(
-				(_BaseColor.rgb * baseColor.rgb * lightIntensity),
-				((_BaseColor.rgb * baseColor.rgb) * baseLightColor),
-			_Is_LightColor_Base);
+			float3 diffuseLight = (_BaseColor.rgb * baseColor.rgb * lightIntensity);
+			float3 diffuseBaseLight = ((_BaseColor.rgb * baseColor.rgb) * baseLightColor);
+			float3 diffuseColor = lerp(diffuseLight, diffuseBaseLight, _Is_LightColor_Base);	
 			
 			float4 toonShade1st = lerp(tex2D(_1st_ShadeMap, i.uv0), baseColor, _Use_BaseAs1st);
 			float4 toonShade2nd = lerp(tex2D(_2nd_ShadeMap, i.uv0), toonShade1st, _Use_1stAs2nd);
 			
-			float3 Set_1st_ShadeColor = lerp(
-				(_1st_ShadeColor.rgb * toonShade1st.rgb * lightIntensity),
-				((_1st_ShadeColor.rgb * toonShade1st.rgb) * baseLightColor),
-			_Is_LightColor_1st_Shade);
+			float3 shade1stColorA = (_1st_ShadeColor.rgb * toonShade1st.rgb * lightIntensity);
+			float3 shade1stColorB = ((_1st_ShadeColor.rgb * toonShade1st.rgb) * baseLightColor);
+			float3 Set_1st_ShadeColor = lerp(shade1stColorA, shade1stColorB, _Is_LightColor_1st_Shade);
 			
-			float3 Set_2nd_ShadeColor = lerp(
-				(_2nd_ShadeColor.rgb * toonShade2nd.rgb * lightIntensity),
-				((_2nd_ShadeColor.rgb * toonShade2nd.rgb) * baseLightColor),
-			_Is_LightColor_2nd_Shade);
+			float3 shade2ndColorA = (_2nd_ShadeColor.rgb * toonShade2nd.rgb * lightIntensity);
+			float3 shade2ndColorB = ((_2nd_ShadeColor.rgb * toonShade2nd.rgb) * baseLightColor);
+			float3 Set_2nd_ShadeColor = lerp(shade2ndColorA, shade2ndColorB, _Is_LightColor_2nd_Shade);
 			
 			float halfLambert = 0.5 * dot(lerp(i.normalDir, normalDir, _Is_NormalMapToBase), lightDirection) + 0.5;
 			float4 shadingGradeMap = tex2Dlod(_ShadingGradeMap, float4(TRANSFORM_TEX(i.uv0, _ShadingGradeMap), 0.0, _BlurLevelSGM));
 			float toonShadeLevel = shadingGradeMap.r < 0.95 ? shadingGradeMap.r + _Tweak_ShadingGradeMapLevel : 1;
-			float toonShade = saturate(toonShadeLevel) *
-				lerp(halfLambert, (halfLambert * saturate(1.0 + _Tweak_SystemShadowsLevel)), _Set_SystemShadowsToBase);
 			
-			float finalShadowMask = saturate(
-				(1.0 + ((toonShade - (_1st_ShadeColor_Step - _1st_ShadeColor_Feather)) * (0.0 - 1.0)) /
-				(_1st_ShadeColor_Step - (_1st_ShadeColor_Step - _1st_ShadeColor_Feather))));
+			float halfLambertClamp = (halfLambert * saturate(1.0 + _Tweak_SystemShadowsLevel));
+			float toonShade = saturate(toonShadeLevel) * lerp(halfLambert, halfLambertClamp, _Set_SystemShadowsToBase);
 			
-			float shadeShadowMask = saturate(
-				(1.0 + ((toonShade - (_2nd_ShadeColor_Step - _2nd_ShadeColor_Feather)) * (0.0 - 1.0)) /
-				(_2nd_ShadeColor_Step - (_2nd_ShadeColor_Step - _2nd_ShadeColor_Feather))));
+			float finalShadowMask = GetShadowMask(toonShade, _1st_ShadeColor_Step, _1st_ShadeColor_Feather);
+			float shadeShadowMask = GetShadowMask(toonShade, _2nd_ShadeColor_Step, _2nd_ShadeColor_Feather); 
 
 			float3 finalColor = lerp(diffuseColor, lerp(Set_1st_ShadeColor, Set_2nd_ShadeColor, shadeShadowMask), finalShadowMask);
 			float4 highColorMaskTex = tex2D(_Set_HighColorMask, i.uv0);
@@ -89,10 +96,9 @@ inline void AddtionalPointLight(VertexOutput i, InputData input, float4 baseColo
 			
 			float4 highColorTex = tex2D(_HighColor_Tex, i.uv0);
 			
-			float3 highColor = (lerp(
-				(highColorTex.rgb * _HighColor.rgb),
-				((highColorTex.rgb * _HighColor.rgb) * baseLightColor),
-				_Is_LightColor_HighColor) * tweakHighColorMask);
+			float3 highColorA = (highColorTex.rgb * _HighColor.rgb);
+			float3 highColorB = ((highColorTex.rgb * _HighColor.rgb) * baseLightColor);
+			float3 highColor = (lerp(highColorA, highColorB, _Is_LightColor_HighColor) * tweakHighColorMask);
 			
 			float3 addLightColor = lerp(
 				lerp(highColor, (highColor * ((1.0 - finalShadowMask) + (finalShadowMask * _TweakHighColorOnShadow))),
@@ -241,7 +247,7 @@ float3 AdditionalHairSpecular(VertexOutput i, fixed dir, float roll, float3 base
 // Emissive
 #ifdef _EMISSIVE_OFF
 #else
-inline void ViewNormalEmissive(VertexOutput i, float3 viewDir, float3 normalDir, fixed signMirror, fixed dir, float roll)
+float3 SetEmissive(VertexOutput i, float3 viewDir, float3 normalDir, fixed signMirror, fixed dir, float roll)
 {
 	float3 viewNormalEmissive = (mul(UNITY_MATRIX_V, float4(i.normalDir, 0))).xyz;
 	float3 normalBlendEmissiveDetail = viewNormalEmissive * float3(-1, -1, 1);
@@ -273,7 +279,7 @@ inline void ViewNormalEmissive(VertexOutput i, float3 viewDir, float3 normalDir,
 	float4 colorShiftColor = lerp(_Emissive_Color, lerp(_Emissive_Color, _ColorShift, colorShiftSpeed), _Is_ColorShift);
 	float4 viewShiftColor = lerp(_ViewShift, colorShiftColor, viewShift);
 	float4 emissiveColor = lerp(colorShiftColor, viewShiftColor, _Is_ViewShift);
-	emissive = emissiveColor.rgb * emissiveTex.rgb * emissiveMask;
+	return emissiveColor.rgb * emissiveTex.rgb * emissiveMask;
 }
 #endif
 
@@ -386,12 +392,12 @@ float4 frag(VertexOutput i, fixed facing : VFACE) : SV_TARGET
 	
 #ifdef _IS_TRANSCLIPPING_OFF
 #elif _IS_TRANSCLIPPING_ON
-	float4 _ClippingMask_var = tex2D(_ClippingMask,TRANSFORM_TEX(i.uv0, _ClippingMask));
-	float Set_MainTexAlpha = mainTex.a;
-	float alphaAsClippingMask = lerp(_ClippingMask_var.r, Set_MainTexAlpha, _IsBaseMapAlphaAsClippingMask);
+	float4 clippingMask = tex2D(_ClippingMask,TRANSFORM_TEX(i.uv0, _ClippingMask));
+	float clippingAlpha = mainTex.a;
+	float alphaAsClippingMask = lerp(clippingMask.r, clippingAlpha, _IsBaseMapAlphaAsClippingMask);
 	float inverseClipping = lerp(alphaAsClippingMask, (1.0 - alphaAsClippingMask), _Inverse_Clipping);
-	float Set_Clipping = saturate((inverseClipping + _ClippingLevel));
-	clip(Set_Clipping - 0.5);
+	float clipping = saturate((inverseClipping + _ClippingLevel));
+	clip(clipping - 0.5);
 #endif
 
 	half shadowAttenuation = 1.0;
@@ -405,10 +411,7 @@ float4 frag(VertexOutput i, fixed facing : VFACE) : SV_TARGET
 
 	float3 lightDirection = GetLightDirection(mainLight.direction);
 	half3 originalLightColor = mainLightColor.rgb;
-	float3 lightColor = lerp(
-		max(defaultLightColor, originalLightColor), 
-		max(defaultLightColor, 
-		saturate(originalLightColor)), 1); //_Is_Filter_LightColor
+	float3 lightColor = lerp(max(defaultLightColor, originalLightColor),  max(defaultLightColor, saturate(originalLightColor)), 1 /*_Is_Filter_LightColor*/);
 	
 	float3 halfDirection = normalize(viewDirection + lightDirection);
 	float halfLambert = 0.5 * dot(lerp(i.normalDir, normalDirection, _Is_NormalMapToBase), lightDirection) + 0.5;
@@ -432,14 +435,8 @@ float4 frag(VertexOutput i, fixed facing : VFACE) : SV_TARGET
 	float systemShadowLevel = ((shadowAttenuation * 0.5) + 0.5 + _Tweak_SystemShadowsLevel > 0.001) ? (shadowAttenuation * 0.5) + 0.5 + _Tweak_SystemShadowsLevel : 0.0001;
 	float toonShadeLevel = (shadingGradeMap.r < 0.95) ? shadingGradeMap.r + _Tweak_ShadingGradeMapLevel : 1;
 	float toonShade = saturate(toonShadeLevel) * lerp(halfLambert, (halfLambert * saturate(systemShadowLevel)), _Set_SystemShadowsToBase);
-	float finalShadowMask = saturate(
-		(1.0 + ((toonShade - (_1st_ShadeColor_Step - _1st_ShadeColor_Feather)) * (0.0 - 1.0)) / 
-		(_1st_ShadeColor_Step - (_1st_ShadeColor_Step - _1st_ShadeColor_Feather))));
-	
-	
-	float shadeShadowMask = saturate(
-		(1.0 + ((toonShade - (_2nd_ShadeColor_Step - _2nd_ShadeColor_Feather)) * (0.0 - 1.0)) / 
-		(_2nd_ShadeColor_Step - (_2nd_ShadeColor_Step - _2nd_ShadeColor_Feather))));
+	float finalShadowMask = GetShadowMask(toonShade, _1st_ShadeColor_Step, _1st_ShadeColor_Feather);
+	float shadeShadowMask = GetShadowMask(toonShade, _2nd_ShadeColor_Step, _2nd_ShadeColor_Feather);
 	
 	float3 base2ndA = (toonShade2nd.rgb * _2nd_ShadeColor.rgb);
 	float3 base2ndB = ((toonShade2nd.rgb * _2nd_ShadeColor.rgb) * baseLightColor);
@@ -449,12 +446,12 @@ float4 frag(VertexOutput i, fixed facing : VFACE) : SV_TARGET
 
 	// HighColor Setting	
 	float3 baseHighColor = SetHighColor(i, normalDirection, halfDirection, baseLightColor, finalBaseColor, finalShadowMask);
-	
 
 	// RimLight Setting
 	float3 baseRimLight = SetRimLight(i, normalDirection, viewDirection, lightDirection, baseLightColor);
 	float3 rimLight = lerp(baseHighColor, (baseHighColor + baseRimLight), _RimLight);
 	
+	// Matcap & Emissive UV Settings
 	fixed signMirror = i.mirrorFlag;
 	float3 cameraRight = UNITY_MATRIX_V[0].xyz;
 	float3 cameraForward = UNITY_MATRIX_V[2].xyz;
@@ -475,7 +472,7 @@ float4 frag(VertexOutput i, fixed facing : VFACE) : SV_TARGET
 	// Create MatCap color
 	float3 matCapColorFinal = SetMatCap(i, rotateMatCapUV, baseLightColor, finalShadowMask, baseHighColor, baseRimLight, rimLight);
 	float3 finalColor = lerp(rimLight, matCapColorFinal, _MatCap);
-	
+	float3 emissiveColor = 0;
 #ifdef _ANGELRING_OFF
 	//
 #else
@@ -487,26 +484,26 @@ float4 frag(VertexOutput i, fixed facing : VFACE) : SV_TARGET
 	//	
 #else
 	// _EMISSIVE_ON
-	ViewNormalEmissive(i, viewDirection, normalDirection, signMirror, cameraDir, cameraRoll);
+	emissiveColor = SetEmissive(i, viewDirection, normalDirection, signMirror, cameraDir, cameraRoll);
 #endif
 
-
+	
 	float3 pointLightColor = 0;
 #ifdef _ADDITIONAL_LIGHTS
 	AddtionalPointLight(i, inputData, mainTex, viewDirection, normalDirection, pointLightColor);
 #endif
 	
-	finalColor = saturate(finalColor) + (envLightColor * envLightIntensity * _GI_Intensity * smoothstep(1, 0, envLightIntensity / 2)) + emissive;
+	finalColor = saturate(finalColor) + (envLightColor * envLightIntensity * _GI_Intensity * smoothstep(1, 0, envLightIntensity / 2)) + emissiveColor;
 	finalColor += pointLightColor;
 
 #ifdef _IS_TRANSCLIPPING_ON
 	float Set_Opacity = saturate((inverseClipping + _Tweak_transparency));
 	fixed4 finalRGBA = fixed4(finalColor, Set_Opacity);
+	return finalRGBA;	
 #else
-	// _IS_TRANSCLIPPING_OFF
 	fixed4 finalRGBA = fixed4(finalColor, 1);
+	return finalRGBA;	
 #endif
-	return finalRGBA;
 }
 
 

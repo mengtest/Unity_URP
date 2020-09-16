@@ -328,6 +328,12 @@ namespace ToonShade
 			}
 			EditorGUI.showMixedValue = false;
 		}
+
+		public static GUIContent TransparentModeText = new GUIContent("Transparent Mode", "Transparent  mode that fits you. ");
+		public static GUIContent ClippingmodeModeText0 = new GUIContent("Clipping Mode", "Select clipping mode that fits you. ");
+		public static GUIContent ClippingmodeModeText1 = new GUIContent("Trans Clipping", "Select clipping mode that fits you. ");
+		public static GUIContent StencilmodeModeText = new GUIContent("Stencil Mode", "Select stencil mode that fits you. ");
+
 	}
 
 	public static class Styles

@@ -127,7 +127,6 @@ namespace ToonShade
 		private MaterialEditor m_MaterialEditor = default;
 #endregion
 
-
 		private bool ClippingModePropertyAvailable
 		{
 			get
@@ -146,13 +145,6 @@ namespace ToonShade
 			}
 		}
 
-
-		public static GUIContent transparentModeText = new GUIContent("Transparent Mode", "Transparent  mode that fits you. ");
-		public static GUIContent clippingmodeModeText0 = new GUIContent("Clipping Mode", "Select clipping mode that fits you. ");
-		public static GUIContent clippingmodeModeText1 = new GUIContent("Trans Clipping", "Select clipping mode that fits you. ");
-		public static GUIContent stencilmodeModeText = new GUIContent("Stencil Mode", "Select stencil mode that fits you. ");
-
-
 		public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] props)
 		{
 			EditorGUIUtility.fieldWidth = 0;
@@ -163,40 +155,13 @@ namespace ToonShade
 			TransparentSetting = (ToonShadeDifinition.Transparent)material.GetInt(ToonShadeDifinition.ShaderPropTransparentEnabled);
 			stencilNoSetting = material.GetInt(ToonShadeDifinition.ShaderPropStencilNo);
 
-			EditorGUILayout.BeginHorizontal();
-
-			if (material.HasProperty(ToonShadeDifinition.ShaderPropSimpleUI))
+			GUI_CustomInspector(material, props);
+			if (originalInspector)
 			{
-				var selectedUI = material.GetInt(ToonShadeDifinition.ShaderPropSimpleUI);
-				if (selectedUI == 2)
-				{
-					originalInspector = true;
-				}
-				else if (selectedUI == 1)
-				{
-					simpleUI = true;
-				}
-				if (originalInspector)
-				{
-					if (GUILayout.Button("Change CustomUI", middleButtonStyle))
-					{
-						originalInspector = false;
-						material.SetInt(ToonShadeDifinition.ShaderPropSimpleUI, 0);
-					}
-					EditorGUILayout.EndHorizontal();
-					m_MaterialEditor.PropertiesDefaultGUI(props);
-					return;
-				}
-				if (GUILayout.Button("Show All properties", middleButtonStyle))
-				{
-					originalInspector = true;
-					material.SetInt(ToonShadeDifinition.ShaderPropSimpleUI, 2);
-				}
+				return;
 			}
 
-			EditorGUILayout.EndHorizontal();
 			EditorGUI.BeginChangeCheck();
-
 			EditorGUILayout.Space();
 			autoRenderQueue = material.GetInt(ToonShadeDifinition.ShaderPropAutoRenderQueue);
 			renderQueue = material.renderQueue;
@@ -298,7 +263,6 @@ namespace ToonShade
 				EditorGUI.indentLevel--;
 			}
 
-
 			EditorGUILayout.Space();
 			if (material.HasProperty(ToonShadeDifinition.ShaderPropOutline) && TransparentSetting != ToonShadeDifinition.Transparent.On)
 			{
@@ -317,7 +281,6 @@ namespace ToonShade
 			{
 				SetOverDrawTransparentObject(material);
 			}
-
 
 			if (!simpleUI)
 			{
@@ -341,7 +304,6 @@ namespace ToonShade
 				EditorGUILayout.Space();
 			}
 
-
 			ApplyClippingMode(material);
 			ApplyStencilMode(material);
 			ApplyAngelRing(material);
@@ -355,6 +317,10 @@ namespace ToonShade
 			}
 		}
 
+		/// <summary>
+		/// Find Shader All Property
+		/// </summary>
+		/// <param name="props"></param>
 		private void FindProperties(MaterialProperty[] props)
 		{
 			transparentMode = FindProperty(ToonShadeDifinition.ShaderPropTransparentEnabled, props);
@@ -411,17 +377,17 @@ namespace ToonShade
 			rimLightTweakMaskLevel = FindProperty(ToonShadeDifinition.ShaderPropRimLightTweakMaskLevel, props);
 
 			// Matcap
-			matCapSampler = FindProperty("_MatCap_Sampler", props);
-			matCapColor = FindProperty("_MatCapColor", props);
-			blurLevelMatcap = FindProperty("_BlurLevelMatcap", props);
-			tweakMatCapUV = FindProperty("_Tweak_MatCapUV", props);
-			rotateMatCapUV = FindProperty("_Rotate_MatCapUV", props);
-			normalMapForMatCap = FindProperty("_NormalMapForMatCap", props);
-			bumpScaleMatcap = FindProperty("_BumpScaleMatcap", props);
-			rotateNormalMapForMatCapUV = FindProperty("_Rotate_NormalMapForMatCapUV", props);
-			tweakMatCapOnShadow = FindProperty("_TweakMatCapOnShadow", props);
-			matCapMask = FindProperty("_Set_MatcapMask", props);
-			tweakMatcapMaskLevel = FindProperty("_Tweak_MatcapMaskLevel", props);
+			matCapSampler = FindProperty(ToonShadeDifinition.ShaderPropMatCapSampler, props);
+			matCapColor = FindProperty(ToonShadeDifinition.ShaderPropMatCapColor, props);
+			blurLevelMatcap = FindProperty(ToonShadeDifinition.ShaderPropMatCapBlurLevel, props);
+			tweakMatCapUV = FindProperty(ToonShadeDifinition.ShaderPropMatCapTweakUV, props);
+			rotateMatCapUV = FindProperty(ToonShadeDifinition.ShaderPropMatCapRotateUV, props);
+			normalMapForMatCap = FindProperty(ToonShadeDifinition.ShaderPropMatCapForNormalMap, props);
+			bumpScaleMatcap = FindProperty(ToonShadeDifinition.ShaderPropMatCapBumpScale, props);
+			rotateNormalMapForMatCapUV = FindProperty(ToonShadeDifinition.ShaderPropMatCapRotateNormalMapUV, props);
+			tweakMatCapOnShadow = FindProperty(ToonShadeDifinition.ShaderPropMatCapTweakShadow, props);
+			matCapMask = FindProperty(ToonShadeDifinition.ShaderPropMatCapMask, props);
+			tweakMatcapMaskLevel = FindProperty(ToonShadeDifinition.ShaderPropMatCapMaskLevel, props);
 
 			// AngelRing
 			angelRingSampler = FindProperty(ToonShadeDifinition.ShaderPropAngelRingSampler, props);
@@ -454,6 +420,38 @@ namespace ToonShade
 
 			//offset_X_Axis_BLD = FindProperty("_Offset_X_Axis_BLD", props, false);
 			//offset_Y_Axis_BLD = FindProperty("_Offset_Y_Axis_BLD", props, false);
+		}
+
+#region GUI
+		private void GUI_CustomInspector(Material material, MaterialProperty[] props)
+		{
+			EditorGUILayout.BeginHorizontal();
+			var selectedUI = material.GetInt(ToonShadeDifinition.ShaderPropSimpleUI);
+			if (selectedUI == 2)
+			{
+				originalInspector = true;
+			}
+			else if (selectedUI == 1)
+			{
+				simpleUI = true;
+			}
+			if (originalInspector)
+			{
+				if (GUILayout.Button("Change CustomUI", middleButtonStyle))
+				{
+					originalInspector = false;
+					material.SetInt(ToonShadeDifinition.ShaderPropSimpleUI, 0);
+				}
+				EditorGUILayout.EndHorizontal();
+				m_MaterialEditor.PropertiesDefaultGUI(props);
+				return;
+			}
+			if (GUILayout.Button("Show All properties", middleButtonStyle))
+			{
+				originalInspector = true;
+				material.SetInt(ToonShadeDifinition.ShaderPropSimpleUI, 2);
+			}
+			EditorGUILayout.EndHorizontal();
 		}
 
 		private void GUI_SetRTHS(Material material)
@@ -547,7 +545,7 @@ namespace ToonShade
 		private void GUI_Tranparent(Material material)
 		{
 			//GUILayout.Label("Transparent Shader", EditorStyles.boldLabel);
-			DoPopup(transparentModeText, transparentMode, System.Enum.GetNames(typeof(ToonShadeDifinition.Transparent)));
+			DoPopup(ToonShadeDifinition.TransparentModeText, transparentMode, System.Enum.GetNames(typeof(ToonShadeDifinition.Transparent)));
 
 			if (TransparentSetting == ToonShadeDifinition.Transparent.On)
 			{
@@ -566,7 +564,7 @@ namespace ToonShade
 		private void GUI_StencilMode(Material material)
 		{
 			//GUILayout.Label("StencilMask or StencilOut Shader", EditorStyles.boldLabel);
-			DoPopup(stencilmodeModeText, stencilMode, System.Enum.GetNames(typeof(ToonShadeDifinition.ToonStencilMode)));
+			DoPopup(ToonShadeDifinition.StencilmodeModeText, stencilMode, System.Enum.GetNames(typeof(ToonShadeDifinition.ToonStencilMode)));
 
 			int _Current_StencilNo = stencilNoSetting;
 			_Current_StencilNo = (int)EditorGUILayout.IntField("Stencil No.", _Current_StencilNo);
@@ -1788,6 +1786,8 @@ namespace ToonShade
 
 		}
 
+#endregion
+
 		private void ApplyQueueAndRenderType(Material material)
 		{
 			var stencilMode = (ToonShadeDifinition.ToonStencilMode)material.GetInt(ToonShadeDifinition.ShaderPropStencilMode);
@@ -1841,6 +1841,49 @@ namespace ToonShade
 			material.SetOverrideTag(IGNOREPROJECTION, ignoreProjection);
 		}
 
+		private void ApplyClippingMode(Material material)
+		{
+			material.DisableKeyword(ToonShadeDifinition.ShaderDefineIS_CLIPPING_OFF);
+			material.DisableKeyword(ToonShadeDifinition.ShaderDefineIS_CLIPPING_MODE);
+			material.DisableKeyword(ToonShadeDifinition.ShaderDefineIS_CLIPPING_TRANSMODE);
+
+			switch (material.GetInt(ToonShadeDifinition.ShaderPropClippingMode))
+			{
+				case 0:
+					material.DisableKeyword(ToonShadeDifinition.ShaderDefineIS_TRANSCLIPPING_ON);
+					material.EnableKeyword(ToonShadeDifinition.ShaderDefineIS_TRANSCLIPPING_OFF);
+					break;
+				default:
+					material.DisableKeyword(ToonShadeDifinition.ShaderDefineIS_TRANSCLIPPING_OFF);
+					material.EnableKeyword(ToonShadeDifinition.ShaderDefineIS_TRANSCLIPPING_ON);
+					break;
+
+			}
+		}
+
+		private void ApplyStencilMode(Material material)
+		{
+			ToonShadeDifinition.ToonStencilMode mode = (ToonShadeDifinition.ToonStencilMode)(material.GetInt(ToonShadeDifinition.ShaderPropStencilMode));
+			switch (mode)
+			{
+				case ToonShadeDifinition.ToonStencilMode.Off:
+					material.SetInt(ToonShadeDifinition.ShaderPropStencilComp, (int)ToonShadeDifinition.StencilCompFunction.Disabled);
+					material.SetInt(ToonShadeDifinition.ShaderPropStencilOpPass, (int)ToonShadeDifinition.StencilType.Keep);
+					material.SetInt(ToonShadeDifinition.ShaderPropStencilOpFail, (int)ToonShadeDifinition.StencilType.Keep);
+					break;
+				case ToonShadeDifinition.ToonStencilMode.StencilMask:
+					material.SetInt(ToonShadeDifinition.ShaderPropStencilComp, (int)ToonShadeDifinition.StencilCompFunction.Always);
+					material.SetInt(ToonShadeDifinition.ShaderPropStencilOpPass, (int)ToonShadeDifinition.StencilType.Replace);
+					material.SetInt(ToonShadeDifinition.ShaderPropStencilOpFail, (int)ToonShadeDifinition.StencilType.Replace);
+					break;
+				case ToonShadeDifinition.ToonStencilMode.StencilOut:
+					material.SetInt(ToonShadeDifinition.ShaderPropStencilComp, (int)ToonShadeDifinition.StencilCompFunction.NotEqual);
+					material.SetInt(ToonShadeDifinition.ShaderPropStencilOpPass, (int)ToonShadeDifinition.StencilType.Keep);
+					material.SetInt(ToonShadeDifinition.ShaderPropStencilOpFail, (int)ToonShadeDifinition.StencilType.Keep);
+					break;
+			}
+		}
+
 		private void ApplyMatCapMode(Material material)
 		{
 			if (material.GetInt(ToonShadeDifinition.ShaderPropClippingMode) == 0)
@@ -1889,49 +1932,6 @@ namespace ToonShade
 				material.EnableKeyword(ToonShadeDifinition.ShaderDefineEMISSIVE_ON);
 			}
 		}
-
-		private void ApplyStencilMode(Material material)
-		{
-			ToonShadeDifinition.ToonStencilMode mode = (ToonShadeDifinition.ToonStencilMode)(material.GetInt(ToonShadeDifinition.ShaderPropStencilMode));
-			switch (mode)
-			{
-				case ToonShadeDifinition.ToonStencilMode.Off:
-					material.SetInt(ToonShadeDifinition.ShaderPropStencilComp, (int)ToonShadeDifinition.StencilCompFunction.Disabled);
-					material.SetInt(ToonShadeDifinition.ShaderPropStencilOpPass, (int)ToonShadeDifinition.StencilType.Keep);
-					material.SetInt(ToonShadeDifinition.ShaderPropStencilOpFail, (int)ToonShadeDifinition.StencilType.Keep);
-					break;
-				case ToonShadeDifinition.ToonStencilMode.StencilMask:
-					material.SetInt(ToonShadeDifinition.ShaderPropStencilComp, (int)ToonShadeDifinition.StencilCompFunction.Always);
-					material.SetInt(ToonShadeDifinition.ShaderPropStencilOpPass, (int)ToonShadeDifinition.StencilType.Replace);
-					material.SetInt(ToonShadeDifinition.ShaderPropStencilOpFail, (int)ToonShadeDifinition.StencilType.Replace);
-					break;
-				case ToonShadeDifinition.ToonStencilMode.StencilOut:
-					material.SetInt(ToonShadeDifinition.ShaderPropStencilComp, (int)ToonShadeDifinition.StencilCompFunction.NotEqual);
-					material.SetInt(ToonShadeDifinition.ShaderPropStencilOpPass, (int)ToonShadeDifinition.StencilType.Keep);
-					material.SetInt(ToonShadeDifinition.ShaderPropStencilOpFail, (int)ToonShadeDifinition.StencilType.Keep);
-					break;
-			}
-		}
-
-		private void ApplyClippingMode(Material material)
-		{
-			material.DisableKeyword(ToonShadeDifinition.ShaderDefineIS_CLIPPING_OFF);
-			material.DisableKeyword(ToonShadeDifinition.ShaderDefineIS_CLIPPING_MODE);
-			material.DisableKeyword(ToonShadeDifinition.ShaderDefineIS_CLIPPING_TRANSMODE);
-
-			switch (material.GetInt(ToonShadeDifinition.ShaderPropClippingMode))
-			{
-				case 0:
-					material.DisableKeyword(ToonShadeDifinition.ShaderDefineIS_TRANSCLIPPING_ON);
-					material.EnableKeyword(ToonShadeDifinition.ShaderDefineIS_TRANSCLIPPING_OFF);
-					break;
-				default:
-					material.DisableKeyword(ToonShadeDifinition.ShaderDefineIS_TRANSCLIPPING_OFF);
-					material.EnableKeyword(ToonShadeDifinition.ShaderDefineIS_TRANSCLIPPING_ON);
-					break;
-
-			}
-		}	
 
 		private void SetOverDrawTransparentObject(Material material)
 		{
