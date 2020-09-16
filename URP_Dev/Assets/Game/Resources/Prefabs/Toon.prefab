@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3264453172641867640}
   - component: {fileID: 3264453172641867646}
   - component: {fileID: 3264453172641867647}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: 3D_Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -107,7 +107,7 @@ GameObject:
   - component: {fileID: 3264453172883517853}
   - component: {fileID: 3264453172883517854}
   - component: {fileID: 3264453172883517855}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Toon
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -106,36 +106,36 @@ float4 frag(VertexOutput i) : SV_Target
 	float lightColorIntensity = (0.299 * lightColor.r + 0.587 * lightColor.g + 0.114 * lightColor.b);
 	lightColor = (lightColorIntensity < 1) ? lightColor : lightColor / lightColorIntensity;
 	lightColor = lerp(half3(1.0, 1.0, 1.0), lightColor, _Is_LightColor_Outline);
+	
+	float4 mainTex = tex2D(_MainTex, TRANSFORM_TEX(i.uv, _MainTex));
+	float4 outlineTex = tex2D(_OutlineTex, TRANSFORM_TEX(i.uv, _OutlineTex));
+	float3 baseColor = _BaseColor.rgb * mainTex.rgb;
+	
+	float3 blendA = (_Outline_Color.rgb * lightColor);
+	float3 blendB = (_Outline_Color.rgb * baseColor * baseColor * lightColor);
+	float3 lightBlendColor = lerp(blendA, blendB, _Is_BlendBaseColor);
 
-	
-	float4 _MainTex_var = tex2D(_MainTex, TRANSFORM_TEX(i.uv, _MainTex));
-	float3 _BaseColorMap_var  = _BaseColor.rgb * _MainTex_var.rgb;
-	
-	float3 _BlendA = (_Outline_Color.rgb * lightColor);
-	float3 _BlendB = (_Outline_Color.rgb * _BaseColorMap_var * _BaseColorMap_var * lightColor);
-	float3 _Is_BlendBaseColor_var = lerp(_BlendA, _BlendB, _Is_BlendBaseColor);
-	float3 _OutlineTex_var = tex2D(_OutlineTex, TRANSFORM_TEX(i.uv, _OutlineTex));
 		
 #ifdef _IS_OUTLINE_CLIPPING_YES
 	
-	float4 _ClippingMask_var = tex2D(_ClippingMask, TRANSFORM_TEX(i.uv, _ClippingMask));
-	float Set_MainTexAlpha = _MainTex_var.a;
-	float _IsBaseMapAlphaAsClippingMask_var = lerp(_ClippingMask_var.r, Set_MainTexAlpha, _IsBaseMapAlphaAsClippingMask);
-	float _Inverse_Clipping_var = lerp(_IsBaseMapAlphaAsClippingMask_var, (1.0 - _IsBaseMapAlphaAsClippingMask_var), _Inverse_Clipping);
-	float Set_Clipping = saturate((_Inverse_Clipping_var + _ClippingLevel));
-	clip(Set_Clipping - 0.5);
+	float4 clippingMask = tex2D(_ClippingMask, TRANSFORM_TEX(i.uv, _ClippingMask));
+	float mainTexAlpha = mainTex.a;
+	float baseMapClippingMaskAlpha = lerp(clippingMask.r, mainTexAlpha, _IsBaseMapAlphaAsClippingMask);
+	float inverseClipping = lerp(baseMapClippingMaskAlpha, (1.0 - baseMapClippingMaskAlpha), _Inverse_Clipping);
+	float clippingValue = saturate((inverseClipping + _ClippingLevel));
+	clip(clippingValue - 0.5);
 	
-	float4 _ClipA = float4(_Is_BlendBaseColor_var, Set_Clipping);
-	float4 _ClipB = float4((_OutlineTex_var.rgb * _Outline_Color.rgb * lightColor), Set_Clipping);
-	float4 Set_Outline_Color = lerp(_ClipA, _ClipB, _Is_OutlineTex);
-	return Set_Outline_Color;
+	float4 blendBaseColor = float4(lightBlendColor, clippingValue);
+	float4 outlineColor = float4((outlineTex.rgb * _Outline_Color.rgb * lightColor), clippingValue);
+	float4 finalColor = lerp(blendBaseColor, outlineColor, _Is_OutlineTex);
+	return finalColor;
 	
 #else
 	// _IS_OUTLINE_CLIPPING_NO
-	float3 _ClipOffA = (_Is_BlendBaseColor_var);
-	float3 _ClipOffB = (_OutlineTex_var.rgb * _Outline_Color.rgb * lightColor);
-	float3 Set_Outline_Color = lerp(_ClipOffA, _ClipOffB, _Is_OutlineTex);	
-	return float4(Set_Outline_Color, 1.0);
+	float3 blendBaseColor = (lightBlendColor);
+	float3 outlineColor = (outlineTex.rgb * _Outline_Color.rgb * lightColor);
+	float3 finalColor = lerp(blendBaseColor, outlineColor, _Is_OutlineTex);	
+	return float4(finalColor, 1.0);
 	
 #endif
 }
