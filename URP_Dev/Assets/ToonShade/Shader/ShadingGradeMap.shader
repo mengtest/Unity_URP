@@ -293,7 +293,6 @@ Shader "ToonShade/ShadingGradeMap"
 			#include "Packages/com.unity.render-pipelines.universal/Shaders/DepthOnlyPass.hlsl"
 			ENDHLSL
 		}
-
 	}
 	FallBack Off
 	CustomEditor "ToonShade.ToonShadeInspector"

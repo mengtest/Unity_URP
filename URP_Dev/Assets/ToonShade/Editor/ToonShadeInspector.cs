@@ -11,16 +11,13 @@ namespace ToonShade
 		public ToonShadeDifinition.OutlineMode outlineMode;
 		public ToonShadeDifinition.CullingMode cullingMode;
 
-
 		public GUILayoutOption[] shortButtonStyle = new GUILayoutOption[] { GUILayout.Width(130) };
 		public GUILayoutOption[] middleButtonStyle = new GUILayoutOption[] { GUILayout.Width(130) };
-
 
 		private static ToonShadeDifinition.Transparent TransparentSetting;
 		private static int stencilNoSetting;
 		private static bool originalInspector = false;
 		private static bool simpleUI = false;
-
 
 		static bool _BasicShaderSettings_Foldout = false;
 		static bool _BasicThreeColors_Foldout = true;
@@ -196,7 +193,7 @@ namespace ToonShade
 			}
 
 			EditorGUILayout.Space();
-			_BasicThreeColors_Foldout = ToonShadeDifinition.Foldout(_BasicThreeColors_Foldout, "【Basic Three Colors Settings】");
+			_BasicThreeColors_Foldout = ToonShadeDifinition.Foldout(_BasicThreeColors_Foldout, "Basic Colors Settings");
 			if (_BasicThreeColors_Foldout)
 			{
 				EditorGUI.indentLevel++;
@@ -205,7 +202,7 @@ namespace ToonShade
 			}
 
 			EditorGUILayout.Space();
-			_StepAndFeather_Foldout = ToonShadeDifinition.Foldout(_StepAndFeather_Foldout, "【Basic Band Step Settings】");
+			_StepAndFeather_Foldout = ToonShadeDifinition.Foldout(_StepAndFeather_Foldout, "Basic ShadeStep Settings");
 			if (_StepAndFeather_Foldout)
 			{
 				EditorGUI.indentLevel++;
@@ -214,7 +211,7 @@ namespace ToonShade
 			}
 
 			EditorGUILayout.Space();
-			_HighColor_Foldout = ToonShadeDifinition.Foldout(_HighColor_Foldout, "【HighColor Settings】");
+			_HighColor_Foldout = ToonShadeDifinition.Foldout(_HighColor_Foldout, "HighColor");
 			if (_HighColor_Foldout)
 			{
 				EditorGUI.indentLevel++;
@@ -224,7 +221,7 @@ namespace ToonShade
 			}
 
 			EditorGUILayout.Space();
-			_RimLight_Foldout = ToonShadeDifinition.Foldout(_RimLight_Foldout, "【RimLight Settings】");
+			_RimLight_Foldout = ToonShadeDifinition.Foldout(_RimLight_Foldout, "RimLight");
 			if (_RimLight_Foldout)
 			{
 				EditorGUI.indentLevel++;
@@ -234,7 +231,7 @@ namespace ToonShade
 			}
 
 			EditorGUILayout.Space();
-			_MatCap_Foldout = ToonShadeDifinition.Foldout(_MatCap_Foldout, "【MatCap Settings】");
+			_MatCap_Foldout = ToonShadeDifinition.Foldout(_MatCap_Foldout, "MatCap");
 			if (_MatCap_Foldout)
 			{
 				EditorGUI.indentLevel++;
@@ -244,7 +241,7 @@ namespace ToonShade
 			}
 
 			EditorGUILayout.Space();
-			_AngelRing_Foldout = ToonShadeDifinition.Foldout(_AngelRing_Foldout, "【AngelRing Settings】");
+			_AngelRing_Foldout = ToonShadeDifinition.Foldout(_AngelRing_Foldout, "AngelRing");
 			if (_AngelRing_Foldout)
 			{
 				EditorGUI.indentLevel++;
@@ -254,7 +251,7 @@ namespace ToonShade
 			}
 
 			EditorGUILayout.Space();
-			_Emissive_Foldout = ToonShadeDifinition.Foldout(_Emissive_Foldout, "【Emissive Settings】");
+			_Emissive_Foldout = ToonShadeDifinition.Foldout(_Emissive_Foldout, "Emissive");
 			if (_Emissive_Foldout)
 			{
 				EditorGUI.indentLevel++;
@@ -1786,8 +1783,9 @@ namespace ToonShade
 
 		}
 
-#endregion
+		#endregion
 
+#region Apply
 		private void ApplyQueueAndRenderType(Material material)
 		{
 			var stencilMode = (ToonShadeDifinition.ToonStencilMode)material.GetInt(ToonShadeDifinition.ShaderPropStencilMode);
@@ -1932,6 +1930,7 @@ namespace ToonShade
 				material.EnableKeyword(ToonShadeDifinition.ShaderDefineEMISSIVE_ON);
 			}
 		}
+#endregion
 
 		private void SetOverDrawTransparentObject(Material material)
 		{

@@ -24,7 +24,7 @@ fixed _Is_LightColor_Outline;
 fixed _Is_BakedNormal;
 
 #ifdef _IS_OUTLINE_CLIPPING_YES
-	sampler2D _ClippingMask; uniform float4 _ClippingMask_ST;
+	sampler2D _ClippingMask; float4 _ClippingMask_ST;
 	float _ClippingLevel;
 	fixed _Inverse_Clipping;
 	fixed _IsBaseMapAlphaAsClippingMask;
@@ -107,8 +107,8 @@ float4 frag(VertexOutput i) : SV_Target
 	lightColor = (lightColorIntensity < 1) ? lightColor : lightColor / lightColorIntensity;
 	lightColor = lerp(half3(1.0, 1.0, 1.0), lightColor, _Is_LightColor_Outline);
 	
-	float4 mainTex = tex2D(_MainTex, TRANSFORM_TEX(i.uv, _MainTex));
-	float4 outlineTex = tex2D(_OutlineTex, TRANSFORM_TEX(i.uv, _OutlineTex));
+	float4 mainTex = tex2D(_MainTex, i.uv);
+	float4 outlineTex = tex2D(_OutlineTex, i.uv);
 	float3 baseColor = _BaseColor.rgb * mainTex.rgb;
 	
 	float3 blendA = (_Outline_Color.rgb * lightColor);
@@ -118,7 +118,7 @@ float4 frag(VertexOutput i) : SV_Target
 		
 #ifdef _IS_OUTLINE_CLIPPING_YES
 	
-	float4 clippingMask = tex2D(_ClippingMask, TRANSFORM_TEX(i.uv, _ClippingMask));
+	float4 clippingMask = tex2D(_ClippingMask, i.uv);
 	float mainTexAlpha = mainTex.a;
 	float baseMapClippingMaskAlpha = lerp(clippingMask.r, mainTexAlpha, _IsBaseMapAlphaAsClippingMask);
 	float inverseClipping = lerp(baseMapClippingMaskAlpha, (1.0 - baseMapClippingMaskAlpha), _Inverse_Clipping);
