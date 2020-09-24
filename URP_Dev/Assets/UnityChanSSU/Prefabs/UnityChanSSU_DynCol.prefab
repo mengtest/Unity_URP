@@ -1390,7 +1390,7 @@ RotationConstraint:
   m_Enabled: 1
   m_Weight: 0.9
   m_RotationAtRest: {x: 52.302612, y: -35.60783, z: 55.94609}
-  m_RotationOffset: {x: 29.689402, y: 114.08442, z: -85.67077}
+  m_RotationOffset: {x: 29.689402, y: 114.08442, z: -85.67078}
   m_AffectRotationX: 1
   m_AffectRotationY: 1
   m_AffectRotationZ: 1
@@ -2634,7 +2634,7 @@ RotationConstraint:
   m_Enabled: 1
   m_Weight: 0.5
   m_RotationAtRest: {x: 0.08951778, y: 133.42139, z: -0.6263446}
-  m_RotationOffset: {x: -46.36013, y: 0.42012805, z: 91.314514}
+  m_RotationOffset: {x: -46.36013, y: 0.420133, z: 91.314514}
   m_AffectRotationX: 1
   m_AffectRotationY: 1
   m_AffectRotationZ: 1
@@ -3592,7 +3592,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: f2c836f3e5c029140a0cc913d7df766a, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: f2c836f3e5c029140a0cc913d7df766a, type: 3}
       propertyPath: m_LocalRotation.z
@@ -3600,7 +3600,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: f2c836f3e5c029140a0cc913d7df766a, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: f2c836f3e5c029140a0cc913d7df766a, type: 3}
       propertyPath: m_RootOrder
@@ -3612,7 +3612,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: f2c836f3e5c029140a0cc913d7df766a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 180
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: f2c836f3e5c029140a0cc913d7df766a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -3740,7 +3740,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -927199367670048503, guid: f2c836f3e5c029140a0cc913d7df766a, type: 3}
       propertyPath: m_Name
-      value: UnityChanSSU_DynCol
+      value: UnityChanSSU
       objectReference: {fileID: 0}
     - target: {fileID: -927199367670048503, guid: f2c836f3e5c029140a0cc913d7df766a, type: 3}
       propertyPath: m_Layer

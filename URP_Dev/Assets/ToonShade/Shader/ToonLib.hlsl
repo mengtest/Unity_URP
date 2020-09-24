@@ -1,7 +1,7 @@
 ﻿#ifndef TOON_LIB
 #define TOON_LIB
 
-#include "ToonDifinition.hlsl"
+#include "Common.hlsl"
 
 #if (SHADER_LIBRARY_VERSION_MAJOR ==7 && SHADER_LIBRARY_VERSION_MINOR >= 3) || (SHADER_LIBRARY_VERSION_MAJOR >= 8)
 
@@ -178,7 +178,7 @@ float2 RotateUV(float2 _uv, float _radian, float2 _piv, float _time)
 	return (mul(_uv - _piv, float2x2(RotateUV_cos, -RotateUV_sin, RotateUV_sin, RotateUV_cos)) + _piv);
 }
 
-fixed3 DecodeLightProbe(fixed3 N)
+half3 DecodeLightProbe(half3 N)
 {
 	return ShadeSH9(float4(N, 1));
 }

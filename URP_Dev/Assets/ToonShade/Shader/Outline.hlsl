@@ -1,7 +1,7 @@
 ﻿#ifndef OUTLINE
 #define OUTLINE
 
-#include "ToonDifinition.hlsl"
+#include "Common.hlsl"
 
 float4 _LightColor0;
 float4 _BaseColor;

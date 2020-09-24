@@ -193,7 +193,7 @@ Shader "ToonShade/ShadingGradeMap"
 			#pragma multi_compile _IS_OUTLINE_CLIPPING_NO _IS_OUTLINE_CLIPPING_YES
 			#pragma multi_compile _OUTLINE_NML _OUTLINE_POS
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-			#include "ToonOutline.hlsl"
+			#include "Outline.hlsl"
 			ENDHLSL
 		}
 
@@ -249,7 +249,7 @@ Shader "ToonShade/ShadingGradeMap"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/Shaders/LitForwardPass.hlsl"
-			#include "ToonShadingGradeMap.hlsl"
+			#include "ShadingGradeMap.hlsl"
 			ENDHLSL
 		}
 

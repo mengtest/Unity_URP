@@ -146,6 +146,7 @@ Material:
     - _BumpScale: 1
     - _BumpScaleMatcap: 1
     - _CameraRolling_Stabilizer: 0
+    - _ClippingLevel: 0
     - _ClippingMode: 2
     - _Clipping_Level: 0
     - _ColorShift_Speed: 0
@@ -154,6 +155,7 @@ Material:
     - _Cutoff: 0.5
     - _DstBlend: 0
     - _EMISSIVE: 0
+    - _Emissive: 0
     - _EnvironmentReflections: 1
     - _Farthest_Distance: 0
     - _GI_Intensity: 0
@@ -165,14 +167,19 @@ Material:
     - _Inverse_MatcapMask: 0
     - _Inverse_Z_Axis_BLD: 1
     - _IsBaseMapAlphaAsClippingMask: 0
+    - _Is_AngelRingAlphaOn: 0
+    - _Is_Antipodean_RimLight: 0
+    - _Is_ApRimLight_FeatherOff: 0
     - _Is_BLD: 0
     - _Is_BakedNormal: 0
     - _Is_BlendAddToHiColor: 0
     - _Is_BlendAddToMatCap: 1
     - _Is_BlendBaseColor: 0
+    - _Is_CameraRolling: 0
     - _Is_ColorShift: 0
     - _Is_Filter_HiCutPointLightColor: 1
     - _Is_Filter_LightColor: 0
+    - _Is_InverseMatcapMask: 0
     - _Is_LightColor_1st_Shade: 1
     - _Is_LightColor_2nd_Shade: 1
     - _Is_LightColor_AR: 1
@@ -182,6 +189,7 @@ Material:
     - _Is_LightColor_MatCap: 1
     - _Is_LightColor_Outline: 1
     - _Is_LightColor_RimLight: 1
+    - _Is_LightDirection_MaskOn: 0
     - _Is_NormalMapForMatCap: 0
     - _Is_NormalMapToBase: 0
     - _Is_NormalMapToHighColor: 0
@@ -189,6 +197,7 @@ Material:
     - _Is_Ortho: 0
     - _Is_OutlineTex: 0
     - _Is_PingPong_Base: 0
+    - _Is_RimLight_FeatherOff: 0
     - _Is_SpecularToHighColor: 0
     - _Is_UseTweakHighColorOnShadow: 0
     - _Is_UseTweakMatCapOnShadow: 0

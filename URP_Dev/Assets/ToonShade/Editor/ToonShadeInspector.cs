@@ -340,8 +340,10 @@ namespace ToonShade
 			baseShadeFeather = FindProperty(ToonShadeDifinition.ShaderPropBaseShade_Feather, props);
 			shadeColorStep = FindProperty(ToonShadeDifinition.ShaderPropShadeColor_Step, props);
 			first2ndShadesFeather = FindProperty(ToonShadeDifinition.ShaderProp1st2nd_Shades_Feather, props);
+
 			set1stShadePosition = FindProperty(ToonShadeDifinition.ShaderPropSet1stShadePosition, props, false);
 			set2ndShadePosition = FindProperty(ToonShadeDifinition.ShaderPropSet2ndShadePosition, props, false);
+
 			shadingGradeMap = FindProperty(ToonShadeDifinition.ShaderPropShadingGradeMap, props, false);
 			tweakShadingGradeMapLevel = FindProperty(ToonShadeDifinition.ShaderPropTweakShadingGradeMapLevel, props, false);
 			blurLevelSGM = FindProperty(ToonShadeDifinition.ShaderPropBlurLevel, props, false);

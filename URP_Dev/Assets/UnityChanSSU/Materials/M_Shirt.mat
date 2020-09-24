@@ -181,10 +181,10 @@ Material:
     - Vector1_DD3E7449: 0.01
     - Vector1_FDD381BC: 0.63
     - _1st2nd_Shades_Feather: 0.0001
-    - _1st_ShadeColor_Feather: 0.0001
-    - _1st_ShadeColor_Step: 0.8
+    - _1st_ShadeColor_Feather: 0.04
+    - _1st_ShadeColor_Step: 0.795
     - _2nd_ShadeColor_Feather: 0.0001
-    - _2nd_ShadeColor_Step: 0.5
+    - _2nd_ShadeColor_Step: 0.51
     - _ARSampler_AlphaOn: 0
     - _AR_OffsetU: 0
     - _AR_OffsetV: 0.3
@@ -195,8 +195,8 @@ Material:
     - _Ap_RimLight_FeatherOff: 0
     - _Ap_RimLight_Power: 0.1
     - _AutoRenderQueue: 1
-    - _BaseColor_Step: 0.8
-    - _BaseShade_Feather: 0.0001
+    - _BaseColor_Step: 0.795
+    - _BaseShade_Feather: 0.04
     - _Base_Speed: 0
     - _Blend: 0
     - _BlurLevelMatcap: 0
@@ -226,6 +226,8 @@ Material:
     - _Inverse_Z_Axis_BLD: 1
     - _IsBaseMapAlphaAsClippingMask: 0
     - _Is_AngelRingAlphaOn: 0
+    - _Is_Antipodean_RimLight: 0
+    - _Is_ApRimLight_FeatherOff: 0
     - _Is_BLD: 0
     - _Is_BakedNormal: 0
     - _Is_BlendAddToHiColor: 0
@@ -245,6 +247,7 @@ Material:
     - _Is_LightColor_MatCap: 1
     - _Is_LightColor_Outline: 1
     - _Is_LightColor_RimLight: 1
+    - _Is_LightDirection_MaskOn: 0
     - _Is_NormalMapForMatCap: 0
     - _Is_NormalMapToBase: 0
     - _Is_NormalMapToHighColor: 0
@@ -252,6 +255,7 @@ Material:
     - _Is_Ortho: 0
     - _Is_OutlineTex: 0
     - _Is_PingPong_Base: 0
+    - _Is_RimLight_FeatherOff: 0
     - _Is_SpecularToHighColor: 0
     - _Is_UseTweakHighColorOnShadow: 0
     - _Is_UseTweakMatCapOnShadow: 0
@@ -281,7 +285,7 @@ Material:
     - _Scroll_EmissiveU: 0
     - _Scroll_EmissiveV: 0
     - _Set_SystemShadowsToBase: 1
-    - _ShadeColor_Step: 0.5
+    - _ShadeColor_Step: 0.51
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
