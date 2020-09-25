@@ -1,5 +1,4 @@
-﻿
-Shader "ToonShade/ShadingGradeMap"
+﻿Shader "Universal Render Pipeline/Sample"
 {
 	Properties
 	{
@@ -18,13 +17,13 @@ Shader "ToonShade/ShadingGradeMap"
 		// 0 : _IS_TRANSCLIPPING_OFF 1 : _IS_TRANSCLIPPING_ON
 		[Enum(OFF,0, ON,1)] _ClippingMode("CliippingMode",int) = 0
 
-		[Enum(OFF,0, FRONT,1, BACK,2)] _CullMode("Cull Mode", int) = 2 
+		[Enum(OFF,0, FRONT,1, BACK,2)] _CullMode("Cull Mode", int) = 2
 		[Enum(OFF,0, ON,1)] _ZWriteMode("ZWrite Mode", int) = 1
 		[Enum(OFF,0, ON,1)] _ZOverDrawMode("ZOver Draw Mode", Float) = 0
 		_SPRDefaultUnlitColorMask("SPRDefaultUnlit Path Color Mask", int) = 15
 
 		[Enum(OFF,0, FRONT,1, BACK,2)] _SRPDefaultUnlitColMode("SPRDefaultUnlit  Cull Mode", int) = 1
-		
+
 		// if _ClippingMode_ON selected show property
 		_ClippingMask("ClippingMask", 2D) = "white" {}
 		_ClippingLevel("Clipping Level", Range(0, 1)) = 0
@@ -38,7 +37,7 @@ Shader "ToonShade/ShadingGradeMap"
 		_1st_ShadeMap("1st_ShadeMap", 2D) = "white" {}
 		_1st_ShadeColor("1st_ShadeColor", Color) = (1,1,1,1)
 		[Toggle(_)] _Use_BaseAs1st("Use BaseMap as 1st_ShadeMap", Float) = 0
-		
+
 		_2nd_ShadeMap("2nd_ShadeMap", 2D) = "white" {}
 		_2nd_ShadeColor("2nd_ShadeColor", Color) = (1,1,1,1)
 		[Toggle(_)] _Use_1stAs2nd("Use 1st_ShadeMap as 2nd_ShadeMap", Float) = 0
@@ -158,40 +157,12 @@ Shader "ToonShade/ShadingGradeMap"
 		[Toggle(_)] _Is_BlendBaseColor("Is_BlendBaseColor", Float) = 0
 		[Toggle(_)] _Is_OutlineTex("Is_OutlineTex", Float) = 0
 		[Toggle(_)] _Is_BakedNormal("Is_BakedNormal", Float) = 0
-
 	}
 
 	SubShader
 	{
 		Tags { "RenderType" = "Opaque" "RenderPipeline" = "UniversalRenderPipeline" }
 
-		Pass
-		{
-			Name "OUTLINE"
-			Tags { "LightMode" = "SRPDefaultUnlit" }
-
-			Cull[_SRPDefaultUnlitColMode]
-			ColorMask[_SPRDefaultUnlitColorMask]
-			Blend SrcAlpha OneMinusSrcAlpha
-			Stencil
-			{
-				Ref[_StencilNo]
-				Comp[_StencilComp]
-				Pass[_StencilOpPass]
-				Fail[_StencilOpFail]
-
-			}
-
-			HLSLPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
-			#pragma target 3.0
-			#pragma multi_compile _IS_OUTLINE_CLIPPING_NO _IS_OUTLINE_CLIPPING_YES
-			#pragma multi_compile _OUTLINE_NML _OUTLINE_POS
-			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-			#include "Outline.hlsl"
-			ENDHLSL
-		}
 
 		Pass
 		{
@@ -201,7 +172,7 @@ Shader "ToonShade/ShadingGradeMap"
 			Cull[_CullMode]
 			Blend SrcAlpha OneMinusSrcAlpha
 
-			Stencil 
+			Stencil
 			{
 				Ref[_StencilNo]
 				Comp[_StencilComp]
@@ -213,8 +184,6 @@ Shader "ToonShade/ShadingGradeMap"
 			#pragma target 3.0
 			#pragma vertex vert
 			#pragma fragment frag
-
-
 			#pragma shader_feature _NORMALMAP
 			#pragma shader_feature _ALPHATEST_ON
 			#pragma shader_feature _ALPHAPREMULTIPLY_ON
@@ -241,12 +210,235 @@ Shader "ToonShade/ShadingGradeMap"
 			#pragma shader_feature _IS_TRANSCLIPPING_OFF _IS_TRANSCLIPPING_ON
 			#pragma shader_feature _ANGELRING_OFF _ANGELRING_ON
 			#pragma shader_feature _EMISSIVE_OFF _EMISSIVE_ON
-
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/Shaders/LitForwardPass.hlsl"
-			#include "ShadingGradeMap.hlsl"
+			#include "Common.hlsl"
+			#include "Function.hlsl"
+
+			CBUFFER_START(UnityPerMaterial)
+			float4 _MainColor;
+			sampler2D _MainTex;
+			float4 _MainTex_ST;
+
+			float4 _1st_ShadeColor;
+			float4 _2nd_ShadeColor;
+			sampler2D _1st_ShadeMap;
+			float4 _1st_ShadeMap_ST;
+			sampler2D _2nd_ShadeMap;
+			float4 _2nd_ShadeMap_ST;
+			sampler2D _ShadingGradeMap;
+			float4 _ShadingGradeMap_ST;
+
+			float _Tweak_SystemShadowsLevel;
+			float _Tweak_ShadingGradeMapLevel;
+			float _1st_ShadeColor_Step;
+			float _1st_ShadeColor_Feather;
+			float _2nd_ShadeColor_Step;
+			float _2nd_ShadeColor_Feather;
+			float _BlurLevelSGM;
+
+			half _Is_NormalMapToBase;
+			half _Set_SystemShadowsToBase;
+
+
+			float4 _HighColor;
+			sampler2D _HighColor_Tex;
+			float4 _HighColor_Tex_ST;
+			float _HighColor_Power;
+			float _TweakHighColorOnShadow;
+			sampler2D _Set_HighColorMask;
+			float4 _Set_HighColorMask_ST;
+			float _Tweak_HighColorMaskLevel;
+			half _Is_NormalMapToHighColor;
+			half _Is_SpecularToHighColor;
+			half _Is_BlendAddToHiColor;
+			half _Is_UseTweakHighColorOnShadow;
+
+			half _RimLight;
+			float4 _RimLightColor;
+			float _RimLight_Power;
+			float _RimLight_InsideMask;
+			float _Tweak_LightDirection_MaskLevel;
+			float4 _Ap_RimLightColor;
+			float _Ap_RimLight_Power;
+			sampler2D _Set_RimLightMask;
+			float4 _Set_RimLightMask_ST;
+			float _Tweak_RimLightMaskLevel;
+			half _Is_NormalMapToRimLight;
+			half _Is_RimLight_FeatherOff;
+			half _Is_LightDirection_MaskOn;
+			half _Is_Antipodean_RimLight;
+			half _Is_ApRimLight_FeatherOff;
+
+			half _MatCap;
+			sampler2D _MatCap_Sampler;
+			float4 _MatCap_Sampler_ST;
+			float _BlurLevelMatcap;
+			float4 _MatCapColor;
+			float _Tweak_MatCapUV;
+			float _Rotate_MatCapUV;
+			sampler2D _NormalMapForMatCap;
+			float4 _NormalMapForMatCap_ST;
+			sampler2D _NormalMap;
+			float4 _NormalMap_ST;
+			float _NormalMapStrength;
+			float _BumpScaleMatcap;
+			float _Rotate_NormalMapForMatCapUV;
+			float _TweakMatCapOnShadow;
+			sampler2D _Set_MatcapMask;
+			float4 _Set_MatcapMask_ST;
+			float _Tweak_MatcapMaskLevel;
+			half _Is_BlendAddToMatCap;
+			half _Is_NormalMapForMatCap;
+			half _Is_UseTweakMatCapOnShadow;
+			half _Is_Ortho;
+			half _Is_InverseMatcapMask;
+			half _Is_CameraRolling;
+
+			half _Emissive;
+			sampler2D _Emissive_Tex;
+			float4 _Emissive_Tex_ST;
+			float4 _Emissive_Color;
+			float _Rotate_EmissiveUV;
+			float _Base_Speed;
+			float _Scroll_EmissiveU;
+			float _Scroll_EmissiveV;
+			float4 _ColorShift;
+			float4 _ViewShift;
+			float _ColorShift_Speed;
+			half _Is_ViewCoord_Scroll;
+			half _Is_PingPong_Base;
+			half _Is_ColorShift;
+			half _Is_ViewShift;
+
+			float _GI_Intensity;
+			float _Unlit_Intensity;
+			float _StepOffset;
+			half _Is_Filter_HiCutPointLightColor;
+
+			sampler2D _ClippingMask;
+			float4 _ClippingMask_ST;
+			float _ClippingLevel;
+			float _Tweak_transparency;
+			half _IsBaseMapAlphaAsClippingMask;
+			half _Inverse_Clipping;
+
+			half _AngelRing;
+			sampler2D _AngelRing_Sampler;
+			float4 _AngelRing_Sampler_ST;
+			float4 _AngelRing_Color;
+			float _AR_OffsetU;
+			float _AR_OffsetV;
+			half _Is_AngelRingAlphaOn;
+
+			half _Use_BaseAs1st;
+			half _Use_1stAs2nd;
+			half _Is_LightColor_Base;
+			half _Is_LightColor_1st_Shade;
+			half _Is_LightColor_2nd_Shade;
+			half _Is_LightColor_HighColor;
+			half _Is_LightColor_RimLight;
+			half _Is_LightColor_Ap_RimLight;
+			half _Is_LightColor_MatCap;
+			half _Is_LightColor_AR;
+			CBUFFER_END
+
+			struct VertexInput
+			{
+				float4 vertex : POSITION;
+				float3 normal : NORMAL;
+				float4 tangent : TANGENT;
+				float2 texcoord0 : TEXCOORD0;
+#ifdef _ANGELRING_ON
+				float2 texcoord1 : TEXCOORD1;
+				float2 lightmapUV : TEXCOORD2;
+#else
+				float2 lightmapUV : TEXCOORD1;
+#endif
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+			};
+
+			struct VertexOutput
+			{
+				// half4 fogFactorAndVertexLight : TEXCOORD7; 
+				// x: fogFactor, yzw: vertex light
+				float4 pos : SV_POSITION;
+				float2 uv0 : TEXCOORD0;
+				float2 uv1 : TEXCOORD1;
+				float4 posWorld : TEXCOORD2;
+				float3 normalDir : TEXCOORD3;
+				float3 tangentDir : TEXCOORD4;
+				float3 bitangentDir : TEXCOORD5;
+				float mirrorFlag : TEXCOORD6;
+				DECLARE_LIGHTMAP_OR_SH(lightmapUV, vertexSH, 7);
+				half4 fogFactorAndVertexLight : TEXCOORD8;
+
+#ifndef _MAIN_LIGHT_SHADOWS
+				float4 positionCS : TEXCOORD9;
+				int mainLightID : TEXCOORD10;
+#else
+				float4 shadowCoord : TEXCOORD9;
+				float4 positionCS : TEXCOORD10;
+				int mainLightID : TEXCOORD11;
+#endif
+				UNITY_VERTEX_INPUT_INSTANCE_ID
+				UNITY_VERTEX_OUTPUT_STEREO
+			};
+
+			VertexOutput vert(VertexInput v)
+			{
+				VertexOutput o = (VertexOutput)0;
+
+				UNITY_SETUP_INSTANCE_ID(v);
+				UNITY_TRANSFER_INSTANCE_ID(v, o);
+				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+
+				o.uv0 = v.texcoord0;
+#ifdef _ANGELRING_ON
+				o.uv1 = v.texcoord1;
+#endif
+				o.normalDir = UnityObjectToWorldNormal(v.normal);
+				o.tangentDir = normalize(mul(unity_ObjectToWorld, float4(v.tangent.xyz, 0.0)).xyz);
+				o.bitangentDir = normalize(cross(o.normalDir, o.tangentDir) * v.tangent.w);
+
+				VertexPositionInputs vertex = GetVertexPositionInputs(v.vertex.xyz);
+				o.pos = vertex.positionCS;
+
+				o.posWorld = mul(unity_ObjectToWorld, v.vertex);
+				float3 crossFwd = cross(UNITY_MATRIX_V[0].xyz, UNITY_MATRIX_V[1].xyz);
+				o.mirrorFlag = dot(crossFwd, UNITY_MATRIX_V[2].xyz) < 0 ? 1 : -1;
+
+				float3 positionWS = TransformObjectToWorld(v.vertex.xyz);
+				float4 positionCS = TransformWorldToHClip(positionWS);
+				half3 vertexLight = VertexLighting(o.posWorld.xyz, o.normalDir);
+				half fogFactor = ComputeFogFactor(positionCS.z);
+
+				OUTPUT_LIGHTMAP_UV(v.lightmapUV, unity_LightmapST, o.lightmapUV);
+				OUTPUT_SH(o.normalDir.xyz, o.vertexSH);
+				o.fogFactorAndVertexLight = half4(fogFactor, vertexLight);
+				o.positionCS = positionCS;
+
+#if defined(_MAIN_LIGHT_SHADOWS) && !defined(_RECEIVE_SHADOWS_OFF)
+#if SHADOWS_SCREEN
+				o.shadowCoord = ComputeScreenPos(positionCS);
+#else
+				o.shadowCoord = TransformWorldToShadowCoord(o.posWorld.xyz);
+#endif
+				o.mainLightID = DetermineToonShadeMainLightIndex(o.posWorld.xyz, o.shadowCoord, positionCS);
+
+#else
+				o.mainLightID = DetermineToonShadeMainLightIndex(o.posWorld.xyz, 0, positionCS);
+#endif
+				return o;
+			}
+
+			float4 frag(VertexOutput i, half facing : VFACE) : SV_TARGET
+			{
+				return tex2D(_MainTex, i.uv0);
+			}
+
 			ENDHLSL
 		}
 
@@ -291,6 +483,7 @@ Shader "ToonShade/ShadingGradeMap"
 			ENDHLSL
 		}
 	}
+
 	FallBack Off
 	CustomEditor "ToonShade.ToonShadeInspector"
 }

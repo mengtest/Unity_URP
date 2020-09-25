@@ -1,7 +1,6 @@
-﻿#ifndef TOON_DIFINITION
-#define TOON_DIFINITION
+﻿#ifndef COMMON
+#define COMMON
 
-#define TOON_URP 1
 
 #define fixed  half
 #define fixed3 half3
@@ -19,7 +18,6 @@
 #undef FOG_EXP2
 #endif
 
-#define UCTS_TEXTURE2D(tex,name)  SAMPLE_TEXTURE2D(tex, sampler##tex, TRANSFORM_TEX(name, tex));
 
 #define UnityObjectToClipPos UnityObjectToClipPosInstanced
 
@@ -44,19 +42,19 @@
 #if defined(FOG_LINEAR) || defined(FOG_EXP) || defined(FOG_EXP2)
 	#if (SHADER_TARGET < 30) || defined(SHADER_API_MOBILE)
 		// mobile or SM2.0: fog factor was already calculated per-vertex, so just lerp the color
-		#define UNITY_APPLY_FOG_COLOR(coord,col,fogCol) UNITY_FOG_LERP_COLOR(col,fogCol,(coord).x)
+		#define UNITY_APPLY_FOG_COLOR(coord, col, fogCol) UNITY_FOG_LERP_COLOR(col,fogCol,(coord).x)
 	#else
 		// SM3.0 and PC/console: calculate fog factor and lerp fog color
-		#define UNITY_APPLY_FOG_COLOR(coord,col,fogCol) UNITY_CALC_FOG_FACTOR((coord).x); UNITY_FOG_LERP_COLOR(col,fogCol,unityFogFactor)
+		#define UNITY_APPLY_FOG_COLOR(coord, col, fogCol) UNITY_CALC_FOG_FACTOR((coord).x); UNITY_FOG_LERP_COLOR(col,fogCol,unityFogFactor)
 	#endif
 #else
 	#define UNITY_APPLY_FOG_COLOR(coord,col,fogCol)
 #endif
 
 #ifdef UNITY_PASS_FORWARDADD
-	#define UNITY_APPLY_FOG(coord,col) UNITY_APPLY_FOG_COLOR(coord,col,fixed4(0,0,0,0))
+	#define UNITY_APPLY_FOG(coord,col) UNITY_APPLY_FOG_COLOR(coord, col, half4(0,0,0,0))
 #else
-	#define UNITY_APPLY_FOG(coord,col) UNITY_APPLY_FOG_COLOR(coord,col,unity_FogColor)
+	#define UNITY_APPLY_FOG(coord,col) UNITY_APPLY_FOG_COLOR(coord, col, unity_FogColor)
 #endif
 
 #ifdef DIRECTIONAL
@@ -64,6 +62,35 @@
 #define TRANSFER_VERTEX_TO_FRAGMENT(a) TRANSFER_SHADOW(a)
 #define LIGHT_ATTENUATION(a)    SHADOW_ATTENUATION(a)
 #endif
+
+#if (SHADER_LIBRARY_VERSION_MAJOR ==7 && SHADER_LIBRARY_VERSION_MINOR >= 3) || (SHADER_LIBRARY_VERSION_MAJOR >= 8)
+
+	#ifdef _ADDITIONAL_LIGHTS
+		#ifndef  REQUIRES_WORLD_SPACE_POS_INTERPOLATOR
+			#define REQUIRES_WORLD_SPACE_POS_INTERPOLATOR
+		#endif
+	#endif
+#else
+	#ifdef _MAIN_LIGHT_SHADOWS
+		#ifndef REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR
+			#define REQUIRES_VERTEX_SHADOW_COORD_INTERPOLATOR
+		#endif
+	#endif
+
+	#ifdef _ADDITIONAL_LIGHTS
+		#ifndef REQUIRES_WORLD_SPACE_POS_INTERPOLATOR
+			#define REQUIRES_WORLD_SPACE_POS_INTERPOLATOR
+		#endif
+	#endif
+#endif
+
+#define UNITY_PROJ_COORD(a) a
+#define UNITY_SAMPLE_SCREEN_SHADOW(tex, uv) tex2Dproj( tex, UNITY_PROJ_COORD(uv) ).r
+#define TEXTURE2D_SAMPLER2D(textureName, samplerName) Texture2D textureName; SamplerState samplerName 
+		TEXTURE2D_SAMPLER2D(_RaytracedHardShadow, sampler_RaytracedHardShadow);
+
+// #define PI 3.141592654
+//float4 _RaytracedHardShadow_TexelSize;
 
 inline bool IsGammaSpace()
 {
@@ -145,11 +172,9 @@ inline float3 UnityObjectToWorldNormal(in float3 norm)
 half3 SHEvalLinearL0L1(half4 normal)
 {
 	half3 x;
-
 	x.r = dot(unity_SHAr, normal);
 	x.g = dot(unity_SHAg, normal);
 	x.b = dot(unity_SHAb, normal);
-
 	return x;
 }
 
@@ -169,7 +194,6 @@ half3 SHEvalLinearL2(half4 normal)
 half3 ShadeSH9(half4 normal)
 {
 	half3 res = SHEvalLinearL0L1(normal);
-
 	res += SHEvalLinearL2(normal);
 
 #ifdef UNITY_COLORSPACE_GAMMA
@@ -178,4 +202,10 @@ half3 ShadeSH9(half4 normal)
 	return res;
 }
 
-#endif // TOON_DIFINITION
+half3 DecodeLightProbe(half3 N)
+{
+	return ShadeSH9(float4(N, 1));
+}
+
+
+#endif // COMMON

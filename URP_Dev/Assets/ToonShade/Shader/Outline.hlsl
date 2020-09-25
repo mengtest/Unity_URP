@@ -2,33 +2,7 @@
 #define OUTLINE
 
 #include "Common.hlsl"
-
-float4 _LightColor0;
-float4 _BaseColor;
-float _Unlit_Intensity;
-float4 _Color;
-
-float _Outline_Width;
-float _Offset_Z;
-float4 _Outline_Color;
-
-sampler2D _MainTex; float4 _MainTex_ST;
-sampler2D _Outline_Sampler; float4 _Outline_Sampler_ST;
-sampler2D _OutlineTex; float4 _OutlineTex_ST;
-sampler2D _BakedNormal; float4 _BakedNormal_ST;
-
-fixed _Is_OutlineTex;
-fixed _Is_BlendBaseColor;
-fixed _Is_Filter_LightColor;
-fixed _Is_LightColor_Outline;
-fixed _Is_BakedNormal;
-
-#ifdef _IS_OUTLINE_CLIPPING_YES
-	sampler2D _ClippingMask; float4 _ClippingMask_ST;
-	float _ClippingLevel;
-	fixed _Inverse_Clipping;
-	fixed _IsBaseMapAlphaAsClippingMask;
-#endif
+#include "Property.hlsl"
 
 struct VertexInput
 {
@@ -98,7 +72,6 @@ VertexOutput vert(VertexInput v)
 
 float4 frag(VertexOutput i) : SV_Target
 {
-	_Color = _BaseColor;
 	float4 objPos = mul(unity_ObjectToWorld, float4(0, 0, 0, 1));
 	half3 ambientSkyColor = (unity_AmbientSky.rgb > 0.05) ? unity_AmbientSky.rgb * _Unlit_Intensity : half3(0.05, 0.05, 0.05) * _Unlit_Intensity;
 	
@@ -109,7 +82,7 @@ float4 frag(VertexOutput i) : SV_Target
 	
 	float4 mainTex = tex2D(_MainTex, i.uv);
 	float4 outlineTex = tex2D(_OutlineTex, i.uv);
-	float3 baseColor = _BaseColor.rgb * mainTex.rgb;
+	float3 baseColor = _MainColor.rgb * mainTex.rgb;
 	
 	float3 blendA = (_Outline_Color.rgb * lightColor);
 	float3 blendB = (_Outline_Color.rgb * lightColor * baseColor);

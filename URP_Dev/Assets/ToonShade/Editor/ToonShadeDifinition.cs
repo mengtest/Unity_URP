@@ -47,7 +47,7 @@ namespace ToonShade
 
 		// Basic
 		public static string ShaderPropMainTex = "_MainTex";
-		public static string ShaderPropBaseColor = "_BaseColor";
+		public static string ShaderPropBaseColor = "_MainColor";
 		public static string ShaderProp1stShadeMap = "_1st_ShadeMap";
 		public static string ShaderPropUse_BaseAs1st = "_Use_BaseAs1st";
 		public static string ShaderProp1stShadeColor = "_1st_ShadeColor";
@@ -56,7 +56,7 @@ namespace ToonShade
 		public static string ShaderProp2ndShadeColor = "_2nd_ShadeColor";
 
 		public static string ShaderPropNormalMap = "_NormalMap";
-		public static string ShaderPropBumpScale = "_BumpScale";
+		public static string ShaderPropBumpScale = "_NormalMapStrength";
 		public static string ShaderPropIs_NormalMapToBase = "_Is_NormalMapToBase";
 		public static string ShaderPropSetSystemShadowsToBase = "_Set_SystemShadowsToBase";
 		public static string ShaderPropTweakSystemShadowsLevel = "_Tweak_SystemShadowsLevel";
