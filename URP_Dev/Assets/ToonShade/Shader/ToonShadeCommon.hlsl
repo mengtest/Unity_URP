@@ -89,7 +89,6 @@
 #define TEXTURE2D_SAMPLER2D(textureName, samplerName) Texture2D textureName; SamplerState samplerName 
 		TEXTURE2D_SAMPLER2D(_RaytracedHardShadow, sampler_RaytracedHardShadow);
 
-// #define PI 3.141592654
 //float4 _RaytracedHardShadow_TexelSize;
 
 inline bool IsGammaSpace()

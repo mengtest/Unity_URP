@@ -6,11 +6,14 @@
 // Using pow often result to a warning like this
 // "pow(f, e) will not work for negative f, use abs(f) or conditionally handle negative values if you expect them"
 // PositivePow remove this warning when you know the value is positive and avoid inf/NAN.
-#include "Common.hlsl"
-#include "Function.hlsl"
-#include "Property.hlsl"
+#include "ToonShadeCommon.hlsl"
+#include "ToonShadeFunction.hlsl"
 #include "ToonShadeProperty.hlsl"
+#include "ToonShadeStruct.hlsl"
 
+#ifndef PI
+	#define PI 3.141592654
+#endif
 
 
 float GetShadowMask(float toonShade, float step, float feather)
@@ -275,6 +278,15 @@ float3 SetEmissive(VertexOutput i, float3 viewDir, float3 normalDir, half signMi
 }
 #endif
 
+float SetTransClipping(float2 uv, float clippingAlpha)
+{
+	float4 clippingMask = tex2D(_ClippingMask, uv);
+	float alphaAsClippingMask = lerp(clippingMask.r, clippingAlpha, _IsBaseMapAlphaAsClippingMask);
+	float inverseClipping = lerp(alphaAsClippingMask, (1.0 - alphaAsClippingMask), _Inverse_Clipping);
+	float clipping = saturate((inverseClipping + _ClippingLevel));
+	clip(clipping - 0.5);
+	return inverseClipping;
+}
 
 VertexOutput vert(VertexInput v)
 {
@@ -361,38 +373,28 @@ float4 frag(VertexOutput i, half facing : VFACE) : SV_TARGET
 	input.normalWS = half3(i.normalDir);
 	input.viewDirWS = half3(viewDirection);
 #endif
-	
+
 	InitializeInputData(input, surfaceData.normalTS, inputData);
 	
 	BRDFData brdfData;
 	InitializeBRDFData(surfaceData.albedo, surfaceData.metallic, surfaceData.specular, surfaceData.smoothness, surfaceData.alpha, brdfData);
 	half3 envColor = GlobalIlluminationToonShade(brdfData, inputData.bakedGI, surfaceData.occlusion, inputData.normalWS, inputData.viewDirectionWS);
 	envColor *= 1.8f;
-
-	float3 envLightColor = envColor.rgb;
-	float envLightIntensity = GetEnvLightIntensity(envLightColor);
 	
 	ToonLight mainLight = GetMainToonShadeLightByID(i.mainLightID, i.posWorld.xyz, inputData.shadowCoord, i.positionCS);
 	half3 mainLightColor = GetLightColor(mainLight);
 	float4 mainTex = tex2D(_MainTex, i.uv0);
 	
-#ifdef _IS_TRANSCLIPPING_OFF
-#elif _IS_TRANSCLIPPING_ON
-	float4 clippingMask = tex2D(_ClippingMask, i.uv0);
-	float clippingAlpha = mainTex.a;
-	float alphaAsClippingMask = lerp(clippingMask.r, clippingAlpha, _IsBaseMapAlphaAsClippingMask);
-	float inverseClipping = lerp(alphaAsClippingMask, (1.0 - alphaAsClippingMask), _Inverse_Clipping);
-	float clipping = saturate((inverseClipping + _ClippingLevel));
-	clip(clipping - 0.5);
+#ifdef _IS_TRANSCLIPPING_ON
+	float inverseClipping = SetTransClipping(i.uv0, mainTex.a);
 #endif
 
 	half shadowAttenuation = mainLight.shadowAttenuation;
 	float3 shadeLight = max(ShadeSH9(half4(0.0, 0.0, 0.0, 1.0)), ShadeSH9(half4(0.0, -1.0, 0.0, 1.0)).rgb);
 	float3 defaultLightColor = saturate(max(half3(0.05, 0.05, 0.05) * _Unlit_Intensity, shadeLight * _Unlit_Intensity));
-
 	float3 lightDirection = GetLightDirection(mainLight.direction);
 	half3 originalLightColor = mainLightColor.rgb;
-	float3 lightColor = lerp(max(defaultLightColor, originalLightColor),  max(defaultLightColor, saturate(originalLightColor)), 1 /*_Is_Filter_LightColor*/);
+	float3 lightColor = lerp(max(defaultLightColor, originalLightColor), max(defaultLightColor, saturate(originalLightColor)), 1);
 	
 	float3 halfDirection = normalize(viewDirection + lightDirection);
 	float lambert = dot(lerp(i.normalDir, normalDirection, _Is_NormalMapToBase), lightDirection);
@@ -400,12 +402,10 @@ float4 frag(VertexOutput i, half facing : VFACE) : SV_TARGET
 	
 	float3 baseLightColor = lightColor.rgb;
 	float3 diffuseColor = lerp((mainTex.rgb * _MainColor.rgb), ((mainTex.rgb * _MainColor.rgb) * baseLightColor), _Is_LightColor_Base);
-	
+
 	float4 toonShade1st = lerp(tex2D(_1st_ShadeMap, i.uv0), mainTex, _Use_BaseAs1st);
 	float4 toonShade2nd = lerp(tex2D(_2nd_ShadeMap, i.uv0), toonShade1st, _Use_1stAs2nd);
-	
 	float3 lightColor1stShade = lerp((toonShade1st.rgb * _1st_ShadeColor.rgb), ((toonShade1st.rgb * _1st_ShadeColor.rgb) * baseLightColor), _Is_LightColor_1st_Shade);
-	
 	float4 shadingGradeMap = tex2Dlod(_ShadingGradeMap, float4(TRANSFORM_TEX(i.uv0, _ShadingGradeMap), 0.0, _BlurLevelSGM));
 	
 #if !defined (_RAYTRACINGSHADOW_ON)
@@ -414,10 +414,7 @@ float4 frag(VertexOutput i, half facing : VFACE) : SV_TARGET
 #endif
 
 	float systemShadowLevel = ((shadowAttenuation * 0.5) + 0.5 + _Tweak_SystemShadowsLevel > 0.001) ? (shadowAttenuation * 0.5) + 0.5 + _Tweak_SystemShadowsLevel : 0.0001;
-	
-	// _ShadingGradeMapLevel_var 
 	float toonShadeLevel = (shadingGradeMap.r < 0.95) ? shadingGradeMap.r + _Tweak_ShadingGradeMapLevel : 1;
-	
 	float toonShade = saturate(toonShadeLevel) * lerp(halfLambert, (halfLambert * saturate(systemShadowLevel)), _Set_SystemShadowsToBase);
 	float finalShadowMask = GetShadowMask(toonShade, _1st_ShadeColor_Step, _1st_ShadeColor_Feather);
 	float shadeShadowMask = GetShadowMask(toonShade, _2nd_ShadeColor_Step, _2nd_ShadeColor_Feather);
@@ -428,14 +425,9 @@ float4 frag(VertexOutput i, half facing : VFACE) : SV_TARGET
 	float3 baseLerpB = lerp(lightColor1stShade, lerp(base2ndA, base2ndB, _Is_LightColor_2nd_Shade), shadeShadowMask);
 	float3 finalBaseColor = lerp(baseLerpA, baseLerpB, finalShadowMask);
 
-	// HighColor Setting	
 	float3 baseHighColor = SetHighColor(i, normalDirection, halfDirection, baseLightColor, finalBaseColor, finalShadowMask);
-
-	// RimLight Setting
 	float3 baseRimLight = SetRimLight(i, normalDirection, viewDirection, lightDirection, baseLightColor);
 	float3 rimLight = lerp(baseHighColor, (baseHighColor + baseRimLight), _RimLight);
-	
-	// Matcap & Emissive UV Settings
 	half signMirror = i.mirrorFlag;
 	float3 cameraRight = UNITY_MATRIX_V[0].xyz;
 	float3 cameraForward = UNITY_MATRIX_V[2].xyz;
@@ -449,46 +441,44 @@ float4 frag(VertexOutput i, half facing : VFACE) : SV_TARGET
 	float cameraRoll = acos(clamp(cameraRollCos, -1, 1));
 	half cameraDir = (cameraRight.y < 0) ? -1 : 1;
 
-	// Create MatCap coordinate
 	float matcapUVAngle = (_Rotate_MatCapUV * PI) - cameraDir * cameraRoll * _Is_CameraRolling;
 	float2 rotateMatCapUV = SetMatCapUV(i, tangentTransform, viewDirection, matcapUVAngle, signMirror);
-	
-	// Create MatCap color
 	float3 matCapColorFinal = SetMatCap(i, rotateMatCapUV, baseLightColor, finalShadowMask, baseHighColor, baseRimLight, rimLight);
 	float3 finalColor = lerp(rimLight, matCapColorFinal, _MatCap);
 	float3 emissiveColor = 0;
+	float3 pointLightColor = 0;
 	
-#ifdef _ANGELRING_OFF
-	//
-#else
-	// _ANGELRING_ON
+#ifdef _ANGELRING_ON
 	finalColor = AdditionalHairSpecular(i, cameraDir, cameraRoll, baseLightColor, finalColor);
 #endif
-	
-#ifdef _EMISSIVE_OFF
-	//	
-#else
-	// _EMISSIVE_ON
+#ifdef _EMISSIVE_ON
 	emissiveColor = SetEmissive(i, viewDirection, normalDirection, signMirror, cameraDir, cameraRoll);
 #endif
-
-	
-	float3 pointLightColor = 0;
 #ifdef _ADDITIONAL_LIGHTS
 	AddtionalPointLight(i, inputData, mainTex, viewDirection, normalDirection, pointLightColor);
 #endif
 	
-	finalColor = saturate(finalColor) + (envLightColor * envLightIntensity * _GI_Intensity * smoothstep(1, 0, envLightIntensity / 2)) + emissiveColor;
+	float3 envLightColor = envColor.rgb;
+	float envLightIntensity = GetEnvLightIntensity(envLightColor);
+	float3 intensity = (envLightColor * envLightIntensity * _GI_Intensity * smoothstep(1, 0, envLightIntensity / 2));
+	finalColor = saturate(finalColor);
+	finalColor += emissiveColor;
 	finalColor += pointLightColor;
+	
+#if 0
+	finalColor = saturate(finalColor) + (envLightColor * envLightIntensity * _GI_Intensity * smoothstep(1, 0, envLightIntensity / 2)) + emissiveColor;
 
+#endif
+	
 #ifdef _IS_TRANSCLIPPING_ON
 	float opacity = saturate((inverseClipping + _Tweak_transparency));
 	float4 finalRGBA = float4(finalColor, opacity);
 	return finalRGBA;	
 #else
 	float4 finalRGBA = float4(finalColor, 1);
-	return finalRGBA;	
+	return finalRGBA;
 #endif
+	
 }
 
 

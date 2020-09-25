@@ -1,5 +1,5 @@
 ﻿
-Shader "ToonShade/ShadingGradeMap"
+Shader "Hidden/ToonShade/ShadingGradeMap"
 {
 	Properties
 	{
@@ -169,7 +169,6 @@ Shader "ToonShade/ShadingGradeMap"
 		{
 			Name "OUTLINE"
 			Tags { "LightMode" = "SRPDefaultUnlit" }
-
 			Cull[_SRPDefaultUnlitColMode]
 			ColorMask[_SPRDefaultUnlitColorMask]
 			Blend SrcAlpha OneMinusSrcAlpha
@@ -179,9 +178,7 @@ Shader "ToonShade/ShadingGradeMap"
 				Comp[_StencilComp]
 				Pass[_StencilOpPass]
 				Fail[_StencilOpFail]
-
 			}
-
 			HLSLPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -189,7 +186,7 @@ Shader "ToonShade/ShadingGradeMap"
 			#pragma multi_compile _IS_OUTLINE_CLIPPING_NO _IS_OUTLINE_CLIPPING_YES
 			#pragma multi_compile _OUTLINE_NML _OUTLINE_POS
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-			#include "Outline.hlsl"
+			#include "ToonShadeOutline.hlsl"
 			ENDHLSL
 		}
 
@@ -213,8 +210,6 @@ Shader "ToonShade/ShadingGradeMap"
 			#pragma target 3.0
 			#pragma vertex vert
 			#pragma fragment frag
-
-
 			#pragma shader_feature _NORMALMAP
 			#pragma shader_feature _ALPHATEST_ON
 			#pragma shader_feature _ALPHAPREMULTIPLY_ON
@@ -246,7 +241,7 @@ Shader "ToonShade/ShadingGradeMap"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/Shaders/LitForwardPass.hlsl"
-			#include "ShadingGradeMap.hlsl"
+			#include "ToonShade.hlsl"
 			ENDHLSL
 		}
 
@@ -257,7 +252,6 @@ Shader "ToonShade/ShadingGradeMap"
 			ZWrite On
 			ZTest LEqual
 			Cull[_CullMode]
-
 			HLSLPROGRAM
 			#pragma target 3.0
 			#pragma shader_feature _ALPHATEST_ON
@@ -274,11 +268,9 @@ Shader "ToonShade/ShadingGradeMap"
 		{
 			Name "DEPTH_ONLY"
 			Tags{ "LightMode" = "DepthOnly" }
-
 			ZWrite On
 			ColorMask 0
 			Cull[_CullMode]
-
 			HLSLPROGRAM
 			#pragma target 3.0
 			#pragma vertex DepthOnlyVertex
@@ -291,6 +283,7 @@ Shader "ToonShade/ShadingGradeMap"
 			ENDHLSL
 		}
 	}
+
 	FallBack Off
 	CustomEditor "ToonShade.ToonShadeInspector"
 }

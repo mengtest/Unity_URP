@@ -169,11 +169,13 @@ Material:
     - _Inverse_Z_Axis_BLD: 1
     - _IsBaseMapAlphaAsClippingMask: 0
     - _Is_AngelRingAlphaOn: 0
+    - _Is_Antipodean_RimLight: 0
+    - _Is_ApRimLight_FeatherOff: 0
     - _Is_BLD: 0
     - _Is_BakedNormal: 0
     - _Is_BlendAddToHiColor: 0
     - _Is_BlendAddToMatCap: 1
-    - _Is_BlendBaseColor: 0
+    - _Is_BlendBaseColor: 1
     - _Is_CameraRolling: 0
     - _Is_ColorShift: 0
     - _Is_Filter_HiCutPointLightColor: 1
@@ -188,6 +190,7 @@ Material:
     - _Is_LightColor_MatCap: 1
     - _Is_LightColor_Outline: 0
     - _Is_LightColor_RimLight: 1
+    - _Is_LightDirection_MaskOn: 0
     - _Is_NormalMapForMatCap: 0
     - _Is_NormalMapToBase: 0
     - _Is_NormalMapToHighColor: 0
@@ -195,6 +198,7 @@ Material:
     - _Is_Ortho: 0
     - _Is_OutlineTex: 0
     - _Is_PingPong_Base: 0
+    - _Is_RimLight_FeatherOff: 0
     - _Is_SpecularToHighColor: 0
     - _Is_UseTweakHighColorOnShadow: 0
     - _Is_UseTweakMatCapOnShadow: 0
@@ -204,6 +208,7 @@ Material:
     - _MatCap: 0
     - _Metallic: 0
     - _Nearest_Distance: 2
+    - _NormalMapStrength: 1
     - _OUTLINE: 0
     - _OcclusionStrength: 1
     - _Offset_X_Axis_BLD: -0.05
@@ -270,8 +275,9 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Emissive_Color: {r: 0, g: 0, b: 0, a: 1}
     - _HighColor: {r: 0, g: 0, b: 0, a: 1}
+    - _MainColor: {r: 1, g: 1, b: 1, a: 1}
     - _MatCapColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Outline_Color: {r: 0.10710279, g: 0.10355108, b: 0.122641504, a: 1}
+    - _Outline_Color: {r: 0.22745098, g: 0.13333334, b: 0.5294118, a: 1}
     - _RimLightColor: {r: 0.9811321, g: 0.8270221, b: 0.63403344, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _ViewShift: {r: 0, g: 0, b: 0, a: 1}
