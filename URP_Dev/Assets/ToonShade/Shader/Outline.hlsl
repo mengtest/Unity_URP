@@ -4,6 +4,8 @@
 #include "Common.hlsl"
 #include "Property.hlsl"
 
+
+
 struct Attributes
 {
 	float4 vertex : POSITION;

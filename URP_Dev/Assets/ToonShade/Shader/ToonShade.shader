@@ -163,7 +163,7 @@ Shader "ToonShade/ShadingGradeMap"
 
 	SubShader
 	{
-		Tags { "RenderType" = "Opaque" "RenderPipeline" = "UniversalRenderPipeline" }
+		Tags { "RenderType" = "Opaque" "RenderPipeline" = "UniversalPipeline" }
 
 		Pass
 		{
@@ -183,8 +183,8 @@ Shader "ToonShade/ShadingGradeMap"
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma target 3.0
-			#pragma multi_compile _IS_OUTLINE_CLIPPING_NO _IS_OUTLINE_CLIPPING_YES
-			#pragma multi_compile _OUTLINE_NML _OUTLINE_POS
+			#pragma multi_compile_local _IS_OUTLINE_CLIPPING_NO _IS_OUTLINE_CLIPPING_YES
+			#pragma multi_compile_local _OUTLINE_NML _OUTLINE_POS
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 			#include "Outline.hlsl"
 			ENDHLSL
@@ -210,32 +210,38 @@ Shader "ToonShade/ShadingGradeMap"
 			#pragma target 3.0
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma shader_feature _NORMALMAP
-			#pragma shader_feature _ALPHATEST_ON
-			#pragma shader_feature _ALPHAPREMULTIPLY_ON
-			#pragma shader_feature _METALLICSPECGLOSSMAP
-			#pragma shader_feature _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
-			#pragma shader_feature _OCCLUSIONMAP
-			#pragma shader_feature _SPECULARHIGHLIGHTS_OFF
-			#pragma shader_feature _ENVIRONMENTREFLECTIONS_OFF
-			#pragma shader_feature _SPECULAR_SETUP
-			#pragma shader_feature _RECEIVE_SHADOWS_OFF
+
+			#pragma shader_feature_local _NORMALMAP
+			#pragma shader_feature_local_fragment _ALPHATEST_ON
+			#pragma shader_feature_local_fragment _ALPHAPREMULTIPLY_ON
+			#pragma shader_feature_local_fragment _EMISSION
+			#pragma shader_feature_local_fragment _METALLICSPECGLOSSMAP
+			#pragma shader_feature_local_fragment _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+			#pragma shader_feature_local_fragment _OCCLUSIONMAP
+
+			#pragma shader_feature_local_fragment _SPECULARHIGHLIGHTS_OFF
+			#pragma shader_feature_local_fragment _ENVIRONMENTREFLECTIONS_OFF
+			#pragma shader_feature_local_fragment _SPECULAR_SETUP
+			#pragma shader_feature_local_fragment _RECEIVE_SHADOWS_OFF
 
 			#pragma multi_compile _ _MAIN_LIGHT_SHADOWS
 			#pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
 			#pragma multi_compile _ _ADDITIONAL_LIGHTS_VERTEX _ADDITIONAL_LIGHTS
-			#pragma multi_compile _ _ADDITIONAL_LIGHT_SHADOWS
-			#pragma multi_compile _ _SHADOWS_SOFT
+			#pragma multi_compile_fragment _ _ADDITIONAL_LIGHT_SHADOWS
+			#pragma multi_compile_fragment _ _SHADOWS_SOFT
 			#pragma multi_compile _ _MIXED_LIGHTING_SUBTRACTIVE
 
-			#pragma multi_compile _ DIRLIGHTMAP_COMBINED
+			#pragma multi_compile_fragment _ DIRLIGHTMAP_COMBINED
 			#pragma multi_compile _ LIGHTMAP_ON
 			#pragma multi_compile_fog
 
-			#pragma shader_feature _ _RAYTRACINGSHADOW_ON
-			#pragma shader_feature _IS_TRANSCLIPPING_OFF _IS_TRANSCLIPPING_ON
-			#pragma shader_feature _ANGELRING_OFF _ANGELRING_ON
-			#pragma shader_feature _EMISSIVE_OFF _EMISSIVE_ON
+			#pragma multi_compile_instancing
+			#pragma multi_compile _ DOTS_INSTANCING_ON
+
+			#pragma shader_feature_local_fragment _ _RAYTRACINGSHADOW_ON
+			#pragma shader_feature_local_fragment _IS_TRANSCLIPPING_OFF _IS_TRANSCLIPPING_ON
+			#pragma shader_feature_local_fragment _ANGELRING_OFF _ANGELRING_ON
+			#pragma shader_feature_local_fragment _EMISSIVE_OFF _EMISSIVE_ON
 
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
@@ -245,7 +251,6 @@ Shader "ToonShade/ShadingGradeMap"
 			ENDHLSL
 		}
 
-		/*
 		Pass
 		{
 			Name "SHADOW_CASTER"
@@ -255,18 +260,20 @@ Shader "ToonShade/ShadingGradeMap"
 			Cull[_CullMode]
 			HLSLPROGRAM
 			#pragma target 3.0
-			#pragma shader_feature _ALPHATEST_ON
+			#pragma shader_feature_local_fragment _ALPHATEST_ON
+			#pragma shader_feature_local_fragment _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+
 			#pragma multi_compile_instancing
-			#pragma shader_feature _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
-			#pragma vertex ShadowPassVertex
-			#pragma fragment ShadowPassFragment
+			#pragma multi_compile _ DOTS_INSTANCING_ON
+
+			#pragma vertex vertShadow
+			#pragma fragment fragShadow
 			#include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
-			#include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
+			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+			#include "ShadowCaster.hlsl"
 			ENDHLSL
 		}
-		*/
 
-		/*
 		Pass
 		{
 			Name "DEPTH_ONLY"
@@ -276,16 +283,20 @@ Shader "ToonShade/ShadingGradeMap"
 			Cull[_CullMode]
 			HLSLPROGRAM
 			#pragma target 3.0
-			#pragma vertex DepthOnlyVertex
-			#pragma fragment DepthOnlyFragment
-			#pragma shader_feature _ALPHATEST_ON
-			#pragma shader_feature _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+			#pragma vertex vertDepth
+			#pragma fragment fragDepth
+			#pragma shader_feature_local_fragment _ALPHATEST_ON
+			#pragma shader_feature_local_fragment _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+
 			#pragma multi_compile_instancing
+			#pragma multi_compile _ DOTS_INSTANCING_ON
+
 			#include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
-			#include "Packages/com.unity.render-pipelines.universal/Shaders/DepthOnlyPass.hlsl"
+			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+			#include "DepthOnly.hlsl"
 			ENDHLSL
 		}
-		*/
+
 	}
 
 	FallBack Off
