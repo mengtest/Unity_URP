@@ -6,10 +6,11 @@
 // Using pow often result to a warning like this
 // "pow(f, e) will not work for negative f, use abs(f) or conditionally handle negative values if you expect them"
 // PositivePow remove this warning when you know the value is positive and avoid inf/NAN.
-#include "ToonShadeCommon.hlsl"
-#include "ToonShadeFunction.hlsl"
-#include "ToonShadeProperty.hlsl"
-#include "ToonShadeStruct.hlsl"
+
+#include "Common.hlsl"
+#include "Function.hlsl"
+#include "Property.hlsl"
+#include "Struct.hlsl"
 
 #ifndef PI
 	#define PI 3.141592654
@@ -395,7 +396,7 @@ float4 frag(VertexOutput i, half facing : VFACE) : SV_TARGET
 	float3 lightDirection = GetLightDirection(mainLight.direction);
 	half3 originalLightColor = mainLightColor.rgb;
 	float3 lightColor = lerp(max(defaultLightColor, originalLightColor), max(defaultLightColor, saturate(originalLightColor)), 1);
-	
+
 	float3 halfDirection = normalize(viewDirection + lightDirection);
 	float lambert = dot(lerp(i.normalDir, normalDirection, _Is_NormalMapToBase), lightDirection);
 	float halfLambert = 0.5 * lambert + 0.5;
@@ -425,6 +426,7 @@ float4 frag(VertexOutput i, half facing : VFACE) : SV_TARGET
 	float3 baseLerpB = lerp(lightColor1stShade, lerp(base2ndA, base2ndB, _Is_LightColor_2nd_Shade), shadeShadowMask);
 	float3 finalBaseColor = lerp(baseLerpA, baseLerpB, finalShadowMask);
 
+
 	float3 baseHighColor = SetHighColor(i, normalDirection, halfDirection, baseLightColor, finalBaseColor, finalShadowMask);
 	float3 baseRimLight = SetRimLight(i, normalDirection, viewDirection, lightDirection, baseLightColor);
 	float3 rimLight = lerp(baseHighColor, (baseHighColor + baseRimLight), _RimLight);
@@ -445,6 +447,7 @@ float4 frag(VertexOutput i, half facing : VFACE) : SV_TARGET
 	float2 rotateMatCapUV = SetMatCapUV(i, tangentTransform, viewDirection, matcapUVAngle, signMirror);
 	float3 matCapColorFinal = SetMatCap(i, rotateMatCapUV, baseLightColor, finalShadowMask, baseHighColor, baseRimLight, rimLight);
 	float3 finalColor = lerp(rimLight, matCapColorFinal, _MatCap);
+
 	float3 emissiveColor = 0;
 	float3 pointLightColor = 0;
 	
@@ -460,14 +463,15 @@ float4 frag(VertexOutput i, half facing : VFACE) : SV_TARGET
 	
 	float3 envLightColor = envColor.rgb;
 	float envLightIntensity = GetEnvLightIntensity(envLightColor);
-	float3 intensity = (envLightColor * envLightIntensity * _GI_Intensity * smoothstep(1, 0, envLightIntensity / 2));
+	float stepEnvIntensity = smoothstep(1, 0, envLightIntensity / 2);
+	float3 intensity = (envLightColor * envLightIntensity * _GI_Intensity * stepEnvIntensity);
+
 	finalColor = saturate(finalColor);
 	finalColor += emissiveColor;
 	finalColor += pointLightColor;
 	
-#if 0
+#if false
 	finalColor = saturate(finalColor) + (envLightColor * envLightIntensity * _GI_Intensity * smoothstep(1, 0, envLightIntensity / 2)) + emissiveColor;
-
 #endif
 	
 #ifdef _IS_TRANSCLIPPING_ON

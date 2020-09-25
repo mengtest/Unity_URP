@@ -23,7 +23,7 @@ Shader "ToonShade/ShadingGradeMap"
 		[Enum(OFF,0, ON,1)] _ZOverDrawMode("ZOver Draw Mode", Float) = 0
 		_SPRDefaultUnlitColorMask("SPRDefaultUnlit Path Color Mask", int) = 15
 
-		[Enum(OFF,0, FRONT,1, BACK,2)] _SRPDefaultUnlitColMode("SPRDefaultUnlit  Cull Mode", int) = 1
+		[Enum(OFF,0, FRONT,1, BACK,2)] _SRPDefaultUnlitColMode("SPRDefaultUnlit Cull Mode", int) = 1
 		
 		// if _ClippingMode_ON selected show property
 		_ClippingMask("ClippingMask", 2D) = "white" {}
@@ -59,15 +59,15 @@ Shader "ToonShade/ShadingGradeMap"
 		_Tweak_ShadingGradeMapLevel("Tweak SGM Level", Range(-0.5, 0.5)) = 0
 		_BlurLevelSGM("Blur Level", Range(0, 10)) = 0
 
-		[Toggle(_)] _Is_LightColor_Base("Is_LightColor_Base", Float) = 1
-		[Toggle(_)] _Is_LightColor_1st_Shade("Is_LightColor_1st_Shade", Float) = 1
-		[Toggle(_)] _Is_LightColor_2nd_Shade("Is_LightColor_2nd_Shade", Float) = 1
-		[Toggle(_)] _Is_LightColor_HighColor("Is_LightColor_HighColor", Float) = 1
-		[Toggle(_)] _Is_LightColor_RimLight("Is_LightColor_RimLight", Float) = 1
-		[Toggle(_)] _Is_LightColor_Ap_RimLight("Is_LightColor_Ap_RimLight", Float) = 1
-		[Toggle(_)] _Is_LightColor_MatCap("Is_LightColor_MatCap", Float) = 1
-		[Toggle(_)] _Is_LightColor_AR("Is_LightColor_AR", Float) = 1
-		[Toggle(_)] _Is_LightColor_Outline("Is_LightColor_Outline", Float) = 1
+		[Toggle(_)] _Is_LightColor_Base("Is_LightColor_Base", Range(0, 1)) = 1
+		[Toggle(_)] _Is_LightColor_1st_Shade("Is_LightColor_1st_Shade", Range(0, 1)) = 1
+		[Toggle(_)] _Is_LightColor_2nd_Shade("Is_LightColor_2nd_Shade", Range(0, 1)) = 1
+		[Toggle(_)] _Is_LightColor_HighColor("Is_LightColor_HighColor", Range(0, 1)) = 1
+		[Toggle(_)] _Is_LightColor_RimLight("Is_LightColor_RimLight", Range(0, 1)) = 1
+		[Toggle(_)] _Is_LightColor_Ap_RimLight("Is_LightColor_Ap_RimLight", Range(0, 1)) = 1
+		[Toggle(_)] _Is_LightColor_MatCap("Is_LightColor_MatCap", Range(0, 1)) = 1
+		[Toggle(_)] _Is_LightColor_AR("Is_LightColor_AR", Range(0, 1)) = 1
+		[Toggle(_)] _Is_LightColor_Outline("Is_LightColor_Outline", Range(0, 1)) = 1
 
 		[HideInInspector] _BaseMap("BaseMap", 2D) = "white" {}
 		[HideInInspector] _1st_ShadeColor_Step("1st_ShadeColor_Step", Range(0, 1)) = 0.5
@@ -140,13 +140,13 @@ Shader "ToonShade/ShadingGradeMap"
 		_Scroll_EmissiveU("Scroll_EmissiveU", Range(-1, 1)) = 0
 		_Scroll_EmissiveV("Scroll_EmissiveV", Range(-1, 1)) = 0
 		_Rotate_EmissiveUV("Rotate_EmissiveUV", Float) = 0
-		[Toggle(_)] _Is_PingPong_Base("Is_PingPong_Base", Float) = 0
-		[Toggle(_)] _Is_ColorShift("Activate ColorShift", Float) = 0
+		[Toggle(_)] _Is_PingPong_Base("Is_PingPong_Base", Range(0, 1)) = 0
+		[Toggle(_)] _Is_ColorShift("Activate ColorShift", Range(0, 1)) = 0
 		[HDR]_ColorShift("ColorSift", Color) = (0,0,0,1)
 		_ColorShift_Speed("ColorShift_Speed", Float) = 0
 		[Toggle(_)] _Is_ViewShift("Activate ViewShift", Float) = 0
 		[HDR]_ViewShift("ViewSift", Color) = (0,0,0,1)
-		[Toggle(_)] _Is_ViewCoord_Scroll("Is_ViewCoord_Scroll", Float) = 0
+		[Toggle(_)] _Is_ViewCoord_Scroll("Is_ViewCoord_Scroll", Range(0, 1)) = 0
 
 		[KeywordEnum(NML, POS)] _OUTLINE("OUTLINE MODE", Float) = 0
 		_Outline_Width("Outline Width", Float) = 0
@@ -155,9 +155,9 @@ Shader "ToonShade/ShadingGradeMap"
 		_OutlineTex("Outline Texture", 2D) = "white" {}
 		_Offset_Z("Camera Forward_Offset", Float) = 0
 		_BakedNormal("Baked Normal Outline", 2D) = "white" {}
-		[Toggle(_)] _Is_BlendBaseColor("Is_BlendBaseColor", Float) = 0
-		[Toggle(_)] _Is_OutlineTex("Is_OutlineTex", Float) = 0
-		[Toggle(_)] _Is_BakedNormal("Is_BakedNormal", Float) = 0
+		[Toggle(_)] _Is_BlendBaseColor("Is_BlendBaseColor", Range(0, 1)) = 0
+		[Toggle(_)] _Is_OutlineTex("Is_OutlineTex", Range(0, 1)) = 0
+		[Toggle(_)] _Is_BakedNormal("Is_BakedNormal", Range(0, 1)) = 0
 
 	}
 
@@ -186,7 +186,7 @@ Shader "ToonShade/ShadingGradeMap"
 			#pragma multi_compile _IS_OUTLINE_CLIPPING_NO _IS_OUTLINE_CLIPPING_YES
 			#pragma multi_compile _OUTLINE_NML _OUTLINE_POS
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-			#include "ToonShadeOutline.hlsl"
+			#include "Outline.hlsl"
 			ENDHLSL
 		}
 
@@ -245,43 +245,47 @@ Shader "ToonShade/ShadingGradeMap"
 			ENDHLSL
 		}
 
-		//Pass
-		//{
-		//	Name "SHADOW_CASTER"
-		//	Tags { "LightMode" = "ShadowCaster" }
-		//	ZWrite On
-		//	ZTest LEqual
-		//	Cull[_CullMode]
-		//	HLSLPROGRAM
-		//	#pragma target 3.0
-		//	#pragma shader_feature _ALPHATEST_ON
-		//	#pragma multi_compile_instancing
-		//	#pragma shader_feature _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
-		//	#pragma vertex ShadowPassVertex
-		//	#pragma fragment ShadowPassFragment
-		//	#include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
-		//	#include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
-		//	ENDHLSL
-		//}
+		/*
+		Pass
+		{
+			Name "SHADOW_CASTER"
+			Tags { "LightMode" = "ShadowCaster" }
+			ZWrite On
+			ZTest LEqual
+			Cull[_CullMode]
+			HLSLPROGRAM
+			#pragma target 3.0
+			#pragma shader_feature _ALPHATEST_ON
+			#pragma multi_compile_instancing
+			#pragma shader_feature _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+			#pragma vertex ShadowPassVertex
+			#pragma fragment ShadowPassFragment
+			#include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
+			#include "Packages/com.unity.render-pipelines.universal/Shaders/ShadowCasterPass.hlsl"
+			ENDHLSL
+		}
+		*/
 
-		//Pass
-		//{
-		//	Name "DEPTH_ONLY"
-		//	Tags{ "LightMode" = "DepthOnly" }
-		//	ZWrite On
-		//	ColorMask 0
-		//	Cull[_CullMode]
-		//	HLSLPROGRAM
-		//	#pragma target 3.0
-		//	#pragma vertex DepthOnlyVertex
-		//	#pragma fragment DepthOnlyFragment
-		//	#pragma shader_feature _ALPHATEST_ON
-		//	#pragma shader_feature _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
-		//	#pragma multi_compile_instancing
-		//	#include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
-		//	#include "Packages/com.unity.render-pipelines.universal/Shaders/DepthOnlyPass.hlsl"
-		//	ENDHLSL
-		//}
+		/*
+		Pass
+		{
+			Name "DEPTH_ONLY"
+			Tags{ "LightMode" = "DepthOnly" }
+			ZWrite On
+			ColorMask 0
+			Cull[_CullMode]
+			HLSLPROGRAM
+			#pragma target 3.0
+			#pragma vertex DepthOnlyVertex
+			#pragma fragment DepthOnlyFragment
+			#pragma shader_feature _ALPHATEST_ON
+			#pragma shader_feature _SMOOTHNESS_TEXTURE_ALBEDO_CHANNEL_A
+			#pragma multi_compile_instancing
+			#include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
+			#include "Packages/com.unity.render-pipelines.universal/Shaders/DepthOnlyPass.hlsl"
+			ENDHLSL
+		}
+		*/
 	}
 
 	FallBack Off

@@ -1,8 +1,8 @@
 ﻿#ifndef OUTLINE
 #define OUTLINE
 
-#include "ToonShadeCommon.hlsl"
-#include "ToonShadeProperty.hlsl"
+#include "Common.hlsl"
+#include "Property.hlsl"
 
 struct Attributes
 {
