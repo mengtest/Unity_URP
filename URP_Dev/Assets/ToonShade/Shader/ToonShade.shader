@@ -269,7 +269,9 @@ Shader "ToonShade/ShadingGradeMap"
 			#pragma vertex vertShadow
 			#pragma fragment fragShadow
 			#include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
-			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+			//#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
 			#include "ShadowCaster.hlsl"
 			ENDHLSL
 		}
@@ -293,6 +295,7 @@ Shader "ToonShade/ShadingGradeMap"
 
 			#include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 			#include "DepthOnly.hlsl"
 			ENDHLSL
 		}
