@@ -38,7 +38,7 @@ half4 fragDepth(Varyings input) : SV_TARGET
     UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
     //Alpha(SampleAlbedoAlpha(input.uv, TEXTURE2D_ARGS(_MainTex, sampler_MainTex)).a, _MainColor, _Cutoff);
 
-    return 0;
+    return 1;
 }
 
 

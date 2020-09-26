@@ -250,7 +250,7 @@ Shader "ToonShade/ShadingGradeMap"
 			#include "ToonShade.hlsl"
 			ENDHLSL
 		}
-
+		
 		Pass
 		{
 			Name "SHADOW_CASTER"
@@ -269,7 +269,7 @@ Shader "ToonShade/ShadingGradeMap"
 			#pragma vertex vertShadow
 			#pragma fragment fragShadow
 			#include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
-			//#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
+			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
 			#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
 			#include "ShadowCaster.hlsl"
