@@ -202,15 +202,6 @@ namespace ToonShade
 			}
 
 			EditorGUILayout.Space();
-			_StepAndFeather_Foldout = ToonShadeDifinition.Foldout(_StepAndFeather_Foldout, "Basic ShadeStep Settings");
-			if (_StepAndFeather_Foldout)
-			{
-				EditorGUI.indentLevel++;
-				GUI_StepAndFeather(material);
-				EditorGUI.indentLevel--;
-			}
-
-			EditorGUILayout.Space();
 			_HighColor_Foldout = ToonShadeDifinition.Foldout(_HighColor_Foldout, "HighColor");
 			if (_HighColor_Foldout)
 			{
@@ -735,6 +726,13 @@ namespace ToonShade
 				GUI_ShadowControlMaps(material);
 				EditorGUILayout.Space();
 			}
+
+			_StepAndFeather_Foldout = ToonShadeDifinition.FoldoutSubMenu(_StepAndFeather_Foldout, "Basic ShadeStep Settings");
+			if (_StepAndFeather_Foldout)
+			{
+				GUI_StepAndFeather(material);
+				EditorGUILayout.Space();
+			}
 		}
 
 		private void GUI_ShadowControlMaps(Material material)
@@ -784,10 +782,10 @@ namespace ToonShade
 
 			if (material.GetFloat(ToonShadeDifinition.ShaderPropSetSystemShadowsToBase) == 1)
 			{
-				EditorGUI.indentLevel++;
-				m_MaterialEditor.RangeProperty(tweakSystemShadowsLevel, "System Shadows Level");
+				//EditorGUI.indentLevel++;
+				m_MaterialEditor.RangeProperty(tweakSystemShadowsLevel, "Shadows Level");
 				GUI_SetRTHS(material);
-				EditorGUI.indentLevel--;
+				//EditorGUI.indentLevel--;
 				EditorGUILayout.Space();
 			}
 			EditorGUILayout.Space();
