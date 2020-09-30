@@ -14,7 +14,6 @@ namespace Invector.Editors
 		public RuntimeAnimatorController controller = default;
 		public GameObject hud = default;
 		private Vector2 rect = new Vector2(500, 540);
-		private Vector2 scrool = default;
 		private Editor humanoidpreview = default;
 		private bool isHuman, isValidAvatar, charExist = default;
 
@@ -49,7 +48,7 @@ namespace Invector.Editors
 			this.minSize = rect;
 			this.titleContent = new GUIContent("Character", null, "Third Person Character Creator");
 			GUILayout.BeginVertical("Character Creator Window", "window");
-			GUILayout.Space(5);
+			GUILayout.Space(30);
 
 			GUILayout.BeginVertical("box");
 
