@@ -1,10 +1,11 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using TPS;
 
 namespace Invector.Editors
 {
 	[CanEditMultipleObjects]
-	[CustomEditor(typeof(CharacterController.vThirdPersonInput), true)]
+	[CustomEditor(typeof(TPS.ThirdPersonInput), true)]
 	public class ThirdPersonInputEditor : Editor
 	{
 		private GUISkin skin = default;

@@ -1,18 +1,18 @@
-﻿using Invector.CharacterController;
+﻿using TPS;
 using UnityEditor;
 using UnityEngine;
 
 namespace Invector.Editors
 {
-	[CustomEditor(typeof(vThirdPersonMotor), true)]
+	[CustomEditor(typeof(ThirdPersonMotor), true)]
 	public class CharacterEditor : Editor
 	{
 		private GUISkin skin = default;
-		private vThirdPersonMotor thirdPersonMotor = default;
+		private ThirdPersonMotor thirdPersonMotor = default;
 
 		private void OnEnable()
 		{
-			thirdPersonMotor = (vThirdPersonMotor)target;
+			thirdPersonMotor = (ThirdPersonMotor)target;
 			skin = Resources.Load("GUISkin") as GUISkin;
 		}
 

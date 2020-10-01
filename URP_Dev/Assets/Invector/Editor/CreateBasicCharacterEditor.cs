@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
-using Invector.CharacterController;
+using TPS;
 
 namespace Invector.Editors
 {
@@ -71,11 +69,11 @@ namespace Invector.Editors
 
 			charObj = EditorGUILayout.ObjectField("FBX Model", charObj, typeof(GameObject), true, GUILayout.ExpandWidth(true)) as GameObject;
 
-			if (GUI.changed && charObj != null && charObj.GetComponent<vThirdPersonController>() == null)
+			if (GUI.changed && charObj != null && charObj.GetComponent<ThirdPersonController>() == null)
 			{
 				humanoidpreview = Editor.CreateEditor(charObj);
 			}
-			if (charObj != null && charObj.GetComponent<vThirdPersonController>() != null)
+			if (charObj != null && charObj.GetComponent<ThirdPersonController>() != null)
 			{
 				EditorGUILayout.HelpBox("This gameObject already contains the component vThirdPersonController", MessageType.Warning);
 			}
@@ -112,7 +110,7 @@ namespace Invector.Editors
 
 		private bool CanCreate()
 		{
-			return isValidAvatar && isHuman && charObj != null && charObj.GetComponent<vThirdPersonController>() == null;
+			return isValidAvatar && isHuman && charObj != null && charObj.GetComponent<ThirdPersonController>() == null;
 		}
 
 		private void DrawHumanoidPreview()
@@ -134,8 +132,8 @@ namespace Invector.Editors
 				return;
 			}
 			_ThirdPerson.name = "vBasicController_" + charObj.gameObject.name;
-			_ThirdPerson.AddComponent<vThirdPersonController>();
-			_ThirdPerson.AddComponent<vThirdPersonInput>();
+			_ThirdPerson.AddComponent<ThirdPersonController>();
+			_ThirdPerson.AddComponent<ThirdPersonInput>();
 
 			var rigidbody = _ThirdPerson.AddComponent<Rigidbody>();
 			var collider = _ThirdPerson.AddComponent<CapsuleCollider>();
@@ -158,7 +156,7 @@ namespace Invector.Editors
 				camera.GetComponent<Camera>().nearClipPlane = 0.03f;
 				camera.gameObject.name = "vThirdPersonCamera";
 			}
-			var tpcamera = camera.GetComponent<vThirdPersonCamera>() ?? camera.AddComponent<vThirdPersonCamera>();
+			var tpcamera = camera.GetComponent<ThirdPersonCamera>() ?? camera.AddComponent<ThirdPersonCamera>();
 
 			_ThirdPerson.tag = "Player";
 			// rigidbody

@@ -1,14 +1,15 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using TPS;
 
 namespace Invector.Editors
 {
-	[CustomEditor(typeof(vThirdPersonCamera))]
+	[CustomEditor(typeof(ThirdPersonCamera))]
 	[CanEditMultipleObjects]
 	public class ThirdPersonCameraEditor : Editor
 	{
 		private GUISkin skin = default;
-		private vThirdPersonCamera tpCamera = default;
+		private ThirdPersonCamera tpCamera = default;
 
 		private void OnSceneGUI()
 		{
@@ -16,12 +17,12 @@ namespace Invector.Editors
 			{
 				return;
 			}
-			tpCamera = (vThirdPersonCamera)target;
+			tpCamera = (ThirdPersonCamera)target;
 		}
 
 		private void OnEnable()
 		{
-			tpCamera = (vThirdPersonCamera)target;
+			tpCamera = (ThirdPersonCamera)target;
 			tpCamera.indexLookPoint = 0;
 		}
 
