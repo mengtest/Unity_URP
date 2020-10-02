@@ -6,7 +6,8 @@ using UnityEngine.UI;
 
 namespace FPA
 {
-	public class DD_Lines : DD_DrawGraphic
+
+	public class DrawGraphicLines : DiagramDrawGraphic
 	{
 		private float thickness = 5f;
 		private bool isShow = true;
@@ -15,8 +16,8 @@ namespace FPA
 		private List<Vector2> pointList = new List<Vector2>();
 		private int cursolStartPointSN = 0;
 
-		private DD_DataDiagram dataDiagram = default;
-		private DD_CoordinateAxis coordinate = default;
+		private DataDiagram dataDiagram = default;
+		private CoordinateAxis coordinate = default;
 
 		[NonSerialized]
 		public string lineName = "";
@@ -42,13 +43,13 @@ namespace FPA
 
 		protected override void Awake()
 		{
-			dataDiagram = GetComponentInParent<DD_DataDiagram>();
+			dataDiagram = GetComponentInParent<DataDiagram>();
 			if (dataDiagram == null)
 			{
 				Debug.Log(this + "null == m_DataDiagram");
 			}
 
-			coordinate = GetComponentInParent<DD_CoordinateAxis>();
+			coordinate = GetComponentInParent<CoordinateAxis>();
 			if (coordinate == null)
 			{
 				Debug.Log(this + "null == m_Coordinate");
@@ -127,17 +128,17 @@ namespace FPA
 			return ret;
 		}
 
-		private void OnCoordinateRectChange(object sender, DD_CoordinateRectChangeEventArgs e)
+		private void OnCoordinateRectChange(object sender, CoordinateRectChangeEventArgs e)
 		{
 			UpdateGeometry();
 		}
 
-		private void OnCoordinateScaleChange(object sender, DD_CoordinateScaleChangeEventArgs e)
+		private void OnCoordinateScaleChange(object sender, CoordinateScaleChangeEventArgs e)
 		{
 			UpdateGeometry();
 		}
 
-		private void OnCoordinateZeroPointChange(object sender, DD_CoordinateZeroPointChangeEventArgs e)
+		private void OnCoordinateZeroPointChange(object sender, CoordinateZeroPointChangeEventArgs e)
 		{
 			cursolStartPointSN = GetStartPointSN(pointList, coordinate.coordinateAxisViewRangeInPixel.x);
 			UpdateGeometry();
@@ -168,7 +169,7 @@ namespace FPA
 		public void AddPoint(Vector2 point)
 		{
 			pointList.Insert(0, new Vector2(point.x, point.y));
-			while (pointList.Count > dataDiagram.m_MaxPointNum)
+			while (pointList.Count > dataDiagram.maxPointNum)
 			{
 				pointList.RemoveAt(pointList.Count - 1);
 				print(pointList.Count);

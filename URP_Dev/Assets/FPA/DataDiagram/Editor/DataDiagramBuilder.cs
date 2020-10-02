@@ -1,12 +1,13 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace FPA
 {
-	public class DD_Menu : MonoBehaviour
+	public sealed class DataDiagramBuilder : MonoBehaviour
 	{
 		[MenuItem("GameObject/UI/DataDiagram")]
-		public static void AddDataDiagramInGameObject()
+		public static void CreateDataDiagramHierarchy()
 		{
 			GameObject parent = null;
 			if (Selection.activeTransform)

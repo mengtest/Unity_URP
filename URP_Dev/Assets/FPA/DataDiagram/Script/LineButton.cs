@@ -7,7 +7,8 @@ using UnityEngine.UI;
 
 namespace FPA
 {
-	public class DD_LineButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+
+	public class LineButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 	{
 		private GameObject line = default;
 		public GameObject labelGO = default;
@@ -17,7 +18,7 @@ namespace FPA
 			get => line;
 			set
 			{
-				DD_Lines lines = value.GetComponent<DD_Lines>();
+				DrawGraphicLines lines = value.GetComponent<DrawGraphicLines>();
 				if (lines == null)
 				{
 					Debug.LogWarning(this.ToString() + "LineButton error : set line null == value.GetComponent<Lines>()");
@@ -31,7 +32,7 @@ namespace FPA
 			}
 		}
 
-		private void SetLabel(DD_Lines lines)
+		private void SetLabel(DrawGraphicLines lines)
 		{
 			if ((labelGO == null) || (labelGO.GetComponent<Text>() == null))
 			{
@@ -40,8 +41,8 @@ namespace FPA
 
 			try
 			{
-				labelGO.GetComponent<Text>().text = lines.GetComponent<DD_Lines>().lineName;
-				labelGO.GetComponent<Text>().color = lines.GetComponent<DD_Lines>().color;
+				labelGO.GetComponent<Text>().text = lines.GetComponent<DrawGraphicLines>().lineName;
+				labelGO.GetComponent<Text>().color = lines.GetComponent<DrawGraphicLines>().color;
 			}
 			catch
 			{
@@ -49,7 +50,7 @@ namespace FPA
 			}
 		}
 
-		public void SetLineButton(DD_Lines lines)
+		public void SetLineButton(DrawGraphicLines lines)
 		{
 			name = string.Format("Button{0}", lines.gameObject.name);
 			GetComponent<Image>().color = lines.color;
@@ -67,13 +68,13 @@ namespace FPA
 			{
 				return;
 			}
-			DD_DataDiagram dd = GetComponentInParent<DD_DataDiagram>();
-			if (dd == null)
+			DataDiagram diagram = GetComponentInParent<DataDiagram>();
+			if (diagram == null)
 			{
 				return;
 			}
 
-			labelGO.transform.SetParent(dd.transform);
+			labelGO.transform.SetParent(diagram.transform);
 			labelGO.transform.position = transform.position + new Vector3(0, -GetComponent<RectTransform>().rect.height / 2, 0);
 			labelGO.SetActive(true);
 		}
@@ -101,7 +102,7 @@ namespace FPA
 				return;
 			}
 
-			DD_Lines lines = line.GetComponent<DD_Lines>();
+			DrawGraphicLines lines = line.GetComponent<DrawGraphicLines>();
 			if (lines == null)
 			{
 				Debug.LogWarning(this.ToString() + "error OnButtonClick : null == DD_Lines");
@@ -119,7 +120,7 @@ namespace FPA
 			{
 				try
 				{
-					transform.GetComponentInParent<DD_DataDiagram>().DestroyLine(line);
+					transform.GetComponentInParent<DataDiagram>().DestroyLine(line);
 				}
 				catch (NullReferenceException)
 				{

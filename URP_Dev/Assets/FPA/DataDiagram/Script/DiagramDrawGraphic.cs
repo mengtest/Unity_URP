@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 namespace FPA
 {
-	public class DD_DrawGraphic : MaskableGraphic
+
+	public class DiagramDrawGraphic : MaskableGraphic
 	{
 		private int IsPointHorizontalInRect(Vector2 p, Rect rect)
 		{
@@ -67,7 +68,6 @@ namespace FPA
 					ret++;
 				}
 			}
-
 			return ret;
 		}
 
@@ -100,7 +100,6 @@ namespace FPA
 			{
 				return false;
 			}
-
 			return true;
 		}
 

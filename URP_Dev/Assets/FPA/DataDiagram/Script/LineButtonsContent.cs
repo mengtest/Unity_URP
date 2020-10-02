@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace FPA
 {
-	public class DD_LineButtonsContent : MonoBehaviour
+	public class LineButtonsContent : MonoBehaviour
 	{
 
 	}

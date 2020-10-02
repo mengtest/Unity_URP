@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 222722386399570498}
   - component: {fileID: 114314822446460516}
   - component: {fileID: 114422874399907360}
-  - component: {fileID: 114752641174552302}
+  - component: {fileID: 3211423664079931138}
   m_Layer: 5
   m_Name: LineButton
   m_TagString: Untagged
@@ -121,8 +121,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114752641174552302}
-        m_TargetAssemblyTypeName: 
+      - m_Target: {fileID: 3211423664079931138}
+        m_TargetAssemblyTypeName: FPA.LineButton, Assembly-CSharp
         m_MethodName: OnButtonClick
         m_Mode: 1
         m_Arguments:
@@ -133,8 +133,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114752641174552302}
-        m_TargetAssemblyTypeName: 
+      - m_Target: {fileID: 3211423664079931138}
+        m_TargetAssemblyTypeName: FPA.LineButton, Assembly-CSharp
         m_MethodName: OnButtonClickWithCtrl
         m_Mode: 1
         m_Arguments:
@@ -145,7 +145,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &114752641174552302
+--- !u!114 &3211423664079931138
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -154,10 +154,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1591969513282910}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53b03e0de3eb29842b896d5274c5b144, type: 3}
+  m_Script: {fileID: 11500000, guid: 776bbae414f01194c9ddf35a1011090d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Label: {fileID: 1961254092150856}
+  labelGO: {fileID: 0}
 --- !u!1 &1961254092150856
 GameObject:
   m_ObjectHideFlags: 0
