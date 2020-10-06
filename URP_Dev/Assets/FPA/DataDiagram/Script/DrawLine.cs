@@ -11,7 +11,6 @@ namespace FPA
 		private DataDiagram dataDiagram = default;
 
 		private List<GameObject> lineList = new List<GameObject>();
-		private bool isContinueInput = false;
 		private float time = 0f;
 		private float h = 0;
 
