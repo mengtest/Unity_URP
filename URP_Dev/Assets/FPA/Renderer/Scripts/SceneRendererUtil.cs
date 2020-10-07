@@ -7,6 +7,16 @@ namespace FPA
 	public static class SceneRendererUtil
 	{
 		/// <summary>
+		/// 鮮やかな赤の%が閾値以上か?
+		/// </summary>
+		/// <param name="brightnessR"></param>
+		/// <returns></returns>
+		public static bool WasAlertBrightness(float brightnessR, float alertBrightness)
+		{
+			return brightnessR >= alertBrightness;
+		}
+
+		/// <summary>
 		/// Get average pixel Intensity
 		/// </summary>
 		/// <param name="tex"></param>
@@ -86,6 +96,29 @@ namespace FPA
 			return Mathf.Floor((r / total) * 100);
 		}
 
+		/// <summary>
+		/// Convert Color32=>Color
+		/// </summary>
+		/// <param name="color"></param>
+		/// <returns></returns>
+		public static Color ConvertColor(Color32 color)
+		{
+			return new Color(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f);
+		}
+
+		/// <summary>
+		/// Convert Color||Color32 => Vector4
+		/// </summary>
+		/// <param name="r"></param>
+		/// <param name="g"></param>
+		/// <param name="b"></param>
+		/// <param name="a"></param>
+		/// <returns></returns>
+		public static Vector4 HexColor(float r, float g, float b, float a)
+		{
+			Vector4 color = new Vector4(r / 255, g / 255, b / 255, a / 255);
+			return color;
+		}
 
 
 		public static RenderTexture CreateRenderTexture(int depth = 24, RenderTextureFormat format = RenderTextureFormat.Default)

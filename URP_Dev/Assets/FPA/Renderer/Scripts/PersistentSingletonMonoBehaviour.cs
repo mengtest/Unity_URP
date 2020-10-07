@@ -6,7 +6,7 @@ namespace FPA
 {
 	public abstract class PersistentSingletonMonoBehaviour<T> : MonoBehaviour where T : MonoBehaviour
 	{
-		private const string FIXED_PREFAB_PATH = "Prefabs/Singletons/";
+		private const string FIXED_PREFAB_PATH = "Singletons/";
 
 		private static T instance;
 		public static T Instance

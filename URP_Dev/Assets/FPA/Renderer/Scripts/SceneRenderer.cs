@@ -16,6 +16,9 @@ namespace FPA
 		[SerializeField]
 		private SceneRendererParam sceneRendererParam = new SceneRendererParam();
 
+		[SerializeField]
+		private SceneRendererSettings sceneRendererSettings = default;
+
 		private Texture2D targetTexture = default;
 		private RenderTexture renderTexture = default;
 		private Camera targetCamera = default;
@@ -25,7 +28,20 @@ namespace FPA
 
 		public bool Abort { get => abort; }
 
+		public bool WasAlertBrightness
+		{
+			get => SceneRendererUtil.WasAlertBrightness(sceneRendererParam.BrightnessR, sceneRendererSettings.alertBrightness);
+		}
+
 		public SceneRendererParam SceneRendererParam { get => sceneRendererParam; }
+
+		protected virtual void OnEnable()
+		{
+			if (sceneRendererSettings == null)
+			{
+				sceneRendererSettings = Resources.Load<SceneRendererSettings>("SceneRendererSettings");
+			}
+		}
 
 		protected virtual void Start()
 		{
@@ -131,6 +147,7 @@ namespace FPA
 				sceneRendererParam.SetPrevIntensity(sceneRendererParam.Intensity);
 				sceneRendererParam.SetPrevLuminance(sceneRendererParam.Luminance);
 				sceneRendererParam.SetPrevBrightnessR(sceneRendererParam.BrightnessR);
+				yield return null;
 
 				RenderTexture.active = targetCamera.targetTexture;
 				yield return new WaitForEndOfFrame();

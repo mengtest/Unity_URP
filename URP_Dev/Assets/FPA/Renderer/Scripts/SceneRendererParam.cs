@@ -44,11 +44,10 @@ namespace FPA
 		private float prevBrightnessR = default;
 
 		/// <summary>
-		/// 画面の平均色
+		/// Pixel全体の平均色
 		/// </summary>
 		[SerializeField]
 		private Color32 averageColor32 = default;
-
 
 		public float Intensity { get => intensity; }
 		public float Luminance { get => luminance; }
@@ -58,11 +57,17 @@ namespace FPA
 		public float PrevLuminance { get => prevLuminance; }
 		public float PrevBrightnessR { get => prevBrightnessR; }
 
+		/// <summary>
+		/// Pixel全体の平均色
+		/// </summary>
 		public Color32 AverageColor32 { get => averageColor32; }
 
-		public float LuminanceDiff
+		/// <summary>
+		/// 現在と前フレーム比較の輝度変化
+		/// </summary>
+		public float LuminanceChange
 		{
-			get => Mathf.Clamp(luminance - prevLuminance, 0, 100);
+			get => Mathf.Abs(Mathf.Clamp(luminance - prevLuminance, 0, 100f));
 		}
 
 		public SceneRendererParam()
